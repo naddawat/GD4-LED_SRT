@@ -4,6 +4,120 @@
              xmlns:local="clr-namespace:GD4_LED"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="PrimaryBlue" Color="#2563EB"/>
+        <SolidColorBrush x:Key="SecondaryBlue" Color="#3B82F6"/>
+        <SolidColorBrush x:Key="LightBlue" Color="#EBF4FF"/>
+        <SolidColorBrush x:Key="Success" Color="#10B981"/>
+        <SolidColorBrush x:Key="Warning" Color="#F59E0B"/>
+        <SolidColorBrush x:Key="Error" Color="#EF4444"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#1F2937"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
+        <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BackgroundGray" Color="#F9FAFB"/>
+
+        <!-- Button Styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SecondaryBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBlue}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlue}"/>
+        </Style>
+        <Style x:Key="PrintButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource Success}"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Opacity="0.1" BlurRadius="10" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        </Style>
+        <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        </Style>
+        <Style x:Key="BodyTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        </Style>
+        <Style x:Key="SecondaryTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+        </Style>
+        <Style x:Key="TabButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="20,16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                            <Rectangle x:Name="ActiveIndicator" 
+                                     Height="3" 
+                                     VerticalAlignment="Bottom" 
+                                     Fill="{StaticResource PrimaryBlue}" 
+                                     Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryBlue}"/>
+                            </Trigger>
+                            <Trigger Property="Tag" Value="Active">
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryBlue}"/>
+                                <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--<local:QuantityToColorConverter x:Key="QuantityToColorConverter"/>-->
     </Application.Resources>
 </Application>
