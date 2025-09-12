@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GD4_LED.cls;
+using GD4_LED.page;
 
 namespace GD4_LED
 {
@@ -40,19 +41,19 @@ namespace GD4_LED
             _var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
 
             SetWindowToSecondaryScreen();
-            //SetActiveTab(DispenseButton);
-            //MainFrame.Navigate(new DispensePage());
+            SetActiveTab(DispenseButton);
+            MainFrame.Navigate(new DispensePage());
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //SetActiveTab(StockButton);
-            //MainFrame.Navigate(new StockWindow());
+            SetActiveTab(StockButton);
+            MainFrame.Navigate(new StockWindow());
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            //SetActiveTab(DispenseButton);
-            //MainFrame.Navigate(new DispensePage());
+            SetActiveTab(DispenseButton);
+            MainFrame.Navigate(new DispensePage());
         }
 
 
@@ -192,9 +193,9 @@ namespace GD4_LED
 
         private void SetActiveTab(Button activeButton)
         {
-            //DispenseButton.Tag = null;
-            //HistoryButton.Tag = null;
-            //StockButton.Tag = null;
+            DispenseButton.Tag = null;
+            HistoryButton.Tag = null;
+            StockButton.Tag = null;
 
             activeButton.Tag = "Active";
         }

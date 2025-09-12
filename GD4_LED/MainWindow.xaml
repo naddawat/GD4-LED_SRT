@@ -145,7 +145,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="SettingsButton" Grid.Column="4" Style="{StaticResource TabButtonStyle}" Click="SettingsButton_Click">
+                <Button x:Name="SettingsButton" Grid.Column="4" Style="{StaticResource TabButtonStyle}">
                     <StackPanel>
                         <Path Data="M19.14,12.94a1.43,1.43,0,0,0,0-1.88l2.11-1.65a.5.5,0,0,0,.12-.65l-2-3.46a.5.5,0,0,0-.61-.22l-2.49,1a6.89,6.89,0,0,0-1.62-.94l-.38-2.65A.5.5,0,0,0,13,2H11a.5.5,0,0,0-.5.42l-.38,2.65a6.89,6.89,0,0,0-1.62.94l-2.49-1a.5.5,0,0,0-.61.22l-2,3.46a.5.5,0,0,0,.12.65l2.11,1.65a1.43,1.43,0,0,0,0,1.88L3.12,14.59a.5.5,0,0,0-.12.65l2,3.46a.5.5,0,0,0,.61.22l2.49-1a6.89,6.89,0,0,0,1.62.94l.38,2.65A.5.5,0,0,0,11,22h2a.5.5,0,0,0,.5-.42l.38-2.65a6.89,6.89,0,0,0,1.62-.94l2.49,1a.5.5,0,0,0,.61-.22l2-3.46a.5.5,0,0,0-.12-.65ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
               Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}"

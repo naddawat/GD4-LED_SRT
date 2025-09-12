@@ -101,3 +101,10 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csp
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\App.baml
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\Newtonsoft.Json.dll
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\Newtonsoft.Json.xml
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\StockWindow.baml
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\StockWindow.g.cs
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.baml
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.g.cs
