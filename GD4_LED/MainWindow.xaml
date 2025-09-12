@@ -5,14 +5,4 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GD4_LED"
         mc:Ignorable="d"
-        Title="MainWindow" Height="571" Width="435">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="0*"/>
-        </Grid.ColumnDefinitions>
-        <Button x:Name="bnt_open" Content="Red" HorizontalAlignment="Left" Margin="300,10,0,0" VerticalAlignment="Top" Width="110" Height="35" Click="bnt_open_Click"/>
-        <TextBox x:Name="txtAddr" HorizontalAlignment="Left" Height="23" Margin="46,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-
-    </Grid>
-</Window>
+        Title="MainWindow" Height="760.375" Width="573"/>
