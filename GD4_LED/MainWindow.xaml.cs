@@ -200,7 +200,10 @@ namespace GD4_LED
             activeButton.Tag = "Active";
         }
 
-
-
+        private void StockButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            SetActiveTab(StockButton);
+            MainFrame.Navigate(new StockWindow());
+        }
     }
 }
