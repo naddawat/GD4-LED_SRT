@@ -7,109 +7,111 @@
       d:DesignHeight="900" d:DesignWidth="800"
       Background="{StaticResource BackgroundGray}">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,24,0,24">
-        <StackPanel>
-            <!-- Search and Filter Section -->
-            <Border Style="{StaticResource CardStyle}">
-                <Grid>
+    <Grid Margin="0,24,0,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search and Filter Section -->
+        <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="187*"/>
+                    <ColumnDefinition Width="161*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" 
+                           Text="Stock LED" 
+                           Style="{StaticResource SubHeaderTextStyle}" 
+                           Grid.ColumnSpan="2"/>
+
+                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,24,0,0" Grid.RowSpan="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="187*"/>
-                        <ColumnDefinition Width="161*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="120"/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" 
-                                 Text="Stock LED" 
-                                 Style="{StaticResource SubHeaderTextStyle}" Grid.ColumnSpan="2"/>
+                    <!-- Search TextBox with simplified placeholder -->
+                    <Border Grid.Column="0" 
+                            Background="White" 
+                            CornerRadius="8"
+                            BorderBrush="{StaticResource TextSecondary}"
+                            BorderThickness="1"
+                            Height="48">
+                        <Grid>
+                            <TextBlock Text="Med code/name" 
+                                       Foreground="{StaticResource TextSecondary}"
+                                       Margin="16,0,0,0"
+                                       VerticalAlignment="Center"
+                                       x:Name="SearchPlaceholder"/>
+                            <TextBox Background="Transparent"
+                                     BorderThickness="0"
+                                     FontSize="14"
+                                     Padding="16,12"
+                                     VerticalAlignment="Center"
+                                     x:Name="SearchTextBox"
+                                     KeyDown="SearchTextBox_KeyDown"/>
+                        </Grid>
+                    </Border>
 
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,24,0,0" Grid.RowSpan="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="120"/>
-                        </Grid.ColumnDefinitions>
+                    <!-- Date Picker -->
 
-                        <!-- Search TextBox with simplified placeholder -->
-                        <Border Grid.Column="0" 
-                                  Background="White" 
-                                  CornerRadius="8"
-                                  BorderBrush="{StaticResource TextSecondary}"
-                                  BorderThickness="1"
-                                  Height="48">
-                            <Grid>
-                                <TextBlock Text="Med code/name" 
-                                             Foreground="{StaticResource TextSecondary}"
-                                             Margin="16,0,0,0"
-                                             VerticalAlignment="Center"
-                                             x:Name="SearchPlaceholder"/>
-                                <TextBox Background="Transparent"
-                                           BorderThickness="0"
-                                           FontSize="14"
-                                           Padding="16,12"
-                                           VerticalAlignment="Center"
-                                           x:Name="SearchTextBox"
-                                           KeyDown="SearchTextBox_KeyDown"/>
-                            </Grid>
-                        </Border>
-
-                        <!-- Date Picker -->
-
-                        <Button Grid.Column="4" 
-                                  Content="ค้นหา" 
-                                  Style="{StaticResource PrimaryButtonStyle}"
-                                  Height="48"/>
-                    </Grid>
+                    <Button Grid.Column="4" 
+                            Content="ค้นหา" 
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Height="48"/>
                 </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Summary Statistics -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="23*"/>
+                <ColumnDefinition Width="222*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="245*"/>
+                <ColumnDefinition Width="245*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0" Grid.ColumnSpan="2">
+                <StackPanel>
+                    <TextBlock Text="ต้องเติม" Style="{StaticResource SecondaryTextStyle}" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding LowStockCount}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
+                </StackPanel>
             </Border>
 
-            <!-- Summary Statistics -->
-            <Grid Margin="0,0,0,24">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="23*"/>
-                    <ColumnDefinition Width="222*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="245*"/>
-                    <ColumnDefinition Width="245*"/>
-                </Grid.ColumnDefinitions>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,8,0" Grid.ColumnSpan="2">
+                <StackPanel>
+                    <TextBlock Text="ใกล้หมดอายุ" Style="{StaticResource SecondaryTextStyle}" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Error}"/>
+                </StackPanel>
+            </Border>
 
-                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0" Grid.ColumnSpan="2">
-                    <StackPanel>
-                        <TextBlock Text="ต้องเติม" Style="{StaticResource SecondaryTextStyle}"/>
-                        <TextBlock Text="{Binding LowStockCount}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
-                    </StackPanel>
-                </Border>
+            <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding TotalCount}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
 
-                <!--<Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,8,0">
-                        <StackPanel>
-                            <TextBlock Text="กำลังจัด" Style="{StaticResource SecondaryTextStyle}"/>
-                            <TextBlock Text="8" FontSize="32" FontWeight="Bold" Foreground="{StaticResource PrimaryBlue}"/>
-                        </StackPanel>
-                    </Border>-->
-
-                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,8,0" Grid.ColumnSpan="2">
-                    <StackPanel>
-                        <TextBlock Text="ใกล้หมดอายุ" Style="{StaticResource SecondaryTextStyle}"/>
-                        <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Error}"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
-                    <StackPanel>
-                        <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}"/>
-                        <TextBlock Text="{Binding TotalCount}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <!-- Medicine Cards -->
-            <!-- ...existing code... -->
-            <!-- Medicine Cards -->
+        <!-- Medicine Cards with ScrollViewer -->
+        <ScrollViewer Grid.Row="4" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding DrugStocks}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -129,22 +131,66 @@
                                     <TextBlock Text="{Binding lot, StringFormat=Lot: {0}}" Style="{StaticResource BodyTextStyle}"/>
                                     <TextBlock Text="{Binding exp, StringFormat=Exp: {0}}" Style="{StaticResource BodyTextStyle}"/>
                                     <TextBlock Text="{Binding Quantity, StringFormat=คงเหลือ: {0}}" 
-                                   Style="{StaticResource BodyTextStyle}" 
-                                   Foreground="{Binding Quantity, Converter={StaticResource QuantityToColorConverter}}"/>
+                                               Style="{StaticResource BodyTextStyle}" 
+                                               Foreground="{Binding Quantity, Converter={StaticResource QuantityToColorConverter}}"/>
+
+                                    <!-- Progress Bar Section -->
+                                    <Grid Margin="0,8,0,0" Name="ProgressContainer">
+                                        <Border Background="#F0F0F0" CornerRadius="10" Height="20">
+                                            <Grid>
+                                                <!-- Progress Bar -->
+                                                <Border Background="{Binding Percent, Converter={StaticResource PercentToColorConverter}}" 
+                                                        CornerRadius="10"
+                                                        HorizontalAlignment="Left">
+                                                    <Border.Width>
+                                                        <MultiBinding Converter="{StaticResource PercentToActualWidthConverter}">
+                                                            <Binding Path="Percent"/>
+                                                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}"/>
+                                                        </MultiBinding>
+                                                    </Border.Width>
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Percent, Converter={StaticResource LessThanConverter}, ConverterParameter=1}" Value="True">
+                                                                    <Setter Property="Width" Value="2"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+
+                                                <!-- Text Overlay -->
+                                                <TextBlock Text="{Binding Percent, StringFormat={}{0:F1}%}" 
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{Binding Percent, Converter={StaticResource ProgressTextColorConverter}}"/>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+
                                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                         <!-- ตัวอย่าง min/max สมมุติ -->
-                                        <TextBlock Text="Min: 20" Style="{StaticResource SecondaryTextStyle}" Margin="0,0,8,0"/>
-                                        <TextBlock Text="Max: 500" Style="{StaticResource SecondaryTextStyle}"/>
+                                        <TextBlock Text="{Binding min, StringFormat=Min: {0}}" Style="{StaticResource SecondaryTextStyle}" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding max, StringFormat=Max: {0}}" Style="{StaticResource SecondaryTextStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
-                                <Button Grid.Column="2" Content="เติมยา" Style="{StaticResource PrimaryButtonStyle}" Width="100" Height="40"
-                            VerticalAlignment="Center" Margin="16,0,0,0"/>
+                                <Button Grid.Column="2" 
+        Content="เติมยา" 
+        Style="{StaticResource PrimaryButtonStyle}" 
+        Width="100" 
+        Height="40"
+        VerticalAlignment="Center" 
+        Margin="16,0,0,0"
+        Click="RefillMedicine_Click"/>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <!-- ...existing code... -->
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+
+
+    </Grid>
 </Page>

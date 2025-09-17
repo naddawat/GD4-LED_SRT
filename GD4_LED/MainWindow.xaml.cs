@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,12 +24,13 @@ namespace GD4_LED
     public partial class MainWindow : Window
     {
         cls.clsvariable _var = new cls.clsvariable();
+        cls.clsMain _Man = new cls.clsMain();
         public MainWindow()
         {
             InitializeComponent();
             
-            _var.SerialCan = new ClsSubSerial();
-            _var.SerialCan.init("COM3");
+            //_var.SerialCan = new ClsSubSerial();
+            //_var.SerialCan.init("COM3");
         }
 
         private void bnt_open_Click(object sender, RoutedEventArgs e)
@@ -38,11 +40,14 @@ namespace GD4_LED
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
+            //_var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
+            string datetimeNow = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 
             SetWindowToSecondaryScreen();
             SetActiveTab(DispenseButton);
             MainFrame.Navigate(new DispensePage());
+            txtdevice.Text = _Man.getDeviceName();
+            txtdatetime.Text = datetimeNow;
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {

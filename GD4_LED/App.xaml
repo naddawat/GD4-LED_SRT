@@ -14,6 +14,8 @@
         <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
         <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="BackgroundGray" Color="#F9FAFB"/>
+        <!-- เพิ่ม Converters ตรงนี้ -->
+
 
         <!-- Button Styles -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
@@ -118,6 +120,201 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="ModernProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="#FF4CAF50"/>
+            <Setter Property="Background" Value="#FFE0E0E0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border x:Name="PART_Track" 
+                            CornerRadius="6" 
+                            Background="{TemplateBinding Background}"/>
+                            <Border x:Name="PART_Indicator" 
+                            CornerRadius="6" 
+                            Background="{TemplateBinding Foreground}" 
+                            HorizontalAlignment="Left"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Popup Overlay Style -->
+        <Style x:Key="PopupOverlayStyle" TargetType="Grid">
+            <Setter Property="Background" Value="#80000000"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Grid.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.3"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Modern Card Style for Popup -->
+        <Style x:Key="PopupCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="32"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="8" Opacity="0.2" BlurRadius="20"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Border.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <BackEase EasingMode="EaseOut" Amplitude="0.3"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Modern TextBox Style -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border 
+                    x:Name="Border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="8"
+                    SnapsToDevicePixels="True">
+                            <ScrollViewer 
+                        Margin="0"
+                        x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#007BFF"/>
+                                <Setter TargetName="Border" Property="Background" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.56"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- Success Button Style -->
+        <Style x:Key="SuccessButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border 
+                    x:Name="border"
+                    Background="#28A745"
+                    CornerRadius="8"
+                    BorderThickness="0"
+                    SnapsToDevicePixels="True">
+                            <ContentPresenter 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#218838"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E7E34"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- Cancel Button Style -->
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="#6C757D"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border 
+                    x:Name="border"
+                    Background="Transparent"
+                    BorderBrush="#E9ECEF"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    SnapsToDevicePixels="True">
+                            <ContentPresenter 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F8F9FA"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#DEE2E6"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E2E6EA"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
         <local:QuantityToColorConverter x:Key="QuantityToColorConverter"/>
+        <local:PercentToColorConverter x:Key="PercentToColorConverter"/>
+        <local:PercentToWidthConverter x:Key="PercentToWidthConverter"/>
+        <local:LessThanConverter x:Key="LessThanConverter"/>
+        <local:QuantityToColorConverter2  x:Key="QuantityToColorConverter2"/>
+        <local:PercentToActualWidthConverter  x:Key="PercentToActualWidthConverter"/>
+        <local:ProgressTextColorConverter  x:Key="ProgressTextColorConverter"/>
+
     </Application.Resources>
 </Application>

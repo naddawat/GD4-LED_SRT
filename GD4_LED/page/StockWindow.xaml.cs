@@ -15,6 +15,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Newtonsoft.Json; // เพิ่ม using สำหรับ JSON
 using System.ComponentModel;
+using System.Data;
+using System.Globalization;
+using System.Windows.Media.Animation;
+
 namespace GD4_LED.page
 {
     /// <summary>
@@ -25,10 +29,24 @@ namespace GD4_LED.page
         public ObservableCollection<DrugStockModel> DrugStocks { get; set; }
         private ObservableCollection<DrugStockModel> AllDrugStocks { get; set; }
         public int TotalCount => DrugStocks?.Count ?? 0;
-        public int LowStockCount => DrugStocks?.Count(x => x.Quantity <= 0) ?? 0; // ปรับเงื่อนไขตามที่ต้องการ
+        //public int LowStockCount => DrugStocks?.Count(x => x.Quantity <= 0) ?? 0; // ปรับเงื่อนไขตามที่ต้องการ
+        public int LowStockCount => DrugStocks?.Count(x => x.Quantity < x.min) ?? 0;
+
+        // เพิ่ม property สำหรับ popup data
+        public object SelectedDrug { get; set; }
+        public int RefillQuantity { get; set; }
+        public string RefillLot { get; set; }
+        public DateTime? RefillExpiryDate { get; set; } = DateTime.Today.AddMonths(12);
+        public string RefillNotes { get; set; }
+
+
+        cls.clsStock _STK = new cls.clsStock();
         public StockWindow()
         {
             InitializeComponent();
+            DataTable dt = new DataTable();
+            dt = _STK.GetLedStock();
+            string jsonData = JsonConvert.SerializeObject(dt, Formatting.Indented);
             string json = @"[
   { ""location"": ""LED-A1"", ""lot"": ""Robot"", ""drugPosition"": ""403"", ""drugCode"": ""1071610"", ""Quantity"": 0, ""drugName"": ""AMOXY875+CLAVULANATE125MG TAB"", ""exp"": ""19/08/2025"", ""firmname"": ""ดีทแฮล์ม เคลเลอร์ โลจิสติกส์ จำกัด\\บริษัท"" },
   { ""drugCode"": ""1050190"", ""drugPosition"": ""502"", ""location"": ""LED-A1"", ""lot"": ""83CEP"", ""Quantity"": -1437298, ""drugName"": ""GABAPENTIN 300 MG CAP."", ""exp"": ""27/04/2027"", ""firmname"": ""บี.เอ็ล.เอช. เทร็ดดิ้ง จำกัด\\บริษัท"" },
@@ -59,11 +77,11 @@ namespace GD4_LED.page
   { ""location"": ""LED-B3"", ""lot"": ""X67554"", ""drugPosition"": ""1201"", ""drugCode"": ""2001023"", ""Quantity"": 90, ""drugName"": ""DIAZEPAM 5MG TAB"", ""exp"": ""14/04/2027"", ""firmname"": ""บางกอกดรักส์\\บริษัท"" },
   { ""location"": ""LED-B3"", ""lot"": ""Y78665"", ""drugPosition"": ""1202"", ""drugCode"": ""2001024"", ""Quantity"": 360, ""drugName"": ""CLONAZEPAM 2MG TAB"", ""exp"": ""19/09/2029"", ""firmname"": ""Pharma Siam\\บริษัท"" },
   { ""location"": ""LED-B4"", ""lot"": ""Z89776"", ""drugPosition"": ""1301"", ""drugCode"": ""2001025"", ""Quantity"": 60, ""drugName"": ""LEVOTHYROXINE 50MCG TAB"", ""exp"": ""28/12/2026"", ""firmname"": ""ไทยไบโอฟาร์ม\\บริษัท"" }
-]";
+//]";
 
-            AllDrugStocks = JsonConvert.DeserializeObject<ObservableCollection<DrugStockModel>>(json);
+            AllDrugStocks = JsonConvert.DeserializeObject<ObservableCollection<DrugStockModel>>(jsonData);
 
-            DrugStocks = JsonConvert.DeserializeObject<ObservableCollection<DrugStockModel>>(json);
+            DrugStocks = JsonConvert.DeserializeObject<ObservableCollection<DrugStockModel>>(jsonData);
             this.DataContext = this;
         }
 
@@ -72,6 +90,8 @@ namespace GD4_LED.page
             // กรองเมื่อกด Enter หรือทุก Key ก็ได้
             //if (e.Key == Key.Enter || e.Key == Key.Return)
             //{
+
+           
             var textBox = sender as TextBox;
             string keyword = textBox.Text.Trim().ToLower();
 
@@ -87,6 +107,14 @@ namespace GD4_LED.page
             // อัปเดตสรุป
             OnPropertyChanged(nameof(TotalCount));
             OnPropertyChanged(nameof(LowStockCount));
+
+            if (SearchTextBox.Text.Length > 0)
+            {
+                SearchPlaceholder.Text = "";
+            } else
+            {
+                SearchPlaceholder.Text = "Med Code/Name";
+            }
             //}
         }
 
@@ -98,6 +126,198 @@ namespace GD4_LED.page
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void RefillMedicine_Click(object sender, RoutedEventArgs e)
+        {
+            ShowPopup();
+            // ดึงข้อมูลยาจาก Button's DataContext
+            //var button = sender as Button;
+            //var drugData = button?.DataContext;
+
+            //if (drugData != null)
+            //{
+            //    SelectedDrug = drugData;
+
+            //    // รีเซ็ตข้อมูลใน popup
+            //    RefillQuantity = 0;
+            //    RefillLot = "";
+            //    RefillExpiryDate = DateTime.Today.AddMonths(12);
+            //    RefillNotes = "";
+
+            //    // แสดง popup
+            //    RefillPopupOverlay.Visibility = Visibility.Visible;
+
+            //    // Focus ที่ช่องจำนวน
+            //    RefillQuantityTextBox.Focus();
+            //}
+        }
+
+        //private void CloseRefillPopup_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Animation สำหรับซ่อน popup
+        //    var fadeOut = new DoubleAnimation
+        //    {
+        //        From = 1,
+        //        To = 0,
+        //        Duration = TimeSpan.FromMilliseconds(200)
+        //    };
+
+        //    fadeOut.Completed += (s, args) => {
+        //        RefillPopupOverlay.Visibility = Visibility.Collapsed;
+        //    };
+
+        //    RefillPopupOverlay.BeginAnimation(Grid.OpacityProperty, fadeOut);
+        //}
+
+        //private void CancelRefill_Click(object sender, RoutedEventArgs e)
+        //{
+        //    CloseRefillPopup_Click(sender, e);
+        //}
+
+        //private void ConfirmRefill_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // ตรวจสอบข้อมูลที่กรอก
+        //    if (ValidateRefillData())
+        //    {
+        //        try
+        //        {
+        //            // บันทึกข้อมูลการเติมยา
+        //            SaveRefillData();
+
+        //            // แสดงข้อความสำเร็จ
+        //            ShowSuccessMessage();
+
+        //            // ปิด popup
+        //            CloseRefillPopup_Click(sender, e);
+
+        //            // รีเฟรชข้อมูล
+        //            RefreshDrugStocks();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด",
+        //                           MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //    }
+        //}
+
+        //private bool ValidateRefillData()
+        //{
+        //    var errors = new List<string>();
+
+        //    // ตรวจสอบจำนวน
+        //    if (RefillQuantity <= 0)
+        //    {
+        //        errors.Add("กรุณาระบุจำนวนที่ต้องการเติม");
+        //        RefillQuantityTextBox.Focus();
+        //    }
+
+        //    // ตรวจสอบ Lot
+        //    if (string.IsNullOrWhiteSpace(RefillLot))
+        //    {
+        //        errors.Add("กรุณาระบุ Lot Number");
+        //        if (errors.Count == 1) RefillLotTextBox.Focus();
+        //    }
+
+        //    // ตรวจสอบวันหมดอายุ
+        //    if (!RefillExpiryDate.HasValue || RefillExpiryDate <= DateTime.Today)
+        //    {
+        //        errors.Add("กรุณาระบุวันหมดอายุที่ถูกต้อง");
+        //        if (errors.Count == 1) RefillExpiryDatePicker.Focus();
+        //    }
+
+        //    // แสดงข้อผิดพลาด
+        //    if (errors.Any())
+        //    {
+        //        string errorMessage = string.Join("\n• ", errors.Prepend("กรุณาแก้ไขข้อมูลดังนี้:"));
+        //        MessageBox.Show(errorMessage, "ข้อมูลไม่ครบถ้วน",
+        //                       MessageBoxButton.OK, MessageBoxImage.Warning);
+        //        return false;
+        //    }
+
+        //    return true;
+        //}
+
+        private void SaveRefillData()
+        {
+            // TODO: บันทึกข้อมูลลงฐานข้อมูล
+            // ตัวอย่างการบันทึก:
+
+            var refillRecord = new
+            {
+                DrugCode = ((dynamic)SelectedDrug).drugCode,
+                Quantity = RefillQuantity,
+                LotNumber = RefillLot,
+                ExpiryDate = RefillExpiryDate.Value,
+                Notes = RefillNotes,
+                RefillDate = DateTime.Now,
+                UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
+            };
+
+            // บันทึกลงฐานข้อมูล
+            // DatabaseService.SaveRefillRecord(refillRecord);
+
+            // อัพเดทสต็อกปัจจุบัน
+            // DatabaseService.UpdateDrugStock(drugCode, newQuantity);
+
+            Console.WriteLine($"บันทึกการเติมยา: {refillRecord}");
+        }
+
+        private void ShowSuccessMessage()
+        {
+            string message = $"เติมยาสำเร็จ!\n\n" +
+                            $"รหัสยา: {((dynamic)SelectedDrug).drugCode}\n" +
+                            $"จำนวนที่เติม: {RefillQuantity:N0} หน่วย\n" +
+                            $"Lot: {RefillLot}\n" +
+                            $"วันหมดอายุ: {RefillExpiryDate:dd/MM/yyyy}";
+
+            MessageBox.Show(message, "เติมยาสำเร็จ",
+                           MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void RefreshDrugStocks()
+        {
+            // TODO: รีเฟรชข้อมูลสต็อกยา
+            // ViewModel.LoadDrugStocks();
+            Console.WriteLine("รีเฟรชข้อมูลสต็อกยา");
+        }
+
+        public void ShowPopup()
+        {
+            // สร้าง Window สำหรับแสดง Popup Page
+            Window popupWindow = new Window
+            {
+                Title = "Popup",
+                Width = 500,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                WindowStyle = WindowStyle.None, // ซ่อน Title Bar ทั้งหมด
+                ResizeMode = ResizeMode.NoResize,
+                Topmost = true,
+                AllowsTransparency = true, // จำเป็นต้องใช้เมื่อ WindowStyle=None
+                Background = Brushes.Transparent // พื้นหลังโปร่งใส
+            };
+
+            // กำหนด Content เป็น Border ที่มีลักษณะเหมือน Window
+            //var content = new Border
+            //{
+            //    Background = Brushes.White,
+            //    BorderBrush = Brushes.Gray,
+            //    BorderThickness = new Thickness(1),
+            //    CornerRadius = new CornerRadius(5),
+            //    Child = new PopupRefill() // หน้า Popup ของคุณ
+            //};
+
+            //popupWindow.Content = content;
+            // สร้าง instance ของ Popup Page
+            PopupRefill popupPage = new PopupRefill();
+
+            // กำหนด Content ของ Window เป็น Popup Page
+            popupWindow.Content = popupPage;
+
+            // แสดง Popup
+            popupWindow.ShowDialog();
         }
 
     }

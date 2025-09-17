@@ -39,7 +39,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="10/09/2025 14:30" 
+                    <TextBlock x:Name="txtdatetime" Text="10/09/2025 14:30" 
                              Foreground="White" 
                              FontSize="14"
                              VerticalAlignment="Center"
@@ -89,74 +89,130 @@
 
         <!-- Bottom Navigation -->
         <Border Grid.Row="2" 
-                Background="White" 
-                BorderBrush="#E5E7EB" 
-                BorderThickness="0,1,0,0">
+        Background="White" 
+        BorderBrush="#E5E7EB" 
+        BorderThickness="0,1,0,0">
+            <!-- กำหนด Style สำหรับปุ่มนำทางที่คลิกได้เต็มพื้นที่ -->
+            <Border.Resources>
+                <Style x:Key="FullTabButtonStyle" TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#6B7280"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                                    <ContentPresenter x:Name="contentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                        <Setter Property="Foreground" Value="#4B5563"/>
+                                    </Trigger>
+                                    <Trigger Property="Tag" Value="Active">
+                                        <Setter Property="Foreground" Value="#3B82F6"/>
+                                        <Setter Property="Background" Value="#EFF6FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Border.Resources>
+
             <Grid>
+                <!-- ปรับคอลัมน์ให้มีจำนวน 4 คอลัมน์เท่ากัน -->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="21*"/>
-                    <ColumnDefinition Width="246*"/>
-                    <ColumnDefinition Width="267*"/>
-                    <ColumnDefinition Width="193*"/>
-                    <ColumnDefinition Width="74*"/>
+                    <ColumnDefinition Width="*"/>
+                    <!-- จ่ายยา -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- ประวัติ -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Stock -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- ตั้งค่า -->
                 </Grid.ColumnDefinitions>
 
+                <!-- ปุ่มจ่ายยา -->
                 <Button x:Name="DispenseButton" Grid.Column="0" 
-                        Style="{StaticResource TabButtonStyle}" 
-                        Tag="Active" Grid.ColumnSpan="2" Margin="0,0,55,0" Click="Button_Click_1">
-                    <StackPanel>
-                        <Path Data="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" 
-                              Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
-                              Stretch="Uniform" 
-                              Width="20" Height="20"
-                              HorizontalAlignment="Center"/>
-                        <TextBlock Text="จ่ายยา" 
-                                 FontSize="12" 
-                                 HorizontalAlignment="Center" 
-                                 Margin="0,4,0,0"/>
-                    </StackPanel>
+                Style="{StaticResource FullTabButtonStyle}" 
+                Tag="Active" Click="Button_Click_1">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Data="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" 
+                          Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
+                          Stretch="Uniform" 
+                          Width="20" Height="20"
+                          HorizontalAlignment="Center"/>
+                            <TextBlock Text="จ่ายยา" 
+                             FontSize="12" 
+                             HorizontalAlignment="Center" 
+                             Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
                 </Button>
 
-                <Button x:Name="HistoryButton" Grid.Column="2" Style="{StaticResource TabButtonStyle}">
-                    <StackPanel>
-                        <Path Data="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" 
-                              Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
-                              Stretch="Uniform" 
-                              Width="20" Height="20"
-                              HorizontalAlignment="Center"/>
-                        <TextBlock Text="ประวัติ" 
-                                 FontSize="12" 
-                                 HorizontalAlignment="Center" 
-                                 Margin="0,4,0,0"/>
-                    </StackPanel>
+                <!-- ปุ่มประวัติ -->
+                <Button x:Name="HistoryButton" Grid.Column="1" Style="{StaticResource FullTabButtonStyle}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Data="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" 
+                          Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
+                          Stretch="Uniform" 
+                          Width="20" Height="20"
+                          HorizontalAlignment="Center"/>
+                            <TextBlock Text="ประวัติ" 
+                             FontSize="12" 
+                             HorizontalAlignment="Center" 
+                             Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
                 </Button>
 
-                <Button x:Name="StockButton" Grid.Column="2" Style="{StaticResource TabButtonStyle}" Grid.ColumnSpan="3" Margin="266,0,0,0" Click="StockButton_Click_1" >
-                    <StackPanel>
-                        <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" 
-                              Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
-                              Stretch="Uniform" 
-                              Width="20" Height="20"
-                              HorizontalAlignment="Center"/>
-                        <TextBlock Text="Stock" 
-                                 FontSize="12" 
-                                 HorizontalAlignment="Center" 
-                                 Margin="0,4,0,0"/>
-                    </StackPanel>
+                <!-- ปุ่ม Stock -->
+                <Button x:Name="StockButton" Grid.Column="2" Style="{StaticResource FullTabButtonStyle}" Click="StockButton_Click_1" Height="79" VerticalAlignment="Top">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" 
+                          Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
+                          Stretch="Uniform" 
+                          Width="20" Height="20"
+                          HorizontalAlignment="Center"/>
+                            <TextBlock Text="Stock" 
+                             FontSize="12" 
+                             HorizontalAlignment="Center" 
+                             Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
                 </Button>
 
-                <Button x:Name="SettingsButton" Grid.Column="4" Style="{StaticResource TabButtonStyle}">
-                    <StackPanel>
-                        <Path Data="M19.14,12.94a1.43,1.43,0,0,0,0-1.88l2.11-1.65a.5.5,0,0,0,.12-.65l-2-3.46a.5.5,0,0,0-.61-.22l-2.49,1a6.89,6.89,0,0,0-1.62-.94l-.38-2.65A.5.5,0,0,0,13,2H11a.5.5,0,0,0-.5.42l-.38,2.65a6.89,6.89,0,0,0-1.62.94l-2.49-1a.5.5,0,0,0-.61.22l-2,3.46a.5.5,0,0,0,.12.65l2.11,1.65a1.43,1.43,0,0,0,0,1.88L3.12,14.59a.5.5,0,0,0-.12.65l2,3.46a.5.5,0,0,0,.61.22l2.49-1a6.89,6.89,0,0,0,1.62.94l.38,2.65A.5.5,0,0,0,11,22h2a.5.5,0,0,0,.5-.42l.38-2.65a6.89,6.89,0,0,0,1.62-.94l2.49,1a.5.5,0,0,0,.61-.22l2-3.46a.5.5,0,0,0-.12-.65ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
-              Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-              Stretch="Uniform"
-              Width="20" Height="20"
-              HorizontalAlignment="Center"/>
-                        <TextBlock Text="ตั้งค่า"
-                   FontSize="12"
-                   HorizontalAlignment="Center"
-                   Margin="0,4,0,0"/>
-                    </StackPanel>
+                <!-- ปุ่มตั้งค่า -->
+                <Button x:Name="SettingsButton" Grid.Column="3" Style="{StaticResource FullTabButtonStyle}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Data="M19.14,12.94a1.43,1.43,0,0,0,0-1.88l2.11-1.65a.5.5,0,0,0,.12-.65l-2-3.46a.5.5,0,0,0-.61-.22l-2.49,1a6.89,6.89,0,0,0-1.62-.94l-.38-2.65A.5.5,0,0,0,13,2H11a.5.5,0,0,0-.5.42l-.38,2.65a6.89,6.89,0,0,0-1.62.94l-2.49-1a.5.5,0,0,0-.61.22l-2,3.46a.5.5,0,0,0,.12.65l2.11,1.65a1.43,1.43,0,0,0,0,1.88L3.12,14.59a.5.5,0,0,0-.12.65l2,3.46a.5.5,0,0,0,.61.22l2.49-1a6.89,6.89,0,0,0,1.62.94l.38,2.65A.5.5,0,0,0,11,22h2a.5.5,0,0,0,.5-.42l.38-2.65a6.89,6.89,0,0,0,1.62-.94l2.49,1a.5.5,0,0,0,.61-.22l2-3.46a.5.5,0,0,0-.12-.65ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
+                          Fill="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                          Stretch="Uniform"
+                          Width="20" Height="20"
+                          HorizontalAlignment="Center"/>
+                            <TextBlock Text="ตั้งค่า"
+                             FontSize="12"
+                             HorizontalAlignment="Center"
+                             Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Grid>
                 </Button>
             </Grid>
         </Border>

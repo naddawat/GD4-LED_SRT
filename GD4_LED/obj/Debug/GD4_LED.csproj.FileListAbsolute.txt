@@ -167,3 +167,5 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CoreCompileInputs.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\PopupRefill.baml
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\PopupRefill.g.cs

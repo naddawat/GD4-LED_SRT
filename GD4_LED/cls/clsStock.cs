@@ -14,7 +14,7 @@ namespace GD4_LED.cls
         clsFillMyDB fill = new clsFillMyDB();
         clsExecuteMYSQL Execute = new clsExecuteMYSQL();
         public static string SQL;
-        public static DataTable GetLedStock(string Wherecondition)
+        public DataTable GetLedStock()
         {
 
             SQL = @" SELECT
@@ -32,11 +32,11 @@ namespace GD4_LED.cls
                 WHEN (ms.In_Qty / ms.max) * 100 < 0 
                     THEN 0
                 ELSE ROUND((ms.In_Qty / ms.max) * 100 ,0)
-            END AS percent
+            END AS Percent
             FROM
               ms_stock ms
               LEFT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
-              ORDER BY percent";
+              ORDER BY Percent";
 
             return clsFillMyDB.GetDataSet(GD4_LED.Properties.Settings.Default.connectstring, SQL);
         }

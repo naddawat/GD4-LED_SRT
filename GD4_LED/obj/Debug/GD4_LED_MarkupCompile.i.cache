@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\
 GD4_LED
 none
 false
 DEBUG;TRACE
-D:\GitHub\GD4-LED_SRT\GD4_LED\App.xaml
-3525705639
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\App.xaml
+4-1186577942
 
-17-865238576
-352012128130
-MainWindow.xaml;page\DispensePage.xaml;page\StockWindow.xaml;
+25-854335051
+35334709731
+MainWindow.xaml;page\DispensePage.xaml;page\PopupRefill.xaml;page\StockWindow.xaml;
 
 True
 

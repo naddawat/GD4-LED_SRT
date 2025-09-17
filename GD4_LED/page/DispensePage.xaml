@@ -184,10 +184,7 @@
                         </Grid>
 
                         <!-- Medicine Details -->
-                        <StackPanel Grid.Row="4" Grid.Column="0">
-                            <TextBlock Text="Paracetamol 500mg" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold"/>
-                            <TextBlock Text="จำนวน: 20 เม็ด" Style="{StaticResource SecondaryTextStyle}"/>
-                        </StackPanel>
+                        <StackPanel Grid.Row="4" Grid.Column="0"/>
 
                         <!-- Action Button -->
                         <Button Grid.Row="0" Grid.RowSpan="5" Grid.Column="1" 
@@ -251,10 +248,7 @@
                         </Grid>
 
                         <!-- Medicine Details -->
-                        <StackPanel Grid.Row="4" Grid.Column="0">
-                            <TextBlock Text="Amoxicillin 500mg" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold"/>
-                            <TextBlock Text="จำนวน: 30 แคปซูล" Style="{StaticResource SecondaryTextStyle}"/>
-                        </StackPanel>
+                        <StackPanel Grid.Row="4" Grid.Column="0"/>
 
                         <!-- Action Button -->
                         <Button Grid.Row="0" Grid.RowSpan="5" Grid.Column="1" 
@@ -318,10 +312,7 @@
                         </Grid>
 
                         <!-- Medicine Details -->
-                        <StackPanel Grid.Row="4" Grid.Column="0">
-                            <TextBlock Text="Insulin 100 units/ml" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold"/>
-                            <TextBlock Text="จำนวน: 2 ขวด" Style="{StaticResource SecondaryTextStyle}"/>
-                        </StackPanel>
+                        <StackPanel Grid.Row="4" Grid.Column="0"/>
 
                         <!-- Action Button -->
                         <Button Grid.Row="0" Grid.RowSpan="5" Grid.Column="1" 
