@@ -64,7 +64,7 @@ namespace GD4_LED.page
                 RefillPopupOverlay.Visibility = Visibility.Visible;
 
                 // Focus ที่ช่องจำนวน
-                RefillQuantityTextBox.Focus();
+                //RefillQuantityTextBox.Focus();
             }
         }
 
@@ -126,7 +126,7 @@ namespace GD4_LED.page
             if (RefillQuantity <= 0)
             {
                 errors.Add("กรุณาระบุจำนวนที่ต้องการเติม");
-                RefillQuantityTextBox.Focus();
+                //RefillQuantityTextBox.Focus();
             }
 
             // ตรวจสอบ Lot
