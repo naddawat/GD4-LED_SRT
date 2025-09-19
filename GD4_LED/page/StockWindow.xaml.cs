@@ -102,25 +102,25 @@ namespace GD4_LED.page
         {
             ShowPopup();
             // ดึงข้อมูลยาจาก Button's DataContext
-            //var button = sender as Button;
-            //var drugData = button?.DataContext;
+            var button = sender as Button;
+            var drugData = button?.DataContext;
 
-            //if (drugData != null)
-            //{
-            //    SelectedDrug = drugData;
+            if (drugData != null)
+            {
+                SelectedDrug = drugData;
+                //string a = SelectedDrug.drugCode;
+                // รีเซ็ตข้อมูลใน popup
+                //RefillQuantity = 0;
+                //RefillLot = "";
+                //RefillExpiryDate = DateTime.Today.AddMonths(12);
+                //RefillNotes = "";
 
-            //    // รีเซ็ตข้อมูลใน popup
-            //    RefillQuantity = 0;
-            //    RefillLot = "";
-            //    RefillExpiryDate = DateTime.Today.AddMonths(12);
-            //    RefillNotes = "";
+                // แสดง popup
+                //RefillPopupOverlay.Visibility = Visibility.Visible;
 
-            //    // แสดง popup
-            //    RefillPopupOverlay.Visibility = Visibility.Visible;
-
-            //    // Focus ที่ช่องจำนวน
-            //    RefillQuantityTextBox.Focus();
-            //}
+                // Focus ที่ช่องจำนวน
+                //RefillQuantityTextBox.Focus();
+            }
         }
 
         //private void CloseRefillPopup_Click(object sender, RoutedEventArgs e)
@@ -259,8 +259,8 @@ namespace GD4_LED.page
             Window popupWindow = new Window
             {
                 Title = "Popup",
-                Width = 500,
-                Height = 600,
+                Width = 800,
+                Height = 1400,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 WindowStyle = WindowStyle.None, // ซ่อน Title Bar ทั้งหมด
                 ResizeMode = ResizeMode.NoResize,
