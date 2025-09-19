@@ -21,14 +21,18 @@ namespace GD4_LED.page
     /// </summary>
     public partial class PopupRefill : Page
     {
-        public object SelectedDrug { get; set; }
+        public List<RefillRecord> SelectedDrug { get; set; }
         public int RefillQuantity { get; set; }
         public string RefillLot { get; set; }
+        public string Drugname { get; set; }
         public DateTime? RefillExpiryDate { get; set; } = DateTime.Today.AddMonths(12);
         public string RefillNotes { get; set; }
-        public PopupRefill()
+
+        public object objDrug = new object();
+        public PopupRefill(List<RefillRecord> _SelectedDrug)
         {
             InitializeComponent();
+            SelectedDrug = _SelectedDrug;
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -52,7 +56,7 @@ namespace GD4_LED.page
 
             if (drugData != null)
             {
-                SelectedDrug = drugData;
+                //SelectedDrug = drugData;
 
                 // รีเซ็ตข้อมูลใน popup
                 RefillQuantity = 0;
@@ -194,9 +198,18 @@ namespace GD4_LED.page
 
         private void RefreshDrugStocks()
         {
-            // TODO: รีเฟรชข้อมูลสต็อกยา
-            // ViewModel.LoadDrugStocks();
+
+            DrugCodeText.Text = SelectedDrug[0].DrugCode;
+            //DrugNameText.Text = SelectedDrug[0].;
+            QuantityText.Text = SelectedDrug[0].Quantity.ToString();
+
+
             Console.WriteLine("รีเฟรชข้อมูลสต็อกยา");
+        }
+
+        private void Border_Loaded(object sender, RoutedEventArgs e)
+        {
+            RefreshDrugStocks();
         }
     }
 }

@@ -163,7 +163,7 @@
                 Width="500"
                 Height="625"
                 VerticalAlignment="Center" 
-                HorizontalAlignment="Center">
+                HorizontalAlignment="Center" Loaded="Border_Loaded">
 
             <!-- Drop Shadow Effect -->
             <Border.Effect>
@@ -227,17 +227,14 @@
 
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock x:Name="DrugCodeText" 
-                                       Text="CODE001" 
                                        FontSize="18" 
                                        FontWeight="Bold" 
                                        Foreground="#212529"/>
                             <TextBlock x:Name="DrugNameText" 
-                                       Text="Paracetamol 500mg" 
                                        FontSize="16" 
                                        Foreground="#495057" 
                                        Margin="0,4,0,8"/>
                             <TextBlock x:Name="LocationText" 
-                                       Text="ตำแหน่ง: A1-01" 
                                        FontSize="14" 
                                        Foreground="#6C757D"/>
                         </StackPanel>
@@ -253,7 +250,6 @@
                                            Foreground="#6C757D" 
                                            HorizontalAlignment="Center"/>
                                 <TextBlock x:Name="QuantityText" 
-                                           Text="50" 
                                            FontSize="36" 
                                            FontWeight="Bold" 
                                            Foreground="#007BFF" 

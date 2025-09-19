@@ -100,7 +100,7 @@ namespace GD4_LED.page
 
         private void RefillMedicine_Click(object sender, RoutedEventArgs e)
         {
-            ShowPopup();
+        
             // ดึงข้อมูลยาจาก Button's DataContext
             var button = sender as Button;
             var drugData = button?.DataContext;
@@ -121,6 +121,7 @@ namespace GD4_LED.page
                 // Focus ที่ช่องจำนวน
                 //RefillQuantityTextBox.Focus();
             }
+            ShowPopup(SelectedDrug);
         }
 
         //private void CloseRefillPopup_Click(object sender, RoutedEventArgs e)
@@ -253,7 +254,7 @@ namespace GD4_LED.page
             Console.WriteLine("รีเฟรชข้อมูลสต็อกยา");
         }
 
-        public void ShowPopup()
+        public void ShowPopup(object SelectedDrug)
         {
             // สร้าง Window สำหรับแสดง Popup Page
             Window popupWindow = new Window
@@ -269,19 +270,21 @@ namespace GD4_LED.page
                 Background = Brushes.Transparent // พื้นหลังโปร่งใส
             };
 
-            // กำหนด Content เป็น Border ที่มีลักษณะเหมือน Window
-            //var content = new Border
-            //{
-            //    Background = Brushes.White,
-            //    BorderBrush = Brushes.Gray,
-            //    BorderThickness = new Thickness(1),
-            //    CornerRadius = new CornerRadius(5),
-            //    Child = new PopupRefill() // หน้า Popup ของคุณ
-            //};
+            List<RefillRecord> refillList = new List<RefillRecord>
+            {
+                new RefillRecord
+                {
+                    DrugCode = ((dynamic)SelectedDrug).drugCode,
+                    Quantity = RefillQuantity,
+                    LotNumber = RefillLot,
+                    ExpiryDate = RefillExpiryDate.Value,
+                    Notes = RefillNotes,
+                    RefillDate = DateTime.Now,
+                    UserId = "CurrentUser"
+                }
+            };
 
-            //popupWindow.Content = content;
-            // สร้าง instance ของ Popup Page
-            PopupRefill popupPage = new PopupRefill();
+            PopupRefill popupPage = new PopupRefill(refillList);
 
             // กำหนด Content ของ Window เป็น Popup Page
             popupWindow.Content = popupPage;
