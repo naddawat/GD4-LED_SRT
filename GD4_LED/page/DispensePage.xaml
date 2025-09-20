@@ -105,27 +105,32 @@
             <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0">
                 <StackPanel>
                     <TextBlock Text="รอจัด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock x:Name="PendingCountText" Text="0" FontSize="35" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
+                    <TextBlock x:Name="PendingCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
                 </StackPanel>
             </Border>
 
             <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="0">
                 <StackPanel>
                     <TextBlock Text="เสร็จแล้ว" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock x:Name="CompletedCountText" Text="0" FontSize="35" FontWeight="Bold" Foreground="{StaticResource Success}"/>
+                    <TextBlock x:Name="CompletedCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Success}"/>
                 </StackPanel>
             </Border>
 
             <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="0">
                 <StackPanel>
                     <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock x:Name="TotalCountText" Text="0" FontSize="35" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                    <TextBlock x:Name="TotalCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Border>
         </Grid>
 
         <!-- Scrollable Medicine Cards -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,16,0,24">
+        <ScrollViewer Grid.Row="2" 
+                      VerticalScrollBarVisibility="Auto" 
+                      Margin="0,16,0,0"
+                      PanningMode="VerticalOnly"
+                      IsManipulationEnabled="True"
+                      x:Name="MainScrollViewer">
             <StackPanel x:Name="PrescriptionPanel">
                 <!-- Cards will be generated here dynamically -->
             </StackPanel>

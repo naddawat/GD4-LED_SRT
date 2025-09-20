@@ -29,12 +29,53 @@ namespace GD4_LED.page
         public DispensePage()
         {
             InitializeComponent();
+            SetupSmoothScrolling();
             LoadPrescriptions();
             UpdateStatistics();
             _RX = new RxService();
-            _RX.OnTriggerReceived += Rx_OnTriggerReceived;
+            //_RX.OnTriggerReceived += Rx_OnTriggerReceived;
 
 
+        }
+        private void SetupSmoothScrolling()
+        {
+            // Enable smooth scrolling for touch devices
+            MainScrollViewer.ScrollChanged += MainScrollViewer_ScrollChanged;
+
+            // Add mouse wheel smooth scrolling
+            MainScrollViewer.PreviewMouseWheel += MainScrollViewer_PreviewMouseWheel;
+        }
+
+        private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            // This helps with touch scrolling performance
+            if (e.VerticalChange != 0)
+            {
+                MainScrollViewer.InvalidateVisual();
+            }
+        }
+
+        private void MainScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            // Smooth mouse wheel scrolling
+            ScrollViewer scrollViewer = sender as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                double scrollAmount = e.Delta > 0 ? -120 : 120; // Adjust scroll speed
+
+                // Create smooth scroll animation
+                var animation = new DoubleAnimation()
+                {
+                    From = scrollViewer.VerticalOffset,
+                    To = scrollViewer.VerticalOffset + scrollAmount,
+                    Duration = TimeSpan.FromMilliseconds(300),
+                    EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
+                };
+
+                // Apply animation to ScrollViewer
+                scrollViewer.BeginAnimation(ScrollViewerBehavior.VerticalOffsetProperty, animation);
+                e.Handled = true;
+            }
         }
 
         private void LoadPrescriptions()
@@ -342,13 +383,14 @@ namespace GD4_LED.page
 
             // Column definitions
             mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             // Row definitions
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Patient info
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(12, GridUnitType.Pixel) }); // Spacing
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Prescription info
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(12, GridUnitType.Pixel) }); // Spacing
-            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Package count
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Package count & buttons
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Medicine details (collapsible)
 
             // Patient Info
@@ -361,7 +403,7 @@ namespace GD4_LED.page
             {
                 CornerRadius = new CornerRadius(4),
                 Padding = new Thickness(8, 4, 8, 4)
-        };
+            };
 
             // Set color based on status
             if (prescription.Status == "รอจัด")
@@ -437,16 +479,24 @@ namespace GD4_LED.page
             prescriptionGrid.Children.Add(leftInfo);
             prescriptionGrid.Children.Add(rightInfo);
 
-            // Package Count Summary
+            // Package Count Summary and Action Buttons
+            Grid packageAndButtonGrid = new Grid();
+            Grid.SetRow(packageAndButtonGrid, 4);
+            Grid.SetColumn(packageAndButtonGrid, 0);
+            Grid.SetColumnSpan(packageAndButtonGrid, 2);
+
+            packageAndButtonGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            packageAndButtonGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
             StackPanel packageSummary = new StackPanel { Orientation = Orientation.Horizontal };
-            Grid.SetRow(packageSummary, 4);
             Grid.SetColumn(packageSummary, 0);
 
             TextBlock packageCountText = new TextBlock
             {
                 Text = $"รายการยา: {prescription.Package.Count} รายการ",
                 Style = (Style)FindResource("BodyTextStyle"),
-                FontWeight = FontWeights.SemiBold
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
             };
 
             TextBlock expandIcon = new TextBlock
@@ -455,11 +505,64 @@ namespace GD4_LED.page
                 FontSize = 12,
                 Margin = new Thickness(8, 0, 0, 0),
                 Foreground = (Brush)FindResource("TextSecondary"),
-                Name = "ExpandIcon"
+                Name = "ExpandIcon",
+                VerticalAlignment = VerticalAlignment.Center
             };
 
             packageSummary.Children.Add(packageCountText);
             packageSummary.Children.Add(expandIcon);
+
+            // Action Buttons Panel
+            StackPanel buttonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            Grid.SetColumn(buttonPanel, 1);
+
+            // Print Button
+            Button printButton = new Button
+            {
+                Content = "ปริ้น",
+                Width = 80,
+                Height = 36,
+                Margin = new Thickness(0, 0, 8, 0),
+                Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Green
+                Foreground = Brushes.White,
+                BorderThickness = new Thickness(0),
+                FontSize = 12,
+                FontWeight = FontWeights.Bold
+            };
+
+            // Cancel Button  
+            Button cancelButton = new Button
+            {
+                Content = "ยกเลิก",
+                Width = 80,
+                Height = 36,
+                Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)), // Red
+                Foreground = Brushes.White,
+                BorderThickness = new Thickness(0),
+                FontSize = 12,
+                FontWeight = FontWeights.Bold
+            };
+
+            // Add button click events
+            printButton.Click += (sender, e) => {
+                e.Handled = true; // Prevent card toggle
+                PrintPrescription(prescription);
+            };
+
+            cancelButton.Click += (sender, e) => {
+                e.Handled = true; // Prevent card toggle
+                CancelPrescription(prescription);
+            };
+
+            buttonPanel.Children.Add(printButton);
+            buttonPanel.Children.Add(cancelButton);
+
+            packageAndButtonGrid.Children.Add(packageSummary);
+            packageAndButtonGrid.Children.Add(buttonPanel);
 
             // Medicine Details (Initially Hidden)
             StackPanel medicinePanel = new StackPanel
@@ -502,24 +605,21 @@ namespace GD4_LED.page
                 medicinePanel.Children.Add(packageBorder);
             }
 
-            // Add click event to toggle details
-            cardBorder.MouseLeftButtonUp += (sender, e) =>
-            {
-                if (medicinePanel.Visibility == Visibility.Collapsed)
-                {
-                    medicinePanel.Visibility = Visibility.Visible;
-                    expandIcon.Text = "▲";
-
-                    // Animate expand
-                    var animation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
-                    medicinePanel.BeginAnimation(UIElement.OpacityProperty, animation);
-                }
-                else
-                {
-                    medicinePanel.Visibility = Visibility.Collapsed;
-                    expandIcon.Text = "▼";
-                }
+            // Add click event to toggle details (only on package summary area)
+            packageSummary.MouseLeftButtonUp += (sender, e) => {
+                e.Handled = true;
+                ToggleCardDetails(medicinePanel, expandIcon);
             };
+            packageSummary.TouchUp += (sender, e) => {
+                e.Handled = true;
+                ToggleCardDetails(medicinePanel, expandIcon);
+            };
+
+            // Make package summary area look clickable
+            packageSummary.Cursor = System.Windows.Input.Cursors.Hand;
+
+            // Remove card-wide click events since we now have buttons
+            cardBorder.Cursor = System.Windows.Input.Cursors.Arrow;
 
             // Add hover effect
             cardBorder.MouseEnter += (sender, e) =>
@@ -535,11 +635,32 @@ namespace GD4_LED.page
             // Add all elements to main grid
             mainGrid.Children.Add(patientPanel);
             mainGrid.Children.Add(prescriptionGrid);
-            mainGrid.Children.Add(packageSummary);
+            mainGrid.Children.Add(packageAndButtonGrid);
             mainGrid.Children.Add(medicinePanel);
 
             cardBorder.Child = mainGrid;
             PrescriptionPanel.Children.Add(cardBorder);
+        }
+
+        private void ToggleCardDetails(StackPanel medicinePanel, TextBlock expandIcon)
+        {
+            if (medicinePanel.Visibility == Visibility.Collapsed)
+            {
+                medicinePanel.Visibility = Visibility.Visible;
+                expandIcon.Text = "▲";
+
+                // Animate expand with smooth effect
+                var animation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(250))
+                {
+                    EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
+                };
+                medicinePanel.BeginAnimation(UIElement.OpacityProperty, animation);
+            }
+            else
+            {
+                medicinePanel.Visibility = Visibility.Collapsed;
+                expandIcon.Text = "▼";
+            }
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -574,28 +695,80 @@ namespace GD4_LED.page
             UpdateStatistics();
         }
 
-
-
-
-        private void Rx_OnTriggerReceived(string data)
+        private void PrintPrescription(Prescription prescription)
         {
-            // Dispatcher.Invoke จะเรียกโค้ดนี้บน UI thread
-            Dispatcher.Invoke(() =>
+            MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
+                          "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void CancelPrescription(Prescription prescription)
+        {
+            var result = MessageBox.Show($"ต้องการยกเลิกใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName} หรือไม่?",
+                                       "Cancel Prescription", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
             {
-                MessageBox.Show("Received: " + data);
-            });
+                // Update prescription status or remove from list
+                prescription.Status = "ยกเลิก";
+
+                // Refresh the display
+                DisplayPrescriptions();
+                UpdateStatistics();
+
+                MessageBox.Show("ยกเลิกใบสั่งยาเรียบร้อยแล้ว", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
+    }
 
+    // Helper class for ScrollViewer animation
+    public static class ScrollViewerBehavior
+    {
+        public static readonly DependencyProperty VerticalOffsetProperty =
+            DependencyProperty.RegisterAttached("VerticalOffset", typeof(double), typeof(ScrollViewerBehavior),
+                new UIPropertyMetadata(0.0, OnVerticalOffsetChanged));
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        public static void SetVerticalOffset(FrameworkElement target, double value)
         {
-            // Test button
-            MessageBox.Show("Button clicked");
+            target.SetValue(VerticalOffsetProperty, value);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        public static double GetVerticalOffset(FrameworkElement target)
         {
-            MessageBox.Show("Button clicked");
+            return (double)target.GetValue(VerticalOffsetProperty);
         }
+
+        private static void OnVerticalOffsetChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
+        {
+            ScrollViewer scrollViewer = target as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                scrollViewer.ScrollToVerticalOffset((double)e.NewValue);
+            }
+        }
+        
+
+
+
+
+        //private void Rx_OnTriggerReceived(string data)
+        //{
+        //    // Dispatcher.Invoke จะเรียกโค้ดนี้บน UI thread
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        MessageBox.Show("Received: " + data);
+        //    });
+        //}
+
+
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Test button
+        //    MessageBox.Show("Button clicked");
+        //}
+
+        //private void Button_Click_1(object sender, RoutedEventArgs e)
+        //{
+        //    MessageBox.Show("Button clicked");
+        //}
     }
 }
