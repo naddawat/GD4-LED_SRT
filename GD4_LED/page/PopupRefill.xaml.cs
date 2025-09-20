@@ -203,7 +203,7 @@ namespace GD4_LED.page
             DrugNameText.Text = SelectedDrug[0].DrugName;
             QuantityText.Text = SelectedDrug[0].Quantity.ToString();
             LocationText.Text = $"{SelectedDrug[0].Location}:  {SelectedDrug[0].DrugPosition}";
-
+            UnitText.Text = "";
             Console.WriteLine("รีเฟรชข้อมูลสต็อกยา");
         }
 

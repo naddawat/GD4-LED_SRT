@@ -160,8 +160,8 @@
         <!-- Popup Card Container -->
         <Border Background="White"
                 CornerRadius="16"
-                Width="500"
-                Height="625"
+                Width="656"
+                Height="643"
                 VerticalAlignment="Center" 
                 HorizontalAlignment="Center" Loaded="Border_Loaded">
 
