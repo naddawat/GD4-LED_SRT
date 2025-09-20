@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="connectstring" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source=127.0.0.1;Initial Catalog=led_demon;Persist Security Info=True;User ID=root;Password=Admin@gd4; Max Pool Size=10000;</Value>
+      <Value Profile="(Default)">Data Source=10.35.222.66;Initial Catalog=led_demo;Persist Security Info=True;User ID=root;Password=Admin@gd4; Max Pool Size=10000;</Value>
     </Setting>
   </Settings>
 </SettingsFile>

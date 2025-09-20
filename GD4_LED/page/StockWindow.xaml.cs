@@ -275,7 +275,7 @@ namespace GD4_LED.page
                 new RefillRecord
                 {
                     DrugCode = ((dynamic)SelectedDrug).drugCode,
-                    DrugName = ((dynamic)SelectedDrug).drugCode,
+                    DrugName = ((dynamic)SelectedDrug).drugName,
                     Quantity = Convert.ToString(((dynamic)SelectedDrug).Quantity),
                     Location = ((dynamic)SelectedDrug).location,
                     DrugPosition = ((dynamic)SelectedDrug).drugPosition

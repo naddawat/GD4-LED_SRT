@@ -25,8 +25,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Initial Catalog=led_demon;Persist Security Info=True;User I" +
-            "D=root;Password=Admin@gd4; Max Pool Size=10000;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=10.35.222.66;Initial Catalog=led_demo;Persist Security Info=True;User" +
+            " ID=root;Password=Admin@gd4; Max Pool Size=10000;")]
         public string connectstring {
             get {
                 return ((string)(this["connectstring"]));
