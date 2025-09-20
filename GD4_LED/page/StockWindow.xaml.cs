@@ -275,12 +275,16 @@ namespace GD4_LED.page
                 new RefillRecord
                 {
                     DrugCode = ((dynamic)SelectedDrug).drugCode,
-                    Quantity = RefillQuantity,
-                    LotNumber = RefillLot,
-                    ExpiryDate = RefillExpiryDate.Value,
-                    Notes = RefillNotes,
-                    RefillDate = DateTime.Now,
-                    UserId = "CurrentUser"
+                    DrugName = ((dynamic)SelectedDrug).drugCode,
+                    Quantity = Convert.ToString(((dynamic)SelectedDrug).Quantity),
+                    Location = ((dynamic)SelectedDrug).location,
+                    DrugPosition = ((dynamic)SelectedDrug).drugPosition
+
+                    //LotNumber = RefillLot,
+                    //ExpiryDate = RefillExpiryDate.Value,
+                    //Notes = RefillNotes,
+                    //RefillDate = DateTime.Now,
+                    //UserId = "CurrentUser"
                 }
             };
 

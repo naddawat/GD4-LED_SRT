@@ -18,15 +18,17 @@ public class DrugStockModel
 public class RefillRecord
 {
     public string DrugCode { get; set; }       // รหัสยา
-    public int Quantity { get; set; }          // จำนวน
+    public string DrugName { get; set; }       // รหัสยา
+    public string Location { get; set; }       // รหัสยา
+    public string Quantity { get; set; }          // จำนวน
     public string LotNumber { get; set; }      // เลข Lot
+    public string DrugPosition { get; set; }      // เลข Lot
     public DateTime ExpiryDate { get; set; }   // วันหมดอายุ
-    public string Notes { get; set; }          // หมายเหตุ
     public DateTime RefillDate { get; set; }   // วันที่เติมยา
     public string UserId { get; set; }         // ผู้ใช้ที่บันทึก
 
     public override string ToString()
     {
-        return $"DrugCode={DrugCode}, Quantity={Quantity}, Lot={LotNumber}, Expiry={ExpiryDate:yyyy-MM-dd}, Notes={Notes}, RefillDate={RefillDate}, UserId={UserId}";
+        return $"DrugCode={DrugCode}, Quantity={Quantity}, Lot={LotNumber}, Expiry={ExpiryDate:yyyy-MM-dd}, RefillDate={RefillDate}, UserId={UserId}";
     }
 }
