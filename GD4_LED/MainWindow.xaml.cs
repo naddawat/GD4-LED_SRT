@@ -210,5 +210,11 @@ namespace GD4_LED
             SetActiveTab(StockButton);
             MainFrame.Navigate(new StockWindow());
         }
+
+        private void HistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveTab(HistoryButton);
+            MainFrame.Navigate(new DispensePageHistory());
+        }
     }
 }

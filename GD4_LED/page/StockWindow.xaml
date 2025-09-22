@@ -7,7 +7,7 @@
       d:DesignHeight="900" d:DesignWidth="800"
       Background="{StaticResource BackgroundGray}">
 
-    <Grid Margin="0,24,0,24">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="16"/>
@@ -16,8 +16,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Search and Filter Section -->
-        <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+        <!-- Search and Filter Section - Fixed at top -->
+        <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="187*"/>
@@ -76,42 +76,50 @@
             </Grid>
         </Border>
 
-        <!-- Summary Statistics -->
-        <Grid Grid.Row="2">
+        <!-- Summary Statistics - Fixed at top -->
+        <Grid Grid.Row="2" Margin="0,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"/>
+                <RowDefinition Height="43*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="23*"/>
-                <ColumnDefinition Width="222*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="245*"/>
-                <ColumnDefinition Width="245*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0" Grid.ColumnSpan="2">
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Grid.RowSpan="2">
                 <StackPanel>
-                    <TextBlock Text="ต้องเติม" Style="{StaticResource SecondaryTextStyle}" FontSize="20" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding LowStockCount}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
+                    <TextBlock Text="ต้องเติม" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding LowStockCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,8,0" Grid.ColumnSpan="2">
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Grid.RowSpan="2">
                 <StackPanel>
-                    <TextBlock Text="ใกล้หมดอายุ" Style="{StaticResource SecondaryTextStyle}" FontSize="20" FontWeight="Bold"/>
-                    <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="{StaticResource Error}"/>
+                    <TextBlock Text="ใกล้หมดอายุ" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Error}"/>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+            <Border Grid.Column="4" Style="{StaticResource CardStyle}" Grid.RowSpan="2">
                 <StackPanel>
-                    <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="20" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding TotalCount}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                    <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding TotalCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
                 </StackPanel>
             </Border>
         </Grid>
 
-        <!-- Medicine Cards with ScrollViewer -->
+        <!-- Medicine Cards with Smooth Scrolling -->
         <ScrollViewer Grid.Row="4" 
                       VerticalScrollBarVisibility="Auto" 
-                      HorizontalScrollBarVisibility="Disabled">
+                      HorizontalScrollBarVisibility="Disabled"
+                      Margin="0,0,0,0"
+                      PanningMode="VerticalOnly"
+                      IsManipulationEnabled="True"
+                      x:Name="StockScrollViewer">
             <ItemsControl ItemsSource="{Binding DrugStocks}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -190,7 +198,5 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-
-
     </Grid>
 </Page>

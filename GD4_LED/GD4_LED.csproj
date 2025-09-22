@@ -176,6 +176,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="page\DispensePageHistory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="page\Page1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -194,6 +198,9 @@
     <Compile Include="models\DrugStockModel.cs" />
     <Compile Include="page\DispensePage.xaml.cs">
       <DependentUpon>DispensePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="page\DispensePageHistory.xaml.cs">
+      <DependentUpon>DispensePageHistory.xaml</DependentUpon>
     </Compile>
     <Compile Include="page\Page1.xaml.cs">
       <DependentUpon>Page1.xaml</DependentUpon>

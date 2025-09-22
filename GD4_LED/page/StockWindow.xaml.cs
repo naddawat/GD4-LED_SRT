@@ -44,6 +44,7 @@ namespace GD4_LED.page
         public StockWindow()
         {
             InitializeComponent();
+            SetupSmoothScrolling();
             DataTable dt = new DataTable();
             dt = _STK.GetLedStock();
             string jsonData = JsonConvert.SerializeObject(dt, Formatting.Indented);
@@ -54,6 +55,50 @@ namespace GD4_LED.page
             DrugStocks = JsonConvert.DeserializeObject<ObservableCollection<DrugStockModel>>(jsonData);
             this.DataContext = this;
         }
+
+        private void SetupSmoothScrolling()
+        {
+            // Enable smooth scrolling for touch devices
+            StockScrollViewer.ScrollChanged += StockScrollViewer_ScrollChanged;
+
+            // Add mouse wheel smooth scrolling
+            StockScrollViewer.PreviewMouseWheel += StockScrollViewer_PreviewMouseWheel;
+        }
+
+        private void StockScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            // This helps with touch scrolling performance
+            if (e.VerticalChange != 0)
+            {
+                StockScrollViewer.InvalidateVisual();
+            }
+        }
+
+        private void StockScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // Smooth mouse wheel scrolling
+            ScrollViewer scrollViewer = sender as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                double scrollAmount = e.Delta > 0 ? -120 : 120; // Adjust scroll speed
+
+                // Create smooth scroll animation
+                var animation = new DoubleAnimation()
+                {
+                    From = scrollViewer.VerticalOffset,
+                    To = Math.Max(0, Math.Min(scrollViewer.ScrollableHeight, scrollViewer.VerticalOffset + scrollAmount)),
+                    Duration = TimeSpan.FromMilliseconds(300),
+                    EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
+                };
+
+                // Apply animation to ScrollViewer
+                scrollViewer.BeginAnimation(ScrollViewerBehavior.VerticalOffsetProperty, animation);
+                e.Handled = true;
+            }
+        }
+
+
+
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -296,6 +341,31 @@ namespace GD4_LED.page
             // แสดง Popup
             popupWindow.ShowDialog();
         }
+        public static class ScrollViewerBehavior
+        {
+            public static readonly DependencyProperty VerticalOffsetProperty =
+                DependencyProperty.RegisterAttached("VerticalOffset", typeof(double), typeof(ScrollViewerBehavior),
+                    new UIPropertyMetadata(0.0, OnVerticalOffsetChanged));
 
-    }
+            public static void SetVerticalOffset(FrameworkElement target, double value)
+            {
+                target.SetValue(VerticalOffsetProperty, value);
+            }
+
+            public static double GetVerticalOffset(FrameworkElement target)
+            {
+                return (double)target.GetValue(VerticalOffsetProperty);
+            }
+
+            private static void OnVerticalOffsetChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
+            {
+                ScrollViewer scrollViewer = target as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    scrollViewer.ScrollToVerticalOffset((double)e.NewValue);
+                }
+            }
+        }
+
+        }
 }
