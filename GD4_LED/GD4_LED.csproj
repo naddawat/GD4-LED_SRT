@@ -188,6 +188,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="page\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="page\StockWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -207,6 +211,9 @@
     </Compile>
     <Compile Include="page\PopupRefill.xaml.cs">
       <DependentUpon>PopupRefill.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="page\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="page\StockWindow.xaml.cs">
       <DependentUpon>StockWindow.xaml</DependentUpon>

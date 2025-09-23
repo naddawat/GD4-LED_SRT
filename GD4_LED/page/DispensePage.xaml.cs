@@ -502,7 +502,7 @@ namespace GD4_LED.page
             TextBlock expandIcon = new TextBlock
             {
                 Text = "▼",
-                FontSize = 12,
+                FontSize = 30,
                 Margin = new Thickness(8, 0, 0, 0),
                 Foreground = (Brush)FindResource("TextSecondary"),
                 Name = "ExpandIcon",

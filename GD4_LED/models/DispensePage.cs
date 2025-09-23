@@ -50,4 +50,5 @@ namespace GD4_LED.models
         [JsonProperty("orderqty")]
         public int OrderQty { get; set; }
     }
+
 }

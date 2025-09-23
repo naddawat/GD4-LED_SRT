@@ -188,3 +188,5 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\Page1.
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\Page1.baml
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePageHistory.baml
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePageHistory.g.cs
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\SettingsPage.baml
+D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\page\SettingsPage.g.cs
