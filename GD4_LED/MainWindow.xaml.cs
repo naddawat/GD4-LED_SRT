@@ -201,6 +201,7 @@ namespace GD4_LED
             DispenseButton.Tag = null;
             HistoryButton.Tag = null;
             StockButton.Tag = null;
+            SettingsButton.Tag = null;
 
             activeButton.Tag = "Active";
         }
@@ -215,6 +216,12 @@ namespace GD4_LED
         {
             SetActiveTab(HistoryButton);
             MainFrame.Navigate(new DispensePageHistory());
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetActiveTab(SettingsButton);
+            MainFrame.Navigate(new SettingsPage());
         }
     }
 }
