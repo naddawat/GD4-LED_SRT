@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Windows.Media.Animation;
+using GD4_LED.cls;
 
 namespace GD4_LED.page
 {
@@ -25,7 +26,7 @@ namespace GD4_LED.page
     /// Interaction logic for StockWindow.xaml
     /// </summary>
     public partial class StockWindow : Page
-    {
+    {       
         public ObservableCollection<DrugStockModel> DrugStocks { get; set; }
         private ObservableCollection<DrugStockModel> AllDrugStocks { get; set; }
         public int TotalCount => DrugStocks?.Count ?? 0;
@@ -35,6 +36,7 @@ namespace GD4_LED.page
         // เพิ่ม property สำหรับ popup data
         public object SelectedDrug { get; set; }
         public int RefillQuantity { get; set; }
+        public int Led_id { get; set; }
         public string RefillLot { get; set; }
         public DateTime? RefillExpiryDate { get; set; } = DateTime.Today.AddMonths(12);
         public string RefillNotes { get; set; }
@@ -45,8 +47,9 @@ namespace GD4_LED.page
         {
             InitializeComponent();
             SetupSmoothScrolling();
+            MainWindow _main = new MainWindow();
             DataTable dt = new DataTable();
-            dt = _STK.GetLedStock();
+            dt = _STK.GetLedStock(clsvariable.comname);
             string jsonData = JsonConvert.SerializeObject(dt, Formatting.Indented);
             
 
@@ -145,28 +148,29 @@ namespace GD4_LED.page
 
         private void RefillMedicine_Click(object sender, RoutedEventArgs e)
         {
-        
-            // ดึงข้อมูลยาจาก Button's DataContext
+
             var button = sender as Button;
             var drugData = button?.DataContext;
 
             if (drugData != null)
             {
-                SelectedDrug = drugData;
-                //string a = SelectedDrug.drugCode;
-                // รีเซ็ตข้อมูลใน popup
-                //RefillQuantity = 0;
-                //RefillLot = "";
-                //RefillExpiryDate = DateTime.Today.AddMonths(12);
-                //RefillNotes = "";
+                SelectedDrug = drugData;   // เก็บไว้เผื่อใช้งานที่อื่น
 
-                // แสดง popup
-                //RefillPopupOverlay.Visibility = Visibility.Visible;
+                dynamic drug = drugData;   // ใช้ dynamic เพื่อเข้าถึง property
 
-                // Focus ที่ช่องจำนวน
-                //RefillQuantityTextBox.Focus();
+                DataTable dt_stock = new DataTable();
+                dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.comname);
+                if(dt_stock.Rows.Count > 0)
+                {
+                    int _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    // เรียก led_id จาก drugData โดยตรง
+                    clsvariable.Instance.SerialCan.SetLED(1, _id, 255, 0, 0);
+                }
+                
             }
+
             ShowPopup(SelectedDrug);
+
         }
 
         //private void CloseRefillPopup_Click(object sender, RoutedEventArgs e)
@@ -265,6 +269,7 @@ namespace GD4_LED.page
                 DrugCode = ((dynamic)SelectedDrug).drugCode,
                 Quantity = RefillQuantity,
                 LotNumber = RefillLot,
+                Led_id = Led_id,
                 ExpiryDate = RefillExpiryDate.Value,
                 Notes = RefillNotes,
                 RefillDate = DateTime.Now,
@@ -323,13 +328,8 @@ namespace GD4_LED.page
                     DrugName = ((dynamic)SelectedDrug).drugName,
                     Quantity = Convert.ToString(((dynamic)SelectedDrug).Quantity),
                     Location = ((dynamic)SelectedDrug).location,
-                    DrugPosition = ((dynamic)SelectedDrug).drugPosition
-
-                    //LotNumber = RefillLot,
-                    //ExpiryDate = RefillExpiryDate.Value,
-                    //Notes = RefillNotes,
-                    //RefillDate = DateTime.Now,
-                    //UserId = "CurrentUser"
+                    DrugPosition = ((dynamic)SelectedDrug).drugPosition,
+                    
                 }
             };
 

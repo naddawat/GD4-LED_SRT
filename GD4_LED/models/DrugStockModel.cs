@@ -5,6 +5,7 @@ public class DrugStockModel
     public string location { get; set; }
     public string lot { get; set; }
     public string drugPosition { get; set; }
+    public int led_id { get; set; }
     public string drugCode { get; set; }
     public double Quantity { get; set; }
     public string drugName { get; set; }
@@ -20,6 +21,7 @@ public class RefillRecord
     public string DrugCode { get; set; }       // รหัสยา
     public string DrugName { get; set; }       // รหัสยา
     public string Location { get; set; }       // รหัสยา
+    public string Led_id { get; set; }
     public string Quantity { get; set; }          // จำนวน
     public string LotNumber { get; set; }      // เลข Lot
     public string DrugPosition { get; set; }      // เลข Lot

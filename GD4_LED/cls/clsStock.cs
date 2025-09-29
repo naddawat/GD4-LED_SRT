@@ -18,12 +18,13 @@ namespace GD4_LED.cls
         public static bool result;
 
         string connectst = GD4_LED.Properties.Settings.Default.connectstring;
-        public DataTable GetLedStock()
+        public DataTable GetLedStock(string shelfzone)
         {
 
-            SQL = @" SELECT
+            SQL = $@" SELECT
               ms.shelfzone AS location,
               ms.shelfname AS drugPosition,
+              ml.position_id,
               ms.LotNo AS lot,
               ms.orderitemcode AS drugCode,
               ml.orderitemENname AS drugName,
@@ -40,7 +41,35 @@ namespace GD4_LED.cls
             FROM
               ms_stock ms
               LEFT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            Where ml.shelfzone = '{shelfzone}'
+            GROUP BY
+                  ms.orderitemcode,
+                  ms.LotNo,
+                  ms.Exp
               ORDER BY Percent";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLedInfo(string comname)
+        {
+
+            SQL = $@" SELECT *
+            FROM
+              ms_shelf ms
+              
+            Where ms.computername = '{comname}' ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLocation(string code,string device)
+        {
+
+            SQL = $@"  SELECT *
+            FROM
+              ms_location ml
+            WHERE
+              ml.orderitemcode = '{code}' 
+              AND ml.shelfzone = '{device}'";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
@@ -74,7 +103,8 @@ namespace GD4_LED.cls
 
         public bool InsertStock(string DrugCode,int In_Qty,string LotNo,string Exp, string shelfzone, string shelfname,string max,string min)
         {
-            SQL = $@" INSERT INTO ms_stock (In_Qty, LotNo, Exp, lastmodify,shelfzone,shelfname,max,min,log_refill,type_refill) VALUES ({In_Qty}, '{LotNo}','{Exp}', CURRENT_DATE),'{shelfzone}','{shelfname}','{max}','{min}',NULL,1 ; "; 
+            SQL = $@" INSERT INTO ms_stock (orderitemcode,In_Qty, LotNo, Exp, lastmodify,shelfzone,shelfname,max,min,log_refill,type_refill) 
+                        VALUES ('{DrugCode}',{In_Qty}, '{LotNo}','{Exp}',CURRENT_DATE(),'{shelfzone}','{shelfname}','{max}','{min}',NULL,1) ; "; 
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {

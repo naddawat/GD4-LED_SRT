@@ -120,14 +120,17 @@ namespace GD4_LED.page
                     {
 
                     }
-                                        
-                    // รีเฟรชข้อมูล
-                    RefreshDrugStocks();
+                   
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด",
                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    // รีเฟรชข้อมูล
+                    RefreshDrugStocks();
                 }
             }
         }
@@ -167,7 +170,7 @@ namespace GD4_LED.page
             }
 
             // ตรวจสอบวันหมดอายุ
-            if (!RefillExpiryDate.HasValue || RefillExpiryDate <= DateTime.Today)
+            if (!RefillExpiryDate.HasValue)
             {
                 errors.Add("กรุณาระบุวันหมดอายุที่ถูกต้อง");
                 if (errors.Count == 1) RefillExpiryDatePicker.Focus();
@@ -241,7 +244,7 @@ namespace GD4_LED.page
 
 
             return result;
-
+            RefreshDrugStocks();
             // อัพเดทสต็อกปัจจุบัน
             // DatabaseService.UpdateDrugStock(drugCode, newQuantity);
 
@@ -274,6 +277,8 @@ namespace GD4_LED.page
         private void Border_Loaded(object sender, RoutedEventArgs e)
         {
             RefreshDrugStocks();
+
+
         }
     }
 }
