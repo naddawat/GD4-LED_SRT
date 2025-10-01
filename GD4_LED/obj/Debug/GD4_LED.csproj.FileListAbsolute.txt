@@ -215,3 +215,9 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.dll
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.pdb
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.xml
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.Up2Date
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.manifest
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.application
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.manifest
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.application
