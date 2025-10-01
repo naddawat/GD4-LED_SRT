@@ -50,6 +50,8 @@ D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.pdb
 <<<<<<< HEAD
+=======
+>>>>>>> 45911199b54e32406e969bcb26c3289648a2bb5f
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.config
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.baml
@@ -68,7 +70,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\App.g.cs
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED_MarkupCompile.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED_MarkupCompile.lref
-=======
 >>>>>>> 6750b246a385f21ccf45d6d296db3a76d3ed439c
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.config
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe
@@ -214,4 +215,13 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.dll
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.pdb
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.xml
+<<<<<<< HEAD
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.config
+=======
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.Up2Date
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.manifest
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.application
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.manifest
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.application
+>>>>>>> 293a3d76260f293b615a630c35158cb7eda8b59e
