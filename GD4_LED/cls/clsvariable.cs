@@ -12,7 +12,7 @@ namespace GD4_LED.cls
         public string StrU = "";
         public ClsSubSerial SerialCan;
         public static string comname = "";
-
+        public static string shelfzone = "";
         private static clsvariable _instance;
         public static clsvariable Instance
         {

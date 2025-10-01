@@ -49,7 +49,7 @@ namespace GD4_LED.page
             SetupSmoothScrolling();
             MainWindow _main = new MainWindow();
             DataTable dt = new DataTable();
-            dt = _STK.GetLedStock(clsvariable.comname);
+            dt = _STK.GetLedStock(clsvariable.shelfzone);
             string jsonData = JsonConvert.SerializeObject(dt, Formatting.Indented);
             
 

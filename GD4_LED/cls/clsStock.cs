@@ -123,6 +123,22 @@ namespace GD4_LED.cls
                 return Execute.dataExecuteNonQuery(connectst, cmd);
             }
         }
+        public static bool CheckConnection(string ConnectionString)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(ConnectionString))
+                {
+                    conn.Open();
+                    return true; // ต่อได้
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return false; // ต่อไม่ได้
+            }
+        }
     }
 
     

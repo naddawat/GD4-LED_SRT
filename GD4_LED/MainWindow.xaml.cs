@@ -24,8 +24,10 @@ namespace GD4_LED
     /// </summary>
     public partial class MainWindow : Window
     {        
-        cls.clsMain _Man = new cls.clsMain();
-        cls.clsStock _STK = new cls.clsStock();
+        clsMain _Man = new clsMain();
+        clsStock _STK = new clsStock();
+        clsutilDB _con = new clsutilDB();
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -48,10 +50,10 @@ namespace GD4_LED
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //_var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
+            
             string datetimeNow = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             clsvariable.comname = Environment.MachineName;
-
-            clsvariable.comname = "iL1";
+            clsvariable.comname = "GD4-ILED1";
 
             SetWindowToSecondaryScreen();
             SetActiveTab(DispenseButton);
@@ -63,6 +65,7 @@ namespace GD4_LED
             if(clsvariable.dt_Ledinfo.Rows.Count > 0)
             {
                 txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+                clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
             }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
