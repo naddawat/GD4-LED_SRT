@@ -49,6 +49,7 @@ D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.pdb
+<<<<<<< HEAD
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.config
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.pdb
@@ -188,3 +189,5 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csp
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
+=======
+>>>>>>> 64d1e7a45e6464c92f6e6840519094642e6cea52

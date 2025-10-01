@@ -26,7 +26,7 @@ namespace GD4_LED.connect
                 }
                 catch (Exception ex)
                 {
-                    WriteLog(ex.ToString() + Environment.NewLine + cmd.CommandText, "ERROR");
+                    //WriteLog(ex.ToString() + Environment.NewLine + cmd.CommandText, "ERROR");
                     trans.Rollback();
                     ret = false;
                 }

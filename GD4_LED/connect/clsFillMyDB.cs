@@ -35,5 +35,36 @@ namespace GD4_LED.connect
             }
             return dt;
         }
+        public static bool dataExecuteNonQuery(string ConnectionString, MySqlCommand cmd)
+        {
+            bool ret = false;
+            using (MySqlConnection conn = new MySqlConnection(ConnectionString))
+            {
+                conn.Open();
+                MySqlTransaction trans = conn.BeginTransaction();
+                cmd.Connection = conn;
+                cmd.Transaction = trans;
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    trans.Commit();
+                    ret = true;
+                }
+                catch (Exception ex)
+                {
+                    //WriteLog(ex.ToString() + Environment.NewLine + cmd.CommandText, "ERROR");
+                    trans.Rollback();
+                    ret = false;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
+            return ret;
+        }
+        
+
     }
 }

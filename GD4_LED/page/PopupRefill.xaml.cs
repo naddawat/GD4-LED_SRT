@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GD4_LED.cls;
 
 namespace GD4_LED.page
 {
@@ -29,6 +31,7 @@ namespace GD4_LED.page
         public string RefillNotes { get; set; }
 
         public object objDrug = new object();
+        clsStock clsst = new clsStock();
         public PopupRefill(List<RefillRecord> _SelectedDrug)
         {
             InitializeComponent();
@@ -98,26 +101,36 @@ namespace GD4_LED.page
 
         private void ConfirmRefill_Click(object sender, RoutedEventArgs e)
         {
+            bool result = false;
             // ตรวจสอบข้อมูลที่กรอก
             if (ValidateRefillData())
             {
                 try
-                {
+                {                    
                     // บันทึกข้อมูลการเติมยา
-                    SaveRefillData();
+                    if(SaveRefillData())
+                    {
+                        // แสดงข้อความสำเร็จ
+                        ShowSuccessMessage();
 
-                    // แสดงข้อความสำเร็จ
-                    ShowSuccessMessage();
+                        Window.GetWindow(this).Close();
 
-                    Window.GetWindow(this).Close();
+                    }
+                    else
+                    {
 
-                    // รีเฟรชข้อมูล
-                    RefreshDrugStocks();
+                    }
+                   
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}", "ข้อผิดพลาด",
                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    // รีเฟรชข้อมูล
+                    RefreshDrugStocks();
                 }
             }
         }
@@ -125,6 +138,22 @@ namespace GD4_LED.page
         private bool ValidateRefillData()
         {
             var errors = new List<string>();
+            RefillLot = RefillLotTextBox.Text;
+            RefillQuantity = Convert.ToInt32(RefillQuantityTextBox.Text);
+            RefillExpiryDate = RefillExpiryDatePicker.SelectedDate;
+            //DrugCodeText = DrugCodeText.Text;
+            Drugname = DrugNameText.Text;
+
+            var refillRecord = new
+            {
+                DrugCode = DrugCodeText.Text,
+                Quantity = RefillQuantity,
+                LotNumber = RefillLot,
+                ExpiryDate = RefillExpiryDate.Value,
+                Notes = RefillNotes,
+                RefillDate = DateTime.Now,
+                UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
+            };
 
             // ตรวจสอบจำนวน
             if (RefillQuantity <= 0)
@@ -141,7 +170,7 @@ namespace GD4_LED.page
             }
 
             // ตรวจสอบวันหมดอายุ
-            if (!RefillExpiryDate.HasValue || RefillExpiryDate <= DateTime.Today)
+            if (!RefillExpiryDate.HasValue)
             {
                 errors.Add("กรุณาระบุวันหมดอายุที่ถูกต้อง");
                 if (errors.Count == 1) RefillExpiryDatePicker.Focus();
@@ -159,14 +188,22 @@ namespace GD4_LED.page
             return true;
         }
 
-        private void SaveRefillData()
+        private bool SaveRefillData()
         {
             // TODO: บันทึกข้อมูลลงฐานข้อมูล
             // ตัวอย่างการบันทึก:
-
+            DataTable dt_stock = new DataTable();
+            dt_stock = clsst.GetLedStockByCode(DrugCodeText.Text, RefillLotTextBox.Text);
+            bool sameLot = false;
+            bool result = false;
+            int qty_old = 0;
+            string shelfzone = "";
+            string shelfname = "";
+            string max = "";
+            string min = "";
             var refillRecord = new
             {
-                DrugCode = ((dynamic)SelectedDrug).drugCode,
+                DrugCode = DrugCodeText.Text,
                 Quantity = RefillQuantity,
                 LotNumber = RefillLot,
                 ExpiryDate = RefillExpiryDate.Value,
@@ -174,20 +211,50 @@ namespace GD4_LED.page
                 RefillDate = DateTime.Now,
                 UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
             };
+            if (dt_stock.Rows.Count > 0)
+            {
+                foreach (DataRow rw in dt_stock.Rows)
+                {
+                    if (rw["drugcode"].ToString() == DrugCodeText.Text && rw["lot"].ToString() == RefillLotTextBox.Text)
+                    {
+                        sameLot = true;
+                        qty_old = Convert.ToInt32(rw["Quantity"].ToString());
+                        break;
+                    }
+                    else
+                    {
+                        shelfzone = rw["location"].ToString();
+                        shelfname = rw["drugPosition"].ToString();
+                        max = rw["max"].ToString();
+                        min = rw["min"].ToString();
+                        sameLot = false;
+                    }
+                }
+            }
 
-            // บันทึกลงฐานข้อมูล
-            // DatabaseService.SaveRefillRecord(refillRecord);
+            if (sameLot) // มี Lot เดิม
+            {
+                RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
+                result = clsst.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber,refillRecord.ExpiryDate.ToString(),refillRecord.UserId);
+            }
+            else
+            {
+                result = clsst.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
+            }
 
+
+            return result;
+            RefreshDrugStocks();
             // อัพเดทสต็อกปัจจุบัน
             // DatabaseService.UpdateDrugStock(drugCode, newQuantity);
 
-            Console.WriteLine($"บันทึกการเติมยา: {refillRecord}");
+            //Console.WriteLine($"บันทึกการเติมยา: {refillRecord}");
         }
 
         private void ShowSuccessMessage()
         {
             string message = $"เติมยาสำเร็จ!\n\n" +
-                            $"รหัสยา: {((dynamic)SelectedDrug).drugCode}\n" +
+                            $"ยา: {Drugname}\n" +
                             $"จำนวนที่เติม: {RefillQuantity:N0} หน่วย\n" +
                             $"Lot: {RefillLot}\n" +
                             $"วันหมดอายุ: {RefillExpiryDate:dd/MM/yyyy}";
@@ -210,6 +277,8 @@ namespace GD4_LED.page
         private void Border_Loaded(object sender, RoutedEventArgs e)
         {
             RefreshDrugStocks();
+
+
         }
     }
 }
