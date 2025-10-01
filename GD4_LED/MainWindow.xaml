@@ -9,6 +9,8 @@
         WindowState="Maximized" WindowStyle="None"
         Loaded="Window_Loaded">
 
+
+
     <Grid Background="{StaticResource BackgroundGray}">
         <Grid.RowDefinitions>
             <!-- Header -->
@@ -32,7 +34,7 @@
                              Foreground="White" 
                              FontSize="18" 
                              FontWeight="Bold"/>
-                    <TextBlock Text="Medicine Management System" 
+                    <TextBlock Text="Medicine Management System | ver 1.0.1" 
                              Foreground="White" 
                              Opacity="0.8" 
                              FontSize="12"/>
@@ -44,15 +46,29 @@
                              FontSize="14"
                              VerticalAlignment="Center"
                              Margin="0,0,20,0"/>
-                    <Ellipse Width="12" Height="12" Fill="{StaticResource Success}" 
-                           ToolTip="ระบบออนไลน์"
-                           Margin="0,0,20,0"/>
+                    <Ellipse x:Name="myEllipse" Width="18" Height="18" 
+         Margin="0,0,20,0"
+         ToolTip="สถานะ Database">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{StaticResource Success}" />
+                                <!-- สีเขียว -->
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDatabaseConnected}" Value="False">
+                                        <Setter Property="Fill" Value="Red" />
+                                        <Setter Property="ToolTip" Value="เชื่อมต่อ Database ไม่ได้" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+
 
                     <!-- Close Button -->
                     <Button Background="Transparent" 
                             BorderThickness="0" 
-                            Width="40" 
-                            Height="40"
+                            Width="58"
+                            Height="51"
                             Click="CloseButton_Click"
                             ToolTip="ออกจากโปรแกรม">
                         <Button.Template>
@@ -148,7 +164,7 @@
                 <!-- ปุ่มจ่ายยา -->
                 <Button x:Name="DispenseButton" Grid.Column="0" 
                 Style="{StaticResource FullTabButtonStyle}" 
-                Tag="Active" Click="Button_Click_1">
+                Tag="Active" Click="Button_Click_1" Foreground="#FF3B82F6">
                     <Grid>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Path Data="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" 

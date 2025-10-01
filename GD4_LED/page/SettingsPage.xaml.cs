@@ -16,6 +16,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
+using System.IO.Ports;
+//using System.Drawing.Printing;
+using System.Diagnostics.Eventing.Reader;
 
 namespace GD4_LED.page
 {
@@ -32,9 +36,99 @@ namespace GD4_LED.page
             SetupSmoothScrolling();
             InitializeLedCabinets();
             LoadSettings();
+            LoadSerialPorts();
+            LoadPrinters();
 
         }
 
+        private void LoadPrinters()
+        {
+            //CbPrinter.Items.Clear();
+
+            //foreach (string printerName in PrinterSettings.InstalledPrinters)
+            //{
+            //    bool isOnline = IsPrinterOnline(printerName);
+            //    string displayName = isOnline ? $"{printerName} " : printerName;
+
+            //    CbPrinter.Items.Add(displayName);
+            //}
+
+            //if (CbPrinter.Items.Count > 0)
+            //{
+            //    TbPrinter.Text = "";
+            //    CbPrinter.SelectedIndex = 0;
+            //}
+            //else
+            //{
+            //    TbPrinter.Text = "Printer";
+            //}
+        }
+
+        private bool IsPrinterOnline(string printerName)
+        {
+            //try
+            //{
+            //    PrinterSettings ps = new PrinterSettings();
+            //    ps.PrinterName = printerName;
+
+            //    // ถ้าเครื่องพิมพ์นี้ไม่รองรับ ตรวจสอบได้ด้วย IsValid
+            //    if (!ps.IsValid)
+            //        return false;
+
+            //    // ตรวจสอบสถานะ Printer ผ่าน PrinterSettings
+            //    // Note: ถ้าอยากละเอียด ต้องใช้ WMI หรือ System.Printing
+            //    return true; // ถือว่าออนไลน์ / ใช้งานได้
+            //}
+            //catch
+            //{
+            return false;
+            //}
+        }
+
+        private void LoadSerialPorts()
+        {
+            CbSerialPort.Items.Clear();
+
+            string[] ports = SerialPort.GetPortNames();
+
+            foreach (string port in ports)
+            {
+                bool isAvailable = IsPortAvailable(port);
+                string displayName = isAvailable ? $"{port} " : port;
+
+                CbSerialPort.Items.Add(displayName);
+            }
+
+            if (CbSerialPort.Items.Count > 0)
+            {
+                TbSerialPort.Text = "";
+                CbSerialPort.SelectedIndex = 0;
+            }
+            else
+            {
+                TbSerialPort.Text = "Serial Port";
+            }
+
+
+        }
+
+        // ตรวจสอบว่า COM port เปิดได้หรือไม่
+        private bool IsPortAvailable(string portName)
+        {
+            try
+            {
+                using (SerialPort port = new SerialPort(portName))
+                {
+                    port.Open();
+                    port.Close();
+                    return true; // เปิดสำเร็จ
+                }
+            }
+            catch
+            {
+                return false; // ใช้งานไม่ได้
+            }
+        }
         private void SetButtonContent(string buttonName, string drugName)
         {
             Button button = FindName(buttonName) as Button;
@@ -317,6 +411,445 @@ namespace GD4_LED.page
             MessageBox.Show("บันทึกการตั้งค่าทั่วไปแล้ว", "Settings Saved",
                           MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void ColorPickerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button clickedButton = sender as Button;
+
+
+            var colorPickerDialog = new Window
+            {
+                Title = "เลือกสี",
+                Width = 450,
+                Height = 850,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                ResizeMode = ResizeMode.NoResize,
+                Background = new SolidColorBrush(Color.FromRgb(245, 245, 250))
+            };
+
+            var mainPanel = new StackPanel { Margin = new Thickness(20) };
+
+            // ========== หมวดสีพื้นฐาน ==========
+            var basicColorSection = CreateSection("สีพื้นฐาน");
+
+            var basicColorsGrid = new UniformGrid
+            {
+                Columns = 6,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+
+            var basicColors = new[]
+            {
+        new { Color = Colors.Red, Name = "แดง" },
+        new { Color = Colors.Orange, Name = "ส้ม" },
+        new { Color = Colors.Yellow, Name = "เหลือง" },
+        new { Color = Colors.Green, Name = "เขียว" },
+        new { Color = Colors.Blue, Name = "น้ำเงิน" },
+        new { Color = Colors.Purple, Name = "ม่วง" },
+        new { Color = Colors.Pink, Name = "ชมพู" },
+        new { Color = Colors.Brown, Name = "น้ำตาล" },
+        new { Color = Colors.Cyan, Name = "ฟ้า" },
+        new { Color = Colors.Black, Name = "ดำ" },
+        new { Color = Colors.Gray, Name = "เทา" },
+        new { Color = Colors.White, Name = "ขาว" }
+    };
+
+            foreach (var colorInfo in basicColors)
+            {
+                var colorButton = new Button
+                {
+                    Width = 50,
+                    Height = 50,
+                    Margin = new Thickness(5),
+                    Background = new SolidColorBrush(colorInfo.Color),
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(200, 200, 200)),
+                    BorderThickness = new Thickness(2),
+                    Tag = colorInfo.Color,
+                    ToolTip = colorInfo.Name,
+                    Cursor = System.Windows.Input.Cursors.Hand,
+                    Style = CreateColorButtonStyle()
+                };
+
+                colorButton.Click += (s, args) =>
+                {
+                    clickedButton.Background = new SolidColorBrush((Color)colorButton.Tag);
+                    colorPickerDialog.Close();
+                };
+
+                basicColorsGrid.Children.Add(colorButton);
+            }
+
+            basicColorSection.Children.Add(basicColorsGrid);
+            mainPanel.Children.Add(basicColorSection);
+
+            // ========== หมวดกำหนดสีเอง ==========
+            var customColorSection = CreateSection("กำหนดสีเอง");
+            customColorSection.Margin = new Thickness(0, 20, 0, 0);
+            var initialColor = ((SolidColorBrush)clickedButton.Background).Color;
+
+            var redSlider = CreateModernColorSlider("แดง (R)", Colors.Red, initialColor.R);
+            var greenSlider = CreateModernColorSlider("เขียว (G)", Colors.Green, initialColor.G);
+            var blueSlider = CreateModernColorSlider("น้ำเงิน (B)", Colors.Blue, initialColor.B);
+
+            customColorSection.Children.Add((UIElement)redSlider.Tag);
+            customColorSection.Children.Add((UIElement)greenSlider.Tag);
+            customColorSection.Children.Add((UIElement)blueSlider.Tag);
+
+            mainPanel.Children.Add(customColorSection);
+
+            // ========== แสดงตัวอย่างสี ==========
+            var previewSection = new StackPanel
+            {
+                Margin = new Thickness(0, 20, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            previewSection.Children.Add(new TextBlock
+            {
+                Text = "ตัวอย่างสี",
+                FontSize = 14,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+
+            var previewBorder = new Border
+            {
+                Width = 150,
+                Height = 60,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(200, 200, 200)),
+                BorderThickness = new Thickness(2),
+                Background = new SolidColorBrush(initialColor),
+                CornerRadius = new CornerRadius(8),
+                Effect = new System.Windows.Media.Effects.DropShadowEffect
+                {
+                    Color = Colors.Gray,
+                    Opacity = 0.3,
+                    BlurRadius = 10,
+                    ShadowDepth = 3
+                }
+            };
+            var currentColor = (clickedButton.Background as SolidColorBrush)?.Color ?? Colors.White;
+            var colorCodeText = new TextBlock
+            {
+                Text = $"#{currentColor.R:X2}{currentColor.G:X2}{currentColor.B:X2}",
+                FontSize = 12,
+                FontFamily = new FontFamily("Consolas"),
+                Foreground = new SolidColorBrush(Color.FromRgb(100, 100, 100)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+
+            previewSection.Children.Add(previewBorder);
+            previewSection.Children.Add(colorCodeText);
+            mainPanel.Children.Add(previewSection);
+
+            void UpdatePreview()
+            {
+                var color = Color.FromRgb(
+                    (byte)redSlider.Value,
+                    (byte)greenSlider.Value,
+                    (byte)blueSlider.Value);
+                previewBorder.Background = new SolidColorBrush(color);
+                colorCodeText.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            }
+
+            redSlider.ValueChanged += (s, e1) => UpdatePreview();
+            greenSlider.ValueChanged += (s, e2) => UpdatePreview();
+            blueSlider.ValueChanged += (s, e3) => UpdatePreview();
+
+            // ========== หมวดทดสอบ ==========
+            var testSection = CreateSection("ทดสอบการใช้งาน");
+            testSection.Margin = new Thickness(0, 20, 0, 0);
+
+            var testGrid = new Grid { Margin = new Thickness(0, 10, 0, 0) };
+            testGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            testGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var rowPanel = new StackPanel { Margin = new Thickness(0, 0, 5, 0) };
+            rowPanel.Children.Add(new TextBlock
+            {
+                Text = "แถว",
+                FontSize = 12,
+                Foreground = new SolidColorBrush(Color.FromRgb(100, 100, 100)),
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+
+            var rowCombo = new ComboBox
+            {
+                Style = (Style)FindResource("ModernComboBoxStyle"),
+                ItemsSource = Enumerable.Range(1, 8).ToList(),
+                SelectedIndex = 0,
+                BorderBrush = Brushes.DarkGray,  // สีขอบ
+                BorderThickness = new Thickness(2), // ความหนาขอบ
+                //CornerRadius = new CornerRadius(5) // ถ้า ModernComboBoxStyle รองรับ
+            };
+
+            rowPanel.Children.Add(rowCombo);
+            Grid.SetColumn(rowPanel, 0);
+
+            var colPanel = new StackPanel { Margin = new Thickness(5, 0, 0, 0) };
+            colPanel.Children.Add(new TextBlock
+            {
+                Text = "คอลัมน์",
+                FontSize = 12,
+                Foreground = new SolidColorBrush(Color.FromRgb(100, 100, 100)),
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+
+            var colCombo = new ComboBox
+            {
+                Style = (Style)FindResource("ModernComboBoxStyle"),
+                ItemsSource = Enumerable.Range(1, 6).ToList(),
+                SelectedIndex = 0,
+                BorderBrush = Brushes.DarkGray,  // สีขอบ
+                BorderThickness = new Thickness(2), // ความหนาขอบ
+            };
+            colPanel.Children.Add(colCombo);
+            Grid.SetColumn(colPanel, 1);
+
+            testGrid.Children.Add(rowPanel);
+            testGrid.Children.Add(colPanel);
+            testSection.Children.Add(testGrid);
+
+            var toggleContainer = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(255, 255, 255)),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(12),
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+
+            var togglePanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+            var lightToggle = new CheckBox
+            {
+                Style = (Style)FindResource("ToggleSwitchStyle"),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var toggleLabel = new TextBlock
+            {
+                Text = "เปิด/ปิดไฟ",
+                FontSize = 13,
+                Foreground = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+
+            togglePanel.Children.Add(lightToggle);
+            togglePanel.Children.Add(toggleLabel);
+            toggleContainer.Child = togglePanel;
+            testSection.Children.Add(toggleContainer);
+
+            mainPanel.Children.Add(testSection);
+
+            // ========== ปุ่มยืนยัน ==========
+            var buttonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 25, 0, 0)
+            };
+
+            var okButton = new Button
+            {
+                Content = "✓ ตกลง",
+                Width = 120,
+                Height = 38,
+                Margin = new Thickness(5, 0, 5, 0),
+                Background = new SolidColorBrush(Color.FromRgb(67, 160, 71)),
+                Foreground = Brushes.White,
+                FontWeight = FontWeights.SemiBold,
+                FontSize = 14,
+                BorderThickness = new Thickness(0),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Style = CreateModernButtonStyle()
+            };
+
+            okButton.Click += (s, e4) =>
+            {
+                clickedButton.Background = previewBorder.Background;
+                colorPickerDialog.Close();
+            };
+
+            var cancelButton = new Button
+            {
+                Content = "✕ ยกเลิก",
+                Width = 120,
+                Height = 38,
+                Margin = new Thickness(5, 0, 5, 0),
+                Background = new SolidColorBrush(Color.FromRgb(220, 220, 220)),
+                Foreground = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                FontWeight = FontWeights.SemiBold,
+                FontSize = 14,
+                BorderThickness = new Thickness(0),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Style = CreateModernButtonStyle()
+            };
+
+            cancelButton.Click += (s, e5) => colorPickerDialog.Close();
+
+            buttonPanel.Children.Add(okButton);
+            buttonPanel.Children.Add(cancelButton);
+            mainPanel.Children.Add(buttonPanel);
+
+            // ========== แสดง Dialog ==========
+            var scrollViewer = new ScrollViewer
+            {
+                Content = mainPanel,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+
+            colorPickerDialog.Content = scrollViewer;
+            colorPickerDialog.Owner = Window.GetWindow(this);
+            colorPickerDialog.ShowDialog();
+        }
+
+        // ========== Helper Methods ==========
+
+        private StackPanel CreateSection(string title)
+        {
+            var section = new StackPanel();
+
+            var titleBlock = new TextBlock
+            {
+                Text = title,
+                FontSize = 15,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = new SolidColorBrush(Color.FromRgb(50, 50, 50))
+            };
+
+            var separator = new Border
+            {
+                Height = 2,
+                Background = new LinearGradientBrush(
+                    Color.FromRgb(100, 150, 255),
+                    Color.FromRgb(150, 180, 255),
+                    0),
+                CornerRadius = new CornerRadius(1),
+                Margin = new Thickness(0, 5, 0, 0)
+            };
+
+            section.Children.Add(titleBlock);
+            section.Children.Add(separator);
+
+            return section;
+        }
+
+        private Slider CreateModernColorSlider(string label, Color color, byte initialValue)
+        {
+            var container = new StackPanel
+            {
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+
+            var labelPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+
+            var labelText = new TextBlock
+            {
+                Text = label,
+                FontSize = 13,
+                FontWeight = FontWeights.Medium,
+                Foreground = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var valueText = new TextBlock
+            {
+                Text = initialValue.ToString(),
+                FontSize = 13,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(color),
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(8, 0, 0, 0),
+                MinWidth = 30,
+                TextAlignment = TextAlignment.Right
+            };
+
+            labelPanel.Children.Add(labelText);
+            labelPanel.Children.Add(valueText);
+            container.Children.Add(labelPanel);
+
+            var slider = new Slider
+            {
+                Minimum = 0,
+                Maximum = 255,
+                Value = initialValue,
+                TickFrequency = 1,
+                IsSnapToTickEnabled = true,
+                Foreground = new SolidColorBrush(color)
+            };
+
+            slider.ValueChanged += (s, e) =>
+            {
+                valueText.Text = ((int)e.NewValue).ToString();
+            };
+
+            container.Children.Add(slider);
+            slider.Tag = container;
+
+            return slider;
+        }
+
+        private Style CreateModernButtonStyle()
+        {
+            var style = new Style(typeof(Button));
+
+            style.Setters.Add(new Setter(Button.TemplateProperty, CreateButtonTemplate()));
+
+            return style;
+        }
+
+        private ControlTemplate CreateButtonTemplate()
+        {
+            var template = new ControlTemplate(typeof(Button));
+
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.Name = "border";
+            border.SetValue(Border.CornerRadiusProperty, new CornerRadius(6));
+            border.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Button.BackgroundProperty));
+            border.SetValue(Border.PaddingProperty, new Thickness(15, 8, 15, 8));
+
+            var contentPresenter = new FrameworkElementFactory(typeof(ContentPresenter));
+            contentPresenter.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            contentPresenter.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+            border.AppendChild(contentPresenter);
+            template.VisualTree = border;
+
+            return template;
+        }
+
+        private Style CreateColorButtonStyle()
+        {
+            var style = new Style(typeof(Button));
+
+            var template = new ControlTemplate(typeof(Button));
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.Name = "border";
+            border.SetValue(Border.CornerRadiusProperty, new CornerRadius(8));
+            border.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Button.BackgroundProperty));
+            border.SetValue(Border.BorderBrushProperty, new TemplateBindingExtension(Button.BorderBrushProperty));
+            border.SetValue(Border.BorderThicknessProperty, new TemplateBindingExtension(Button.BorderThicknessProperty));
+
+            template.VisualTree = border;
+            style.Setters.Add(new Setter(Button.TemplateProperty, template));
+
+            return style;
+        }
+
+
+
+
+
     }
     public class LedCabinetModel
     {

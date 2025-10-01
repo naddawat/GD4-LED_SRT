@@ -67,6 +67,17 @@ namespace GD4_LED
                 txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
                 clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
             }
+
+            if (txtdevice.Text.Length > 0) // method ที่คุณเขียนไว้เช็คการต่อ
+            {
+                myEllipse.Fill = (Brush)FindResource("Success"); // สีเขียว
+                myEllipse.ToolTip = "ระบบออนไลน์";
+            }
+            else
+            {
+                myEllipse.Fill = Brushes.Red;
+                myEllipse.ToolTip = "เชื่อมต่อ Database ไม่ได้";
+            }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {

@@ -46,7 +46,7 @@
       <HintPath>..\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
     <Reference Include="ClsSerialLED">
-      <HintPath>..\..\..\..\GitHub\ex_dllQ with DLL\ex_dllQ with DLL\WindowsApplication1\bin\Debug\ClsSerialLED.dll</HintPath>
+      <HintPath>C:\Users\noteb\Downloads\DLL_8_18_25\DLL_8_18_25\Debug\ClsSerialLED.dll</HintPath>
     </Reference>
     <Reference Include="EngineIoClientDotNet, Version=0.9.22.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\EngineIoClientDotNet.0.9.22\lib\net45\EngineIoClientDotNet.dll</HintPath>

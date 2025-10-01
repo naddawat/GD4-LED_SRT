@@ -3,11 +3,8 @@
   <Profiles />
   <Settings>
     <Setting Name="connectstring" Type="System.String" Scope="User">
-<<<<<<< HEAD
-      <Value Profile="(Default)">Server=10.35.222.66;Port=3306;Database=led_demo;User Id=root;Password=Admin@gd4;Pooling=true;Max Pool Size=10000;</Value>
-=======
+
       <Value Profile="(Default)">Data Source=kcmh-pharma.chula.or.th;Initial Catalog=led_demo;Persist Security Info=True;User ID=root;Password=Admin@gd4; Max Pool Size=10000;</Value>
->>>>>>> 64d1e7a45e6464c92f6e6840519094642e6cea52
     </Setting>
   </Settings>
 </SettingsFile>

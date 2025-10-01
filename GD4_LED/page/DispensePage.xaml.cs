@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using GD4_LED.models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,20 +24,105 @@ namespace GD4_LED.page
 {
     public partial class DispensePage : Page
     {
-        private readonly RxService _RX;
+        //private readonly RxService _RX;
         private List<Prescription> allPrescriptions = new List<Prescription>();
         private List<Prescription> filteredPrescriptions = new List<Prescription>();
+        private RxService _RX;
+        private bool _isLoading = true;
+
         public DispensePage()
         {
             InitializeComponent();
-            SetupSmoothScrolling();
-            LoadPrescriptions();
-            UpdateStatistics();
-            _RX = new RxService();
-            //_RX.OnTriggerReceived += Rx_OnTriggerReceived;
 
+            // เริ่ม Loading Animation
+            StartLoadingAnimation();
 
+            // โหลดข้อมูลแบบ Async
+            _ = InitializePageAsync();
         }
+
+        private void StartLoadingAnimation()
+        {
+            // เริ่ม Animation หมุนของไอคอน
+            var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
+            loadingStoryboard.Begin();
+
+            // เริ่ม Fade In Animation สำหรับ Loading
+            var fadeInStoryboard = (Storyboard)this.Resources["FadeInLoading"];
+            fadeInStoryboard.Begin();
+        }
+
+        private async Task InitializePageAsync()
+        {
+            try
+            {
+                // แสดง Loading อย่างน้อย 1.5 วินาที เพื่อให้เห็น Animation
+                var minimumLoadingTime = Task.Delay(500);
+
+                // โหลดข้อมูลจริง
+                var dataLoadingTask = LoadDataAsync();
+
+                // รอให้ทั้งสองงานเสร็จ
+                await Task.WhenAll(minimumLoadingTime, dataLoadingTask);
+
+                // ซ่อน Loading และแสดงเนื้อหาหลัก
+                await HideLoadingAndShowContent();
+            }
+            catch (Exception ex)
+            {
+                // จัดการ Error
+                MessageBox.Show($"เกิดข้อผิดพลาดในการโหลดข้อมูล: {ex.Message}",
+                              "ข้อผิดพลาด", MessageBoxButton.OK, MessageBoxImage.Error);
+                await HideLoadingAndShowContent();
+            }
+        }
+
+        private async Task LoadDataAsync()
+        {
+            // ใช้ Task.Run เพื่อไม่ให้ UI ค้าง
+            await Task.Run(async () =>
+            {
+                // โหลดข้อมูลใน Background Thread
+                await Task.Delay(100); // จำลองการโหลดข้อมูล
+
+                // กลับมาที่ UI Thread เพื่ออัพเดท UI
+                Dispatcher.Invoke(() =>
+                {
+                    SetupSmoothScrolling();
+                    LoadPrescriptions();
+                    UpdateStatistics();
+                    _RX = new RxService();
+
+                    // Subscribe event
+                    _RX.OnTriggerReceived += Rx_OnTriggerReceived;
+                });
+            });
+        }
+
+        private async Task HideLoadingAndShowContent()
+        {
+            // หยุด Loading Animation
+            var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
+            loadingStoryboard.Stop();
+
+            // Fade Out Loading
+            var fadeOutStoryboard = (Storyboard)this.Resources["FadeOutLoading"];
+            fadeOutStoryboard.Begin();
+
+            // รอให้ Fade Out เสร็จ
+            await Task.Delay(300);
+
+            // ซ่อน Loading Overlay
+            LoadingOverlay.Visibility = Visibility.Collapsed;
+
+            // เริ่ม Slide Up Animation สำหรับเนื้อหาหลัก
+            var slideUpStoryboard = (Storyboard)this.Resources["SlideUpAnimation"];
+            slideUpStoryboard.Begin();
+
+            _isLoading = false;
+        }
+
+
         private void SetupSmoothScrolling()
         {
             // Enable smooth scrolling for touch devices
@@ -101,250 +187,9 @@ namespace GD4_LED.page
                 ""orderqty"": 2
             }
         ]
-    },
-    {
-        ""prescriptionno"": ""1893-1"",
-        ""hn"": ""1893"",
-        ""an"": ""1"",
-        ""patientname"": ""นาง TEST3 TEST4"",
-        ""ward"": ""Ward B"",
-        ""bed"": ""5"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P003"",
-                ""orderitemname"": ""Package 3"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1894-3"",
-        ""hn"": ""1894"",
-        ""an"": ""3"",
-        ""patientname"": ""นาย TEST5 TEST6"",
-        ""ward"": ""Ward C"",
-        ""bed"": ""8"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P004"",
-                ""orderitemname"": ""Package 4"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P005"",
-                ""orderitemname"": ""Package 5"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P006"",
-                ""orderitemname"": ""Package 6"",
-                ""orderqty"": 3
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1895-4"",
-        ""hn"": ""1895"",
-        ""an"": ""4"",
-        ""patientname"": ""นางสาว TEST7 TEST8"",
-        ""ward"": ""Ward D"",
-        ""bed"": ""15"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P007"",
-                ""orderitemname"": ""Package 7"",
-                ""orderqty"": 2
-            },
-            {
-                ""orderitemcode"": ""P008"",
-                ""orderitemname"": ""Package 8"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1896-5"",
-        ""hn"": ""1896"",
-        ""an"": ""5"",
-        ""patientname"": ""นาย TEST9 TEST10"",
-        ""ward"": ""Ward E"",
-        ""bed"": ""22"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P009"",
-                ""orderitemname"": ""Package 9"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1897-6"",
-        ""hn"": ""1897"",
-        ""an"": ""6"",
-        ""patientname"": ""นาง TEST11 TEST12"",
-        ""ward"": ""Ward F"",
-        ""bed"": ""7"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P010"",
-                ""orderitemname"": ""Package 10"",
-                ""orderqty"": 3
-            },
-            {
-                ""orderitemcode"": ""P011"",
-                ""orderitemname"": ""Package 11"",
-                ""orderqty"": 2
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1898-7"",
-        ""hn"": ""1898"",
-        ""an"": ""7"",
-        ""patientname"": ""นาย TEST13 TEST14"",
-        ""ward"": ""Ward G"",
-        ""bed"": ""18"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P012"",
-                ""orderitemname"": ""Package 12"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P013"",
-                ""orderitemname"": ""Package 13"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P014"",
-                ""orderitemname"": ""Package 14"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1899-8"",
-        ""hn"": ""1899"",
-        ""an"": ""8"",
-        ""patientname"": ""นางสาว TEST15 TEST16"",
-        ""ward"": ""Ward H"",
-        ""bed"": ""9"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P015"",
-                ""orderitemname"": ""Package 15"",
-                ""orderqty"": 2
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1900-9"",
-        ""hn"": ""1900"",
-        ""an"": ""9"",
-        ""patientname"": ""นาย TEST17 TEST18"",
-        ""ward"": ""Ward I"",
-        ""bed"": ""14"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P016"",
-                ""orderitemname"": ""Package 16"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P017"",
-                ""orderitemname"": ""Package 17"",
-                ""orderqty"": 4
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1901-10"",
-        ""hn"": ""1901"",
-        ""an"": ""10"",
-        ""patientname"": ""นาง TEST19 TEST20"",
-        ""ward"": ""Ward J"",
-        ""bed"": ""6"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P018"",
-                ""orderitemname"": ""Package 18"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1902-11"",
-        ""hn"": ""1902"",
-        ""an"": ""11"",
-        ""patientname"": ""นาย TEST21 TEST22"",
-        ""ward"": ""Ward K"",
-        ""bed"": ""11"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P019"",
-                ""orderitemname"": ""Package 19"",
-                ""orderqty"": 2
-            },
-            {
-                ""orderitemcode"": ""P020"",
-                ""orderitemname"": ""Package 20"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1903-12"",
-        ""hn"": ""1903"",
-        ""an"": ""12"",
-        ""patientname"": ""นางสาว TEST23 TEST24"",
-        ""ward"": ""Ward L"",
-        ""bed"": ""17"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P021"",
-                ""orderitemname"": ""Package 21"",
-                ""orderqty"": 3
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1904-13"",
-        ""hn"": ""1904"",
-        ""an"": ""13"",
-        ""patientname"": ""นาย TEST25 TEST26"",
-        ""ward"": ""Ward M"",
-        ""bed"": ""20"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P022"",
-                ""orderitemname"": ""Package 22"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P023"",
-                ""orderitemname"": ""Package 23"",
-                ""orderqty"": 2
-            },
-            {
-                ""orderitemcode"": ""P024"",
-                ""orderitemname"": ""Package 24"",
-                ""orderqty"": 1
-            }
-        ]
     }
 ]";
+
 
             allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(jsonData);
             filteredPrescriptions = allPrescriptions.ToList();
@@ -527,11 +372,15 @@ namespace GD4_LED.page
                 Width = 80,
                 Height = 36,
                 Margin = new Thickness(0, 0, 8, 0),
-                Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Green
-                Foreground = Brushes.White,
-                BorderThickness = new Thickness(0),
-                FontSize = 12,
-                FontWeight = FontWeights.Bold
+                FontSize = 16,
+                Style = (Style)FindResource("PrintButtonStyle")
+
+                //Margin = new Thickness(0, 0, 8, 0),
+                //Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Green
+                //Foreground = Brushes.White,
+                //BorderThickness = new Thickness(0),
+                //FontSize = 12,
+                //FontWeight = FontWeights.Bold
             };
 
             // Cancel Button  
@@ -540,11 +389,15 @@ namespace GD4_LED.page
                 Content = "ยกเลิก",
                 Width = 80,
                 Height = 36,
-                Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)), // Red
-                Foreground = Brushes.White,
-                BorderThickness = new Thickness(0),
-                FontSize = 12,
-                FontWeight = FontWeights.Bold
+                FontSize = 16,
+                Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)),
+                Style = (Style)FindResource("PrintButtonStyle")
+
+
+                //Foreground = Brushes.White,
+                //BorderThickness = new Thickness(0),
+                //FontSize = 12,
+                //FontWeight = FontWeights.Bold
             };
 
             // Add button click events
@@ -665,7 +518,8 @@ namespace GD4_LED.page
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            PerformSearch();
+
+            //PerformSearch();
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -718,8 +572,117 @@ namespace GD4_LED.page
                 MessageBox.Show("ยกเลิกใบสั่งยาเรียบร้อยแล้ว", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        private void Rx_OnTriggerReceived(string data)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                try
+                {
+
+
+
+                    var incoming = JsonConvert.DeserializeObject<List<Prescription>>(data);
+
+                    foreach (var p in incoming)
+                    {
+
+                        var existing = allPrescriptions.FirstOrDefault(x => x.PrescriptionNo == p.PrescriptionNo);
+
+                        if (existing != null)
+                        {
+
+                            existing.HN = p.HN;
+                            existing.PatientName = p.PatientName;
+                            existing.Ward = p.Ward;
+                            existing.Bed = p.Bed;
+                            existing.Status = p.Status;
+
+                            foreach (var pkg in p.Package)
+                            {
+                                var existPkg = existing.Package.FirstOrDefault(x => x.OrderItemCode == pkg.OrderItemCode);
+                                if (existPkg != null)
+                                {
+                                    // อัปเดท orderqty
+                                    existPkg.OrderQty = pkg.OrderQty;
+                                }
+                                else
+                                {
+                                    existing.Package.Add(pkg);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // เพิ่ม prescription ใหม่
+                            allPrescriptions.Add(p);
+
+                        }
+                    }
+                    filteredPrescriptions = allPrescriptions.ToList();
+                    DisplayPrescriptions();
+                    UpdateStatistics();
+                    // Parse JSON array
+                    //var arr = Newtonsoft.Json.Linq.JArray.Parse(data);
+
+
+                    //allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(data);
+
+                    //filteredPrescriptions = allPrescriptions.ToList();
+                    //DisplayPrescriptions();
+                    //UpdateStatistics();
+                    //foreach (var item in arr)
+                    //{
+                    //    string prescriptionno = item["prescriptionno"]?.ToString();
+                    //    string hn = item["hn"]?.ToString();
+                    //    string patientname = item["patientname"]?.ToString();
+                    //    string ward = item["ward"]?.ToString();
+                    //    string bed = item["bed"]?.ToString();
+                    //    string status = item["status"]?.ToString();
+
+                    //    //MessageBox.Show(
+                    //    //    $"HN: {hn}\nPatient: {patientname}\nWard: {ward}\nBed: {bed}\nStatus: {status}\nPrescription: {prescriptionno}"
+                    //    //);
+
+                    //    //  package
+                    //    foreach (var pkg in item["package"])
+                    //    {
+                    //        string code = pkg["orderitemcode"]?.ToString();
+                    //        string name = pkg["orderitemname"]?.ToString();
+                    //        string qty = pkg["orderqty"]?.ToString();
+
+                    //        //MessageBox.Show($"Package: {code} - {name} x{qty}");
+                    //    }
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("JSON parse error: " + ex.Message);
+                }
+            });
+        }
+
+
+        // ทำลาย Resources เมื่อหน้าถูกปิด
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_RX != null)
+            {
+                _RX.OnTriggerReceived -= Rx_OnTriggerReceived;
+            }
+
+            // หยุด Animations
+            var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
+            loadingStoryboard?.Stop();
+        }
+
     }
 
+
+    //allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(data);
+    //            filteredPrescriptions = allPrescriptions.ToList();
+    //            DisplayPrescriptions();
+    //UpdateStatistics();
     // Helper class for ScrollViewer animation
     public static class ScrollViewerBehavior
     {
@@ -745,19 +708,12 @@ namespace GD4_LED.page
                 scrollViewer.ScrollToVerticalOffset((double)e.NewValue);
             }
         }
-        
 
 
 
 
-        //private void Rx_OnTriggerReceived(string data)
-        //{
-        //    // Dispatcher.Invoke จะเรียกโค้ดนี้บน UI thread
-        //    Dispatcher.Invoke(() =>
-        //    {
-        //        MessageBox.Show("Received: " + data);
-        //    });
-        //}
+
+
 
 
         //private void Button_Click(object sender, RoutedEventArgs e)

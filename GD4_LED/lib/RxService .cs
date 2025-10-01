@@ -1,4 +1,5 @@
-﻿using SocketIOClient;
+﻿using Newtonsoft.Json.Linq;
+using SocketIOClient;
 using System;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ public class RxService : IDisposable
 
     public RxService()
     {
-        _socket = new SocketIOClient.SocketIO("http://127.0.0.1:6426", new SocketIOClient.SocketIOOptions
+        _socket = new SocketIOClient.SocketIO("http://127.0.0.1:6430", new SocketIOClient.SocketIOOptions
         {
             Transport = SocketIOClient.Transport.TransportProtocol.WebSocket
         });
@@ -22,18 +23,56 @@ public class RxService : IDisposable
         };
 
         // รับ event trigger-queue
+        //_socket.On("trigger-queue", response =>
+        //{
+        //    try
+        //    {
+        //        var data = response.GetValue<string>();
+        //        OnTriggerReceived?.Invoke(data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Error parsing data: " + ex.Message);
+        //    }
+        //});
+
+        //_socket.On("trigger-queue", response =>
+        //{
+        //    try
+        //    {
+        //        // ดึงค่ามาเป็น string JSON
+        //        string raw = response.GetValue<string>();
+
+        //        // ส่งต่อให้ WPF
+        //        OnTriggerReceived?.Invoke(raw);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Error in trigger-queue: " + ex.Message);
+        //    }
+        //});
+
         _socket.On("trigger-queue", response =>
         {
             try
             {
-                var data = response.GetValue<string>();
-                OnTriggerReceived?.Invoke(data);
+                var arr = response.GetValue<object[]>();   // System.Text.Json deserialize
+                string raw = System.Text.Json.JsonSerializer.Serialize(arr); // แปลงกลับเป็น string JSON
+
+                Console.WriteLine("RAW trigger-queue: " + raw);
+
+                // Parse ด้วย Newtonsoft
+                JArray jarr = JArray.Parse(raw);
+
+                OnTriggerReceived?.Invoke(jarr.ToString());
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error parsing data: " + ex.Message);
+                Console.WriteLine("Error parsing trigger-queue: " + ex.Message);
             }
         });
+
+
 
         ConnectAsync();
     }
