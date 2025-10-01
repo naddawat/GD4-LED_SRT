@@ -526,7 +526,7 @@
                                               x:Name="AutoPrintToggle" VerticalAlignment="Center"/>
                                 </Grid>
 
-                                <Grid>
+                                <!--<Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -540,12 +540,12 @@
 
                                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" 
                                               x:Name="PrintPrescriptionToggle" VerticalAlignment="Center"/>
-                                </Grid>
+                                </Grid>-->
                             </StackPanel>
                         </Border>
 
                         <!-- System Settings -->
-                        <Border Background="#F8F9FA" CornerRadius="8" Padding="20">
+                        <!--<Border Background="#F8F9FA" CornerRadius="8" Padding="20">
                             <StackPanel>
                                 <TextBlock Text="⚙️ ระบบ" FontSize="16" FontWeight="SemiBold" 
                                            Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>
@@ -582,7 +582,7 @@
                                               x:Name="DarkModeToggle" VerticalAlignment="Center"/>
                                 </Grid>
                             </StackPanel>
-                        </Border>
+                        </Border>-->
 
                         <!-- Save Button -->
                         <Button Content="💾 บันทึกการตั้งค่า" Style="{StaticResource PrimaryButtonStyle}" 
