@@ -50,11 +50,31 @@ D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Documents\งาน รพ.สุราษ\GD4_LED\GD4_LED\obj\Debug\GD4_LED.pdb
 <<<<<<< HEAD
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.config
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePageHistory.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\PopupRefill.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\SettingsPage.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\StockWindow.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\MainWindow.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePageHistory.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\Page1.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\PopupRefill.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\SettingsPage.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\StockWindow.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\App.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED_MarkupCompile.cache
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED_MarkupCompile.lref
+=======
+>>>>>>> 6750b246a385f21ccf45d6d296db3a76d3ed439c
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.config
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.pdb
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\BouncyCastle.Cryptography.dll
-D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\EngineIoClientDotNet.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Google.Protobuf.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\K4os.Compression.LZ4.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\K4os.Compression.LZ4.Streams.dll
@@ -62,6 +82,10 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\K4os.Hash.xxHash.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\MySql.Data.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Newtonsoft.Json.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIO.Core.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIO.Serializer.Core.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIO.Serializer.SystemTextJson.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIOClient.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Buffers.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Configuration.ConfigurationManager.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Diagnostics.DiagnosticSource.dll
@@ -69,7 +93,11 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.IO.Pipelines.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Memory.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Numerics.Vectors.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Encodings.Web.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Json.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Threading.Tasks.Extensions.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.ValueTuple.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\WebSocket4Net.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ZstdSharp.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\BouncyCastle.Cryptography.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.pdb
@@ -82,6 +110,7 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\K4os.Hash.xxHash.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\MySql.Data.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Newtonsoft.Json.xml
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIOClient.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Buffers.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Configuration.ConfigurationManager.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Diagnostics.DiagnosticSource.xml
@@ -89,21 +118,13 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.IO.Pipelines.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Memory.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Numerics.Vectors.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Encodings.Web.xml
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Json.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Threading.Tasks.Extensions.xml
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.baml
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\PopupRefill.baml
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\StockWindow.baml
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\MainWindow.g.cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.g.cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\PopupRefill.g.cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\StockWindow.g.cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\App.g.cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GeneratedInternalTypeHelper.g.cs
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED_MarkupCompile.cache
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED_MarkupCompile.lref
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.ValueTuple.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\App.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\MainWindow.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\Page1.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.g.resources
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.Properties.Resources.resources
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.GenerateResource.cache
@@ -189,5 +210,4 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csp
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
-=======
 >>>>>>> 64d1e7a45e6464c92f6e6840519094642e6cea52

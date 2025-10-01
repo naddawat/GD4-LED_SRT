@@ -23,17 +23,104 @@ namespace GD4_LED.page
     /// </summary>
     public partial class DispensePageHistory : Page
     {
-        private readonly RxService _RX;
+        //private readonly RxService _RX;
         private List<Prescription> allPrescriptions = new List<Prescription>();
         private List<Prescription> filteredPrescriptions = new List<Prescription>();
+        private bool _isLoading = true;
         public DispensePageHistory()
         {
             InitializeComponent();
-            SetupSmoothScrolling();
-            LoadPrescriptions();
-            UpdateStatistics();
-            _RX = new RxService();
+            // เริ่ม Loading Animation
+            StartLoadingAnimation();
+
+            // โหลดข้อมูลแบบ Async
+            _ = InitializePageAsync();
+            //_RX = new RxService();
         }
+
+
+        private void StartLoadingAnimation()
+        {
+            // เริ่ม Animation หมุนของไอคอน
+            var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
+            loadingStoryboard.Begin();
+
+            // เริ่ม Fade In Animation สำหรับ Loading
+            var fadeInStoryboard = (Storyboard)this.Resources["FadeInLoading"];
+            fadeInStoryboard.Begin();
+        }
+
+        private async Task InitializePageAsync()
+        {
+            try
+            {
+                // แสดง Loading อย่างน้อย 1.5 วินาที เพื่อให้เห็น Animation
+                var minimumLoadingTime = Task.Delay(500);
+
+                // โหลดข้อมูลจริง
+                var dataLoadingTask = LoadDataAsync();
+
+                // รอให้ทั้งสองงานเสร็จ
+                await Task.WhenAll(minimumLoadingTime, dataLoadingTask);
+
+                // ซ่อน Loading และแสดงเนื้อหาหลัก
+                await HideLoadingAndShowContent();
+            }
+            catch (Exception ex)
+            {
+                // จัดการ Error
+                MessageBox.Show($"เกิดข้อผิดพลาดในการโหลดข้อมูล: {ex.Message}",
+                              "ข้อผิดพลาด", MessageBoxButton.OK, MessageBoxImage.Error);
+                await HideLoadingAndShowContent();
+            }
+        }
+
+        private async Task LoadDataAsync()
+        {
+            // ใช้ Task.Run เพื่อไม่ให้ UI ค้าง
+            await Task.Run(async () =>
+            {
+                // โหลดข้อมูลใน Background Thread
+                await Task.Delay(100); // จำลองการโหลดข้อมูล
+
+                // กลับมาที่ UI Thread เพื่ออัพเดท UI
+                Dispatcher.Invoke(() =>
+                {
+                    SetupSmoothScrolling();
+                    LoadPrescriptions();
+                    UpdateStatistics();
+                    //_RX = new RxService();
+
+                    // Subscribe event
+                    //_RX.OnTriggerReceived += Rx_OnTriggerReceived;
+                });
+            });
+        }
+
+        private async Task HideLoadingAndShowContent()
+        {
+            // หยุด Loading Animation
+            var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
+            loadingStoryboard.Stop();
+
+            // Fade Out Loading
+            var fadeOutStoryboard = (Storyboard)this.Resources["FadeOutLoading"];
+            fadeOutStoryboard.Begin();
+
+            // รอให้ Fade Out เสร็จ
+            await Task.Delay(300);
+
+            // ซ่อน Loading Overlay
+            LoadingOverlay.Visibility = Visibility.Collapsed;
+
+            // เริ่ม Slide Up Animation สำหรับเนื้อหาหลัก
+            var slideUpStoryboard = (Storyboard)this.Resources["SlideUpAnimation"];
+            slideUpStoryboard.Begin();
+
+            _isLoading = false;
+        }
+
+
 
         private void SetupSmoothScrolling()
         {
@@ -691,6 +778,19 @@ namespace GD4_LED.page
 
             DisplayPrescriptions();
             UpdateStatistics();
+        }
+
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            //if (_RX != null)
+            //{
+            //    _RX.OnTriggerReceived -= Rx_OnTriggerReceived;
+            //}
+
+            // หยุด Animations
+            var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
+            loadingStoryboard?.Stop();
         }
 
         private void PrintPrescription(Prescription prescription)
