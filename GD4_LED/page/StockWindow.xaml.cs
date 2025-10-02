@@ -318,7 +318,7 @@ namespace GD4_LED.page
                 SelectedDrug = drugData;
                 DrugStockGroupModel drug = drugData as DrugStockGroupModel;
 
-                DataTable dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.comname);
+                DataTable dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.shelfzone);
                 if (dt_stock.Rows.Count > 0)
                 {
                     int _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());

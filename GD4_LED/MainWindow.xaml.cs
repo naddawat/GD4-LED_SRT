@@ -32,12 +32,27 @@ namespace GD4_LED
         {
             InitializeComponent();
 
+            clsvariable.comname = Environment.MachineName;
+            clsvariable.comname = "GD4-ILED1";
+            clsvariable.dt_LedConfig = _STK.GetLedConfig(clsvariable.comname);
+            if (clsvariable.dt_LedConfig.Rows.Count > 0)
+            {
+                clsvariable.comport = clsvariable.dt_LedConfig.Rows[0]["serial_port"].ToString();
+            }
             // สร้าง SerialCan แค่ครั้งเดียว
             if (clsvariable.Instance.SerialCan == null)
             {
                 clsvariable.Instance.SerialCan = new ClsSubSerial();
                 clsvariable.Instance.SerialCan.init("COM3");
             }
+
+            clsvariable.dt_Ledinfo = _STK.GetLedInfo(clsvariable.comname);
+            if (clsvariable.dt_Ledinfo.Rows.Count > 0)
+            {
+                txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+                clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+            }
+
             //_var.SerialCan = new ClsSubSerial();
             //_var.SerialCan.init("COM3");
         }
@@ -52,21 +67,12 @@ namespace GD4_LED
             //_var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
             
             string datetimeNow = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            clsvariable.comname = Environment.MachineName;
-            clsvariable.comname = "GD4-ILED1";
-
+            
             SetWindowToSecondaryScreen();
             SetActiveTab(DispenseButton);
             MainFrame.Navigate(new DispensePage());
             txtdevice.Text = _Man.getDeviceName();
             txtdatetime.Text = datetimeNow;
-
-            clsvariable.dt_Ledinfo = _STK.GetLedInfo(clsvariable.comname);
-            if(clsvariable.dt_Ledinfo.Rows.Count > 0)
-            {
-                txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
-                clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
-            }
 
             if (txtdevice.Text.Length > 0) // method ที่คุณเขียนไว้เช็คการต่อ
             {

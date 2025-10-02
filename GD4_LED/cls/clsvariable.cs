@@ -13,6 +13,7 @@ namespace GD4_LED.cls
         public ClsSubSerial SerialCan;
         public static string comname = "";
         public static string shelfzone = "";
+        public static string comport = "";
         private static clsvariable _instance;
         public static clsvariable Instance
         {
@@ -27,5 +28,6 @@ namespace GD4_LED.cls
         private clsvariable() { }
 
         public static DataTable dt_Ledinfo = new DataTable();
+        public static DataTable dt_LedConfig = new DataTable();
     }
 }

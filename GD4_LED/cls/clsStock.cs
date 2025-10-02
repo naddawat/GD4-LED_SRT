@@ -61,6 +61,17 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
+        public DataTable GetLedConfig(string comname)
+        {
+
+            SQL = $@" SELECT *
+            FROM
+              ms_ledconfig ms
+              
+            Where ms.comname = '{comname}' ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
         public DataTable GetLocation(string code,string device)
         {
 

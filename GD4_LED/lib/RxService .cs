@@ -12,7 +12,7 @@ public class RxService : IDisposable
 
     public RxService()
     {
-        _socket = new SocketIOClient.SocketIO("http://127.0.0.1:6430", new SocketIOClient.SocketIOOptions
+        _socket = new SocketIOClient.SocketIO("http://10.32.242.69:6430", new SocketIOClient.SocketIOOptions
         {
             Transport = SocketIOClient.Transport.TransportProtocol.WebSocket
         });
