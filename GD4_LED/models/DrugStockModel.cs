@@ -1,5 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 
+// Model สำหรับ Lot Detail
+public class LotDetail
+{
+    public string lot { get; set; }
+    public string exp { get; set; }
+    public int Quantity { get; set; }
+}
+
+// Model สำหรับกลุ่มยาที่มี code เดียวกัน
+public class DrugStockGroupModel
+{
+    public string drugCode { get; set; }
+    public string drugName { get; set; }
+    public string drugPosition { get; set; }
+    public string location { get; set; }
+    public int min { get; set; }
+    public int max { get; set; }
+    public List<LotDetail> LotDetails { get; set; }
+    public int TotalQuantity { get; set; }
+    public double Percent { get; set; }
+}
+
+// Model เดิมสำหรับข้อมูลดิบ
 public class DrugStockModel
 {
     public string location { get; set; }

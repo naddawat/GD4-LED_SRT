@@ -6,197 +6,410 @@
       mc:Ignorable="d"
       d:DesignHeight="900" d:DesignWidth="800"
       Background="{StaticResource BackgroundGray}">
+    <Page.Resources>
+        <!-- Loading Animation -->
+        <Storyboard x:Key="LoadingAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="LoadingIcon"
+                           Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                           From="0" To="360" Duration="0:0:2"/>
+        </Storyboard>
+
+        <!-- Fade In Animation for Loading -->
+        <Storyboard x:Key="FadeInLoading">
+            <DoubleAnimation Storyboard.TargetName="LoadingOverlay"
+                           Storyboard.TargetProperty="Opacity"
+                           From="0" To="1" Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <!-- Slide Up Animation for Main Content -->
+        <Storyboard x:Key="SlideUpAnimation">
+            <DoubleAnimation Storyboard.TargetName="MainContentTransform"
+                           Storyboard.TargetProperty="Y"
+                           From="100" To="0" Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="MainContent"
+                           Storyboard.TargetProperty="Opacity"
+                           From="0" To="1" Duration="0:0:0.4"/>
+        </Storyboard>
+
+        <!-- Fade Out Animation for Loading -->
+        <Storyboard x:Key="FadeOutLoading">
+            <DoubleAnimation Storyboard.TargetName="LoadingOverlay"
+                           Storyboard.TargetProperty="Opacity"
+                           From="1" To="0" Duration="0:0:0.3"/>
+        </Storyboard>
+    </Page.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="24"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid x:Name="MainContent" Opacity="1">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="MainContentTransform" Y="100"/>
+            </Grid.RenderTransform>
 
-        <!-- Search and Filter Section - Fixed at top -->
-        <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="187*"/>
-                    <ColumnDefinition Width="161*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" 
+            <!-- Search and Filter Section - Fixed at top -->
+            <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="187*"/>
+                        <ColumnDefinition Width="161*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" 
                            Text="Stock LED" 
                            Style="{StaticResource SubHeaderTextStyle}" 
                            Grid.ColumnSpan="2"/>
 
-                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,24,0,0" Grid.RowSpan="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="120"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,24,0,0" Grid.RowSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <!--<ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="120"/>-->
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Search TextBox with simplified placeholder -->
-                    <Border Grid.Column="0" 
+                        <!-- Search TextBox with simplified placeholder -->
+                        <Border Grid.Column="0" 
                             Background="White" 
                             CornerRadius="8"
                             BorderBrush="{StaticResource TextSecondary}"
                             BorderThickness="1"
                             Height="48">
-                        <Grid>
-                            <TextBlock Text="Med code/name" 
+                            <Grid>
+                                <TextBlock Text="Med code/name" 
                                        Foreground="{StaticResource TextSecondary}"
                                        Margin="16,0,0,0"
                                        VerticalAlignment="Center"
                                        x:Name="SearchPlaceholder"/>
-                            <TextBox Background="Transparent"
+                                <TextBox Background="Transparent"
                                      BorderThickness="0"
                                      FontSize="14"
                                      Padding="16,12"
                                      VerticalAlignment="Center"
                                      x:Name="SearchTextBox"
                                      KeyDown="SearchTextBox_KeyDown"/>
-                        </Grid>
-                    </Border>
-
-                    <!-- Date Picker -->
-
-                    <Button Grid.Column="4" 
-                            Content="ค้นหา" 
-                            Style="{StaticResource PrimaryButtonStyle}"
-                            Height="48"/>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <!-- Summary Statistics - Fixed at top -->
-        <Grid Grid.Row="2" Margin="0,0,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="6*"/>
-                <RowDefinition Height="43*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Grid.RowSpan="2">
-                <StackPanel>
-                    <TextBlock Text="ต้องเติม" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding LowStockCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
-                </StackPanel>
-            </Border>
-
-            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Grid.RowSpan="2">
-                <StackPanel>
-                    <TextBlock Text="ใกล้หมดอายุ" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Error}"/>
-                </StackPanel>
-            </Border>
-
-            <Border Grid.Column="4" Style="{StaticResource CardStyle}" Grid.RowSpan="2">
-                <StackPanel>
-                    <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding TotalCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
-                </StackPanel>
-            </Border>
-        </Grid>
-
-        <!-- Medicine Cards with Smooth Scrolling -->
-        <ScrollViewer Grid.Row="4" 
-                      VerticalScrollBarVisibility="Auto" 
-                      HorizontalScrollBarVisibility="Disabled"
-                      Margin="0,0,0,0"
-                      PanningMode="VerticalOnly"
-                      IsManipulationEnabled="True"
-                      x:Name="StockScrollViewer">
-            <ItemsControl ItemsSource="{Binding DrugStocks}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding drugPosition, StringFormat=ตำแหน่ง: {0}}" Style="{StaticResource SecondaryTextStyle}"/>
-                                    <TextBlock Text="{Binding drugCode, StringFormat=Code: {0}}" Style="{StaticResource BodyTextStyle}" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding drugName, StringFormat=ชื่อยา: {0}}" Style="{StaticResource BodyTextStyle}"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding lot, StringFormat=Lot: {0}}" Style="{StaticResource BodyTextStyle}"/>
-                                    <TextBlock Text="{Binding exp, StringFormat=Exp: {0}}" Style="{StaticResource BodyTextStyle}"/>
-                                    <TextBlock Text="{Binding Quantity, StringFormat=คงเหลือ: {0}}" 
-                                               Style="{StaticResource BodyTextStyle}" 
-                                               Foreground="{Binding Quantity, Converter={StaticResource QuantityToColorConverter}}"/>
-
-                                    <!-- Progress Bar Section -->
-                                    <Grid Margin="0,8,0,0" Name="ProgressContainer">
-                                        <Border Background="#F0F0F0" CornerRadius="10" Height="20">
-                                            <Grid>
-                                                <!-- Progress Bar -->
-                                                <Border Background="{Binding Percent, Converter={StaticResource PercentToColorConverter}}" 
-                                                        CornerRadius="10"
-                                                        HorizontalAlignment="Left">
-                                                    <Border.Width>
-                                                        <MultiBinding Converter="{StaticResource PercentToActualWidthConverter}">
-                                                            <Binding Path="Percent"/>
-                                                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}"/>
-                                                        </MultiBinding>
-                                                    </Border.Width>
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Percent, Converter={StaticResource LessThanConverter}, ConverterParameter=1}" Value="True">
-                                                                    <Setter Property="Width" Value="2"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-                                                </Border>
-
-                                                <!-- Text Overlay -->
-                                                <TextBlock Text="{Binding Percent, StringFormat={}{0:F1}%}" 
-                                                           HorizontalAlignment="Center" 
-                                                           VerticalAlignment="Center"
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{Binding Percent, Converter={StaticResource ProgressTextColorConverter}}"/>
-                                            </Grid>
-                                        </Border>
-                                    </Grid>
-
-                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                        <!-- ตัวอย่าง min/max สมมุติ -->
-                                        <TextBlock Text="{Binding min, StringFormat=Min: {0}}" Style="{StaticResource SecondaryTextStyle}" Margin="0,0,8,0"/>
-                                        <TextBlock Text="{Binding max, StringFormat=Max: {0}}" Style="{StaticResource SecondaryTextStyle}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <Button Grid.Column="2" 
-        Content="เติมยา" 
-        Style="{StaticResource PrimaryButtonStyle}" 
-        Width="100" 
-        Height="40"
-        VerticalAlignment="Center" 
-        Margin="16,0,0,0"
-        Click="RefillMedicine_Click"/>
                             </Grid>
                         </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+
+                        <!-- ComboBox -->
+                        <Border Grid.Column="2" 
+                                Background="White" 
+                                CornerRadius="8"
+                                BorderBrush="{StaticResource TextSecondary}"
+                                BorderThickness="1"
+                                Height="48">
+                            <Grid>
+                                <TextBlock Text="เลือกแถว" 
+                                           Foreground="{StaticResource TextSecondary}"
+                                           Margin="16,0,0,0"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox Width="180"
+                                          Height="40"
+                                          BorderThickness="0"
+                                          FontSize="20"
+                                          x:Name="RowSelector"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          ItemContainerStyle="{StaticResource ModernComboBoxItemStyle}"
+                                          HorizontalContentAlignment="Left"
+                                          VerticalContentAlignment="Center"
+                                          SelectionChanged="RowSelector_SelectionChanged">
+                                    <ComboBoxItem Content="ALL"/>
+                                    <ComboBoxItem Content="แถวที่ 1"/>
+                                    <ComboBoxItem Content="แถวที่ 2"/>
+                                    <ComboBoxItem Content="แถวที่ 3"/>
+                                    <ComboBoxItem Content="แถวที่ 4"/>
+                                    <ComboBoxItem Content="แถวที่ 5"/>
+                                    <ComboBoxItem Content="แถวที่ 6"/>
+                                    <ComboBoxItem Content="แถวที่ 7"/>
+                                    <ComboBoxItem Content="แถวที่ 8"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- ปุ่มค้นหา (ซ่อนไว้) -->
+                        <Button Grid.Column="4" 
+                                Content="ค้นหา" 
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Height="48"
+                                Visibility="Collapsed"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Summary Statistics - Fixed at top -->
+            <Grid Grid.Row="2" Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="6*"/>
+                    <RowDefinition Height="43*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Card ต้องเติม -->
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Grid.RowSpan="2" 
+                        Cursor="Hand" MouseLeftButtonDown="LowStockCard_Click">
+                    <StackPanel>
+                        <TextBlock Text="ต้องเติม" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding LowStockCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card ใกล้หมดอายุ -->
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Grid.RowSpan="2" 
+                        Cursor="Hand" MouseLeftButtonDown="NearExpiryCard_Click">
+                    <StackPanel>
+                        <TextBlock Text="ใกล้หมดอายุ" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding NearExpiryCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Error}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card ทั้งหมด -->
+                <Border Grid.Column="4" Style="{StaticResource CardStyle}" Grid.RowSpan="2" 
+                        Cursor="Hand" MouseLeftButtonDown="TotalCard_Click">
+                    <StackPanel>
+                        <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TotalCount}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Medicine Cards with Smooth Scrolling -->
+            <ScrollViewer Grid.Row="4" 
+                          VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled"
+                          Margin="0,0,0,0"
+                          PanningMode="VerticalOnly"
+                          IsManipulationEnabled="True"
+                          x:Name="StockScrollViewer">
+                <ItemsControl ItemsSource="{Binding DrugStocks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" 
+                                    Cursor="Hand" MouseLeftButtonDown="DrugCard_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ข้อมูลยา -->
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding drugPosition, StringFormat=ตำแหน่ง: {0}}" 
+                                                   Style="{StaticResource SecondaryTextStyle}"/>
+                                        <TextBlock Text="{Binding drugCode, StringFormat=Code: {0}}" 
+                                                   Style="{StaticResource BodyTextStyle}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding drugName, StringFormat=ชื่อยา: {0}}" 
+                                                   Style="{StaticResource BodyTextStyle}"/>
+                                    </StackPanel>
+
+                                    <!-- ข้อมูล Lot และ Progress -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <!-- แสดงข้อมูล Lot และ Exp ทุก Lot -->
+                                        <ItemsControl ItemsSource="{Binding LotDetails}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="0,0,0,8">
+                                                        <TextBlock Text="{Binding lot, StringFormat=Lot: {0}}" 
+                                                                   Style="{StaticResource BodyTextStyle}"/>
+                                                        <TextBlock Text="{Binding exp, StringFormat=Exp: {0}}" 
+                                                                   Style="{StaticResource BodyTextStyle}"/>
+                                                        <TextBlock Text="{Binding Quantity, StringFormat=คงเหลือ: {0}}" 
+                                                                   Style="{StaticResource BodyTextStyle}" 
+                                                                   Foreground="{Binding Quantity, Converter={StaticResource QuantityToColorConverter}}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <!-- Progress Bar Section -->
+                                        <Grid Margin="0,8,0,0">
+                                            <Border Background="#F0F0F0" CornerRadius="10" Height="20">
+                                                <Grid>
+                                                    <!-- Progress Bar -->
+                                                    <Border Background="{Binding Percent, Converter={StaticResource PercentToColorConverter}}" 
+                                                            CornerRadius="10"
+                                                            HorizontalAlignment="Left">
+                                                        <Border.Width>
+                                                            <MultiBinding Converter="{StaticResource PercentToActualWidthConverter}">
+                                                                <Binding Path="Percent"/>
+                                                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}"/>
+                                                            </MultiBinding>
+                                                        </Border.Width>
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Percent, Converter={StaticResource LessThanConverter}, ConverterParameter=1}" Value="True">
+                                                                        <Setter Property="Width" Value="2"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                    </Border>
+
+                                                    <!-- Text Overlay -->
+                                                    <TextBlock Text="{Binding Percent, StringFormat={}{0:F1}%}" 
+                                                               HorizontalAlignment="Center" 
+                                                               VerticalAlignment="Center"
+                                                               FontSize="11"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{Binding Percent, Converter={StaticResource ProgressTextColorConverter}}"/>
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <TextBlock Text="{Binding min, StringFormat=Min: {0}}" 
+                                                       Style="{StaticResource SecondaryTextStyle}" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding max, StringFormat=Max: {0}}" 
+                                                       Style="{StaticResource SecondaryTextStyle}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- ปุ่มเติมยา (ซ่อนไว้) -->
+                                    <Button Grid.Column="2" 
+                                            Content="เติมยา" 
+                                            Style="{StaticResource PrimaryButtonStyle}" 
+                                            Width="100" 
+                                            Height="40"
+                                            VerticalAlignment="Center" 
+                                            Margin="16,0,0,0"
+                                            Click="RefillMedicine_Click"
+                                            Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1" d:IsHidden="True">
+            <Grid.Effect>
+                <BlurEffect Radius="0"/>
+            </Grid.Effect>
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- Modern Loading Icon -->
+                <Border Width="100" Height="100" 
+                        Background="White"
+                        CornerRadius="20"
+                        Margin="0,0,0,32">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" 
+                                        Direction="270" 
+                                        ShadowDepth="8" 
+                                        Opacity="0.1" 
+                                        BlurRadius="20"/>
+                    </Border.Effect>
+
+                    <Grid>
+                        <!-- Medicine Icon Background -->
+                        <Ellipse Width="60" Height="60" 
+                                Fill="Transparent"
+                                Stroke="#4285F4"
+                                StrokeThickness="4"
+                                StrokeDashArray="8,4"
+                                x:Name="LoadingIcon">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform CenterX="30" CenterY="30"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+
+                        <!-- Medicine Icon -->
+                        <Path Width="32" Height="32"
+                              Fill="#4285F4"
+                              Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top" Margin="38,39,0,0" RenderTransformOrigin="0.812,0.196"/>
+                    </Grid>
+                </Border>
+
+                <!-- Loading Text -->
+                <TextBlock Text="กำลังโหลดข้อมูล..." 
+                           FontSize="18"
+                           FontWeight="Medium"
+                           Foreground="#2C3E50"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,8"/>
+
+                <TextBlock Text="โปรดรอสักครู่..." 
+                           FontSize="14"
+                           Foreground="#7F8C8D"
+                           HorizontalAlignment="Center"/>
+
+                <!-- Progress Dots -->
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            Margin="0,24,0,0">
+                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4">
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                       From="0.3" To="1" Duration="0:0:0.6"
+                                                       AutoReverse="True"
+                                                       BeginTime="0:0:0"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+
+                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4">
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                       From="0.3" To="1" Duration="0:0:0.6"
+                                                       AutoReverse="True"
+                                                       BeginTime="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+
+                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4">
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                       From="0.3" To="1" Duration="0:0:0.6"
+                                                       AutoReverse="True"
+                                                       BeginTime="0:0:0.4"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>
