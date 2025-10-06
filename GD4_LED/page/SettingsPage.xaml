@@ -258,19 +258,19 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Text="Server:" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource InputFieldStyle}" x:Name="ServerTextBox" Text="localhost"/>
-
+                            <TextBox Grid.Row="0" Grid.Column="1"  x:Name="ServerTextBox" Text="localhost"/>
+                            <!--Style="{StaticResource InputFieldStyle}"-->
                             <TextBlock Grid.Row="2" Text="Port:" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource InputFieldStyle}" x:Name="PortTextBox" Text="1433"/>
+                            <TextBox Grid.Row="2" Grid.Column="1"  x:Name="PortTextBox" Text="1433"/>
 
                             <TextBlock Grid.Row="4" Text="Database:" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource InputFieldStyle}" x:Name="DatabaseTextBox" Text="MedicineDB"/>
+                            <TextBox Grid.Row="4" Grid.Column="1"  x:Name="DatabaseTextBox" Text="MedicineDB"/>
 
                             <TextBlock Grid.Row="6" Text="Username:" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource InputFieldStyle}" x:Name="UsernameTextBox" Text="admin"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" x:Name="UsernameTextBox" Text="admin"/>
 
                             <TextBlock Grid.Row="8" Text="Password:" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center"/>
-                            <PasswordBox Grid.Row="8" Grid.Column="1" Style="{StaticResource PasswordBoxStyle}" x:Name="PasswordBox"/>
+                            <PasswordBox Grid.Row="8" Grid.Column="1"  x:Name="PasswordBox"/>
 
                             <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal">
                                 <Button Content="ทดสอบการเชื่อมต่อ" Style="{StaticResource PrimaryButtonStyle}" 

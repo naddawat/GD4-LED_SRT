@@ -12,7 +12,7 @@ namespace GD4_LED.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -33,6 +33,19 @@ namespace GD4_LED.Properties {
             }
             set {
                 this["connectstring"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=kcmh-pharma.chula.or.th;Initial Catalog=led_demo;Persist Security Inf" +
+            "o=True;User ID=root;Password=Admin@gd4; Max Pool Size=10000;")]
+        public string connectstringlocal {
+            get {
+                return ((string)(this["connectstringlocal"]));
+            }
+            set {
+                this["connectstringlocal"] = value;
             }
         }
     }

@@ -44,7 +44,7 @@ namespace GD4_LED.page
         public string RefillNotes { get; set; }
         private bool _isLoading = true;
 
-        cls.clsStock _STK = new cls.clsStock();
+        cls.clsQuery _STK = new cls.clsQuery();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -165,6 +165,7 @@ namespace GD4_LED.page
                     TotalQuantity = (int)g.Sum(x => x.Quantity),
 
                     // คำนวณ Percent จากจำนวนรวมกับ max
+                    
                     Percent = g.First().max > 0
     ? Math.Min((double)g.Sum(x => x.Quantity) / (int)g.First().max * 100, 100)
     : 0
@@ -321,8 +322,16 @@ namespace GD4_LED.page
                 DataTable dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.shelfzone);
                 if (dt_stock.Rows.Count > 0)
                 {
-                    int _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                    clsvariable.Instance.SerialCan.SetLED(1, _id, 255, 0, 0);
+                    if(dt_stock.Rows[0]["position_id"].ToString() !="")
+                    {
+                        int _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                        clsvariable.Instance.SerialCan.SetLED(1, _id, 255, 0, 0);
+                    }
+                    else
+                    {
+                        
+                    }
+                   
                 }
 
                 ShowPopup(SelectedDrug);

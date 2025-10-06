@@ -39,6 +39,24 @@ public class DrugStockModel
     public double min { get; set; }
     public double max { get; set; }
 }
+public class Prescr
+{
+    public string prescriptionno { get; set; }
+    public string hn { get; set; }
+    public string an { get; set; }
+    public string patientname { get; set; }
+    public string ward { get; set; }
+    public string bed { get; set; }
+    public string status { get; set; }
+    public List<PackageItem> package { get; set; }
+}
+
+public class PackageItem
+{
+    public string orderitemcode { get; set; }
+    public string orderitemname { get; set; }
+    public int orderqty { get; set; }
+}
 
 public class RefillRecord
 {

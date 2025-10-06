@@ -1,13 +1,19 @@
-﻿using Microsoft.Win32;
+﻿using GD4_LED.cls;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+//using System.Drawing.Printing;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -16,10 +22,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
-using System.IO.Ports;
-//using System.Drawing.Printing;
-using System.Diagnostics.Eventing.Reader;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace GD4_LED.page
 {
@@ -30,6 +33,7 @@ namespace GD4_LED.page
     {
         private ObservableCollection<LedCabinetModel> ledCabinets;
         private int activeTabIndex = 0;
+        clsConfig _config = new clsConfig();
         public SettingsPage()
         {
             InitializeComponent();
@@ -38,7 +42,7 @@ namespace GD4_LED.page
             LoadSettings();
             LoadSerialPorts();
             LoadPrinters();
-
+            
         }
 
         private void LoadPrinters()
@@ -193,8 +197,39 @@ namespace GD4_LED.page
 
         private void LoadSettings()
         {
+            if (clsvariable.dt_LedConfig.Rows.Count <= 0)
+            {
+                clsvariable.dt_LedConfig = _config.GetLedConfig(clsvariable.comname);
+            }
+            else
+            {
+                if(clsvariable.print_isenable)
+                {
+                    AutoPrintToggle.IsChecked = true;
+                }
+                else
+                {
+                    AutoPrintToggle.IsChecked = false;
+                }
+                if(clsvariable.printname != "")
+                {
+                    CbPrinter.Items.Add(clsvariable.printname);
+                }
+
+                if(clsvariable.comport != "")
+                {
+                    CbSerialPort.Items.Add(clsvariable.comport);
+                }
+
+                ServerTextBox.Text = clsvariable.sever;
+                DatabaseTextBox.Text = clsvariable.database;
+                PortTextBox.Text = clsvariable.port;
+                UsernameTextBox.Text = clsvariable.username;
+                PasswordBox.Password = clsvariable.password;
+
+            }
             // Load existing settings from configuration
-            AutoPrintToggle.IsChecked = true;
+            
             //PrintPrescriptionToggle.IsChecked = false;
             //SoundNotificationToggle.IsChecked = true;
             //DarkModeToggle.IsChecked = false;
@@ -438,21 +473,21 @@ namespace GD4_LED.page
                 Margin = new Thickness(0, 10, 0, 0)
             };
 
-            var basicColors = new[]
-            {
-        new { Color = Colors.Red, Name = "แดง" },
-        new { Color = Colors.Orange, Name = "ส้ม" },
-        new { Color = Colors.Yellow, Name = "เหลือง" },
-        new { Color = Colors.Green, Name = "เขียว" },
-        new { Color = Colors.Blue, Name = "น้ำเงิน" },
-        new { Color = Colors.Purple, Name = "ม่วง" },
-        new { Color = Colors.Pink, Name = "ชมพู" },
-        new { Color = Colors.Brown, Name = "น้ำตาล" },
-        new { Color = Colors.Cyan, Name = "ฟ้า" },
-        new { Color = Colors.Black, Name = "ดำ" },
-        new { Color = Colors.Gray, Name = "เทา" },
-        new { Color = Colors.White, Name = "ขาว" }
-    };
+                    var basicColors = new[]
+                    {
+                new { Color = Colors.Red, Name = "แดง" },
+                new { Color = Colors.Orange, Name = "ส้ม" },
+                new { Color = Colors.Yellow, Name = "เหลือง" },
+                new { Color = Colors.Green, Name = "เขียว" },
+                new { Color = Colors.Blue, Name = "น้ำเงิน" },
+                new { Color = Colors.Purple, Name = "ม่วง" },
+                new { Color = Colors.Pink, Name = "ชมพู" },
+                new { Color = Colors.Brown, Name = "น้ำตาล" },
+                new { Color = Colors.Cyan, Name = "ฟ้า" },
+                new { Color = Colors.Black, Name = "ดำ" },
+                new { Color = Colors.Gray, Name = "เทา" },
+                new { Color = Colors.White, Name = "ขาว" }
+            };
 
             foreach (var colorInfo in basicColors)
             {
@@ -670,11 +705,44 @@ namespace GD4_LED.page
                 Style = CreateModernButtonStyle()
             };
 
+
+            // ปรับสีปุ่ม OK ให้บันทึกสีที่เลือก
             okButton.Click += (s, e4) =>
             {
                 clickedButton.Background = previewBorder.Background;
                 colorPickerDialog.Close();
             };
+
+            // ปุ่มเปิดไฟ/ปิดไฟ
+            lightToggle.Click += (s, e5) =>
+            {
+                if (lightToggle.IsChecked == true)
+                {
+                    // Logic to turn on the light
+                    //MessageBox.Show("เปิดไฟแล้ว", "Light Control",
+                    //MessageBoxButton.OK, MessageBoxImage.Information);
+                    int red = (int)redSlider.Value;
+                    int green = (int)greenSlider.Value;
+                    int blue = (int)blueSlider.Value;
+                    for (int i = 0; i < 6; i++)
+                    {
+                        clsvariable.Instance.SerialCan.SetLED(1, i, red, green, blue);
+                    }
+                    
+                }
+                else
+                {
+                    // Logic to turn off the light
+                    //MessageBox.Show("ปิดไฟแล้ว", "Light Control",
+                    //              MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    for (int i = 0; i < 6; i++)
+                    {
+                        clsvariable.Instance.SerialCan.SetLED(1, i, 0, 0, 0);
+                    }
+                }
+            };
+
 
             var cancelButton = new Button
             {

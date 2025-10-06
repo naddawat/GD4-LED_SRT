@@ -1,7 +1,9 @@
-﻿using GD4_LED.models;
+﻿using GD4_LED.cls;
+using GD4_LED.models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +29,7 @@ namespace GD4_LED.page
         private List<Prescription> allPrescriptions = new List<Prescription>();
         private List<Prescription> filteredPrescriptions = new List<Prescription>();
         private bool _isLoading = true;
+        clsQuery _query = new clsQuery();
         public DispensePageHistory()
         {
             InitializeComponent();
@@ -165,275 +168,47 @@ namespace GD4_LED.page
 
         private void LoadPrescriptions()
         {
-            string jsonData = @"[
-    {
-        ""prescriptionno"": ""1892-2"",
-        ""hn"": ""1892"",
-        ""an"": ""2"",
-        ""patientname"": ""นาย TEST1 TEST2"",
-        ""ward"": ""Ward A"",
-        ""bed"": ""12"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P001"",
-                ""orderitemname"": ""Package 1"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P002"",
-                ""orderitemcode"": ""Package 2"",
-                ""orderqty"": 2
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1893-1"",
-        ""hn"": ""1893"",
-        ""an"": ""1"",
-        ""patientname"": ""นาง TEST3 TEST4"",
-        ""ward"": ""Ward B"",
-        ""bed"": ""5"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P003"",
-                ""orderitemname"": ""Package 3"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1894-3"",
-        ""hn"": ""1894"",
-        ""an"": ""3"",
-        ""patientname"": ""นาย TEST5 TEST6"",
-        ""ward"": ""Ward C"",
-        ""bed"": ""8"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P004"",
-                ""orderitemname"": ""Package 4"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P005"",
-                ""orderitemname"": ""Package 5"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P006"",
-                ""orderitemname"": ""Package 6"",
-                ""orderqty"": 3
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1895-4"",
-        ""hn"": ""1895"",
-        ""an"": ""4"",
-        ""patientname"": ""นางสาว TEST7 TEST8"",
-        ""ward"": ""Ward D"",
-        ""bed"": ""15"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P007"",
-                ""orderitemname"": ""Package 7"",
-                ""orderqty"": 2
-            },
-            {
-                ""orderitemcode"": ""P008"",
-                ""orderitemname"": ""Package 8"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1896-5"",
-        ""hn"": ""1896"",
-        ""an"": ""5"",
-        ""patientname"": ""นาย TEST9 TEST10"",
-        ""ward"": ""Ward E"",
-        ""bed"": ""22"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P009"",
-                ""orderitemname"": ""Package 9"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1897-6"",
-        ""hn"": ""1897"",
-        ""an"": ""6"",
-        ""patientname"": ""นาง TEST11 TEST12"",
-        ""ward"": ""Ward F"",
-        ""bed"": ""7"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P010"",
-                ""orderitemname"": ""Package 10"",
-                ""orderqty"": 3
-            },
-            {
-                ""orderitemcode"": ""P011"",
-                ""orderitemname"": ""Package 11"",
-                ""orderqty"": 2
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1898-7"",
-        ""hn"": ""1898"",
-        ""an"": ""7"",
-        ""patientname"": ""นาย TEST13 TEST14"",
-        ""ward"": ""Ward G"",
-        ""bed"": ""18"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P012"",
-                ""orderitemname"": ""Package 12"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P013"",
-                ""orderitemname"": ""Package 13"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P014"",
-                ""orderitemname"": ""Package 14"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1899-8"",
-        ""hn"": ""1899"",
-        ""an"": ""8"",
-        ""patientname"": ""นางสาว TEST15 TEST16"",
-        ""ward"": ""Ward H"",
-        ""bed"": ""9"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P015"",
-                ""orderitemname"": ""Package 15"",
-                ""orderqty"": 2
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1900-9"",
-        ""hn"": ""1900"",
-        ""an"": ""9"",
-        ""patientname"": ""นาย TEST17 TEST18"",
-        ""ward"": ""Ward I"",
-        ""bed"": ""14"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P016"",
-                ""orderitemname"": ""Package 16"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P017"",
-                ""orderitemname"": ""Package 17"",
-                ""orderqty"": 4
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1901-10"",
-        ""hn"": ""1901"",
-        ""an"": ""10"",
-        ""patientname"": ""นาง TEST19 TEST20"",
-        ""ward"": ""Ward J"",
-        ""bed"": ""6"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P018"",
-                ""orderitemname"": ""Package 18"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1902-11"",
-        ""hn"": ""1902"",
-        ""an"": ""11"",
-        ""patientname"": ""นาย TEST21 TEST22"",
-        ""ward"": ""Ward K"",
-        ""bed"": ""11"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P019"",
-                ""orderitemname"": ""Package 19"",
-                ""orderqty"": 2
-            },
-            {
-                ""orderitemcode"": ""P020"",
-                ""orderitemname"": ""Package 20"",
-                ""orderqty"": 1
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1903-12"",
-        ""hn"": ""1903"",
-        ""an"": ""12"",
-        ""patientname"": ""นางสาว TEST23 TEST24"",
-        ""ward"": ""Ward L"",
-        ""bed"": ""17"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P021"",
-                ""orderitemname"": ""Package 21"",
-                ""orderqty"": 3
-            }
-        ]
-    },
-    {
-        ""prescriptionno"": ""1904-13"",
-        ""hn"": ""1904"",
-        ""an"": ""13"",
-        ""patientname"": ""นาย TEST25 TEST26"",
-        ""ward"": ""Ward M"",
-        ""bed"": ""20"",
-        ""status"": ""รอจัด"",
-        ""package"": [
-            {
-                ""orderitemcode"": ""P022"",
-                ""orderitemname"": ""Package 22"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P023"",
-                ""orderitemname"": ""Package 23"",
-                ""orderqty"": 2
-            },
-            {
-                ""orderitemcode"": ""P024"",
-                ""orderitemname"": ""Package 24"",
-                ""orderqty"": 1
-            }
-        ]
-    }
-]";
+            DataTable dtPrescriptions = new DataTable();
+            dtPrescriptions = _query.GetPrescrfinished(clsvariable.shelfzone);
+            List<Prescription> list = new List<Prescription>();
 
-            allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(jsonData);
-            filteredPrescriptions = allPrescriptions.ToList();
-            DisplayPrescriptions();
+            foreach (DataRow row in dtPrescriptions.Rows)
+            {
+                var prescriptions = dtPrescriptions.AsEnumerable()
+                .GroupBy(r => new
+                {
+                    prescriptionno = r["prescriptionno"].ToString(),
+                    hn = r["hn"].ToString(),
+                    an = r["an"].ToString(),
+                    patientname = r["patientname"].ToString(),
+                    ward = r["ward"].ToString(),
+                    bed = r["bed"].ToString()
+                })
+                .Select(g => new
+                {
+                    prescriptionno = g.Key.prescriptionno,
+                    hn = g.Key.hn,
+                    an = g.Key.an,
+                    patientname = g.Key.patientname,
+                    ward = g.Key.ward,
+                    bed = g.Key.bed,
+                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    package = g.Select(r => new
+                    {
+                        orderitemcode = r["orderitemcode"].ToString(),
+                        orderitemname = r["orderitemname"].ToString(),
+                        orderqty = Convert.ToInt32(r["orderqty"])
+                    }).ToList()
+                })
+                .ToList();
+
+                // แปลง JSON
+                string jsonResult = JsonConvert.SerializeObject(prescriptions, Formatting.Indented);
+
+                allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(jsonResult);
+                filteredPrescriptions = allPrescriptions.ToList();
+                DisplayPrescriptions();
+            }
         }
 
         private void UpdateStatistics()
@@ -611,11 +386,17 @@ namespace GD4_LED.page
                 Width = 80,
                 Height = 36,
                 Margin = new Thickness(0, 0, 8, 0),
-                Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Green
-                Foreground = Brushes.White,
-                BorderThickness = new Thickness(0),
-                FontSize = 12,
-                FontWeight = FontWeights.Bold
+                FontSize = 16,
+                Style = (Style)FindResource("PrintButtonStyle")
+                //Content = "ปริ้น",
+                //Width = 80,
+                //Height = 36,
+                //Margin = new Thickness(0, 0, 8, 0),
+                //Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Green
+                //Foreground = Brushes.White,
+                //BorderThickness = new Thickness(0),
+                //FontSize = 12,
+                //FontWeight = FontWeights.Bold
             };
 
             // Cancel Button  
@@ -628,7 +409,9 @@ namespace GD4_LED.page
                 Foreground = Brushes.White,
                 BorderThickness = new Thickness(0),
                 FontSize = 12,
-                FontWeight = FontWeights.Bold
+                FontWeight = FontWeights.Bold,
+                Visibility = Visibility.Collapsed
+
             };
 
             // Add button click events

@@ -31,7 +31,7 @@ namespace GD4_LED.page
         public string RefillNotes { get; set; }
 
         public object objDrug = new object();
-        clsStock clsst = new clsStock();
+        clsQuery clsst = new clsQuery();
         public PopupRefill(List<RefillRecord> _SelectedDrug)
         {
             InitializeComponent();
@@ -193,7 +193,7 @@ namespace GD4_LED.page
             // TODO: บันทึกข้อมูลลงฐานข้อมูล
             // ตัวอย่างการบันทึก:
             DataTable dt_stock = new DataTable();
-            dt_stock = clsst.GetLedStockByCode(DrugCodeText.Text, RefillLotTextBox.Text);
+            dt_stock = clsst.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
             bool sameLot = false;
             bool result = false;
             int qty_old = 0;
@@ -231,11 +231,15 @@ namespace GD4_LED.page
                     }
                 }
             }
+            else
+            {
+
+            }
 
             if (sameLot) // มี Lot เดิม
             {
                 RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
-                result = clsst.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber,refillRecord.ExpiryDate.ToString(),refillRecord.UserId);
+                result = clsst.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
             }
             else
             {

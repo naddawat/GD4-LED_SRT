@@ -14,7 +14,20 @@ namespace GD4_LED.cls
         public static string comname = "";
         public static string shelfzone = "";
         public static string comport = "";
+        public static string crp_report = "";
+        public static string printname = "";
+        public static bool print_isenable = false;
+        public static bool trigger_isenable = false;
+        public static string sever = "";
+        public static string database = "";
+        public static string port = "";
+        public static string username = "";
+        public static string password = "";
+        public static string connectionST = "";
         private static clsvariable _instance;
+        public static string[] RGD_dispense;
+        public static string Button_event = "";
+        public string[] StrU_array = new string[3];
         public static clsvariable Instance
         {
             get

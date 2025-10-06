@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GD4_LED.cls;
+using GD4_LED.page;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using GD4_LED.cls;
-using GD4_LED.page;
-
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace GD4_LED
 {
@@ -25,34 +17,22 @@ namespace GD4_LED
     public partial class MainWindow : Window
     {        
         clsMain _Man = new clsMain();
-        clsStock _STK = new clsStock();
+        clsQuery _STK = new clsQuery();
         clsutilDB _con = new clsutilDB();
-        
+        clsConfig _config = new clsConfig();
         public MainWindow()
         {
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
             clsvariable.comname = "GD4-ILED1";
-            clsvariable.dt_LedConfig = _STK.GetLedConfig(clsvariable.comname);
-            if (clsvariable.dt_LedConfig.Rows.Count > 0)
-            {
-                clsvariable.comport = clsvariable.dt_LedConfig.Rows[0]["serial_port"].ToString();
-            }
+           
             // สร้าง SerialCan แค่ครั้งเดียว
             if (clsvariable.Instance.SerialCan == null)
             {
                 clsvariable.Instance.SerialCan = new ClsSubSerial();
                 clsvariable.Instance.SerialCan.init("COM3");
             }
-
-            clsvariable.dt_Ledinfo = _STK.GetLedInfo(clsvariable.comname);
-            if (clsvariable.dt_Ledinfo.Rows.Count > 0)
-            {
-                txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
-                clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
-            }
-
             //_var.SerialCan = new ClsSubSerial();
             //_var.SerialCan.init("COM3");
         }
@@ -73,6 +53,48 @@ namespace GD4_LED
             MainFrame.Navigate(new DispensePage());
             txtdevice.Text = _Man.getDeviceName();
             txtdatetime.Text = datetimeNow;
+
+            clsvariable.dt_LedConfig = _config.GetLedConfig(clsvariable.comname);
+            if (clsvariable.dt_LedConfig.Rows.Count > 0)
+            {
+                clsvariable.RGD_dispense = clsvariable.dt_LedConfig.Rows[0]["RGB_dispense"].ToString().Split('|');
+                clsvariable.comport = clsvariable.dt_LedConfig.Rows[0]["serial_port"].ToString();
+                clsvariable.crp_report = clsvariable.dt_LedConfig.Rows[0]["crp_report"].ToString();
+                if (clsvariable.dt_LedConfig.Rows[0]["print_isenable"].ToString() == "Y")
+                {
+                    clsvariable.print_isenable = true;
+                }
+                else
+                {
+                    clsvariable.print_isenable = false;
+                }
+
+                if (clsvariable.dt_LedConfig.Rows[0]["trigger_isenable"].ToString() == "Y")
+                {
+                    clsvariable.trigger_isenable = true;
+                }
+                else
+                {
+                    clsvariable.trigger_isenable = false;
+                }
+
+                clsvariable.sever = clsvariable.dt_LedConfig.Rows[0]["server"].ToString();
+                clsvariable.database = clsvariable.dt_LedConfig.Rows[0]["database"].ToString();
+                clsvariable.port = clsvariable.dt_LedConfig.Rows[0]["port"].ToString();
+                clsvariable.username = clsvariable.dt_LedConfig.Rows[0]["username"].ToString();
+                clsvariable.password = clsvariable.dt_LedConfig.Rows[0]["password"].ToString();
+
+                if(clsvariable.sever != "" && clsvariable.database != "" && clsvariable.username != "" && clsvariable.password != "")
+                {
+                    clsvariable.connectionST = $@"Data Source={clsvariable.sever};Initial Catalog={clsvariable.database};Persist Security Info=True;User ID={clsvariable.username};Password={clsvariable.password}; Max Pool Size=10000;";
+                }
+            }
+            clsvariable.dt_Ledinfo = _STK.GetLedInfo(clsvariable.comname);
+            if (clsvariable.dt_Ledinfo.Rows.Count > 0)
+            {
+                txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+                clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+            }
 
             if (txtdevice.Text.Length > 0) // method ที่คุณเขียนไว้เช็คการต่อ
             {
@@ -255,7 +277,7 @@ namespace GD4_LED
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
+        {   
             SetActiveTab(SettingsButton);
             MainFrame.Navigate(new SettingsPage());
         }

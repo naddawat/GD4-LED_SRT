@@ -1,8 +1,14 @@
-﻿
+﻿using GD4_LED.cls;
+using GD4_LED.models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.IO.Packaging;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,9 +22,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using GD4_LED.models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace GD4_LED.page
 {
@@ -29,7 +32,9 @@ namespace GD4_LED.page
         private List<Prescription> filteredPrescriptions = new List<Prescription>();
         private RxService _RX;
         private bool _isLoading = true;
-
+        clsQuery _query = new clsQuery();
+        private DispatcherTimer timer;
+        clsvariable clsvariable = clsvariable.Instance;
         public DispensePage()
         {
             InitializeComponent();
@@ -39,6 +44,11 @@ namespace GD4_LED.page
 
             // โหลดข้อมูลแบบ Async
             _ = InitializePageAsync();
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1); // ตั้งเวลา 1 วินาที
+            timer.Tick += Timer_Tick;
+            timer.Start();
         }
 
         private void StartLoadingAnimation()
@@ -50,6 +60,20 @@ namespace GD4_LED.page
             // เริ่ม Fade In Animation สำหรับ Loading
             var fadeInStoryboard = (Storyboard)this.Resources["FadeInLoading"];
             fadeInStoryboard.Begin();
+        }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            // ตรวจว่า array มีค่า และมีอย่างน้อย 3 ตัว
+            if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
+            {
+                // ตรวจว่าเป็นตัวเลขและ > 0
+                if (int.TryParse(clsvariable.StrU_array[2], out int value) && value > 0)
+                {
+                    MessageBox.Show(clsvariable.StrU);
+                    clsvariable.StrU = "";
+                }
+            }
+
         }
 
         private async Task InitializePageAsync()
@@ -166,34 +190,47 @@ namespace GD4_LED.page
 
         private void LoadPrescriptions()
         {
-            string jsonData = @"[
-    {
-        ""prescriptionno"": ""1892-2"",
-        ""hn"": ""1892"",
-        ""an"": ""2"",
-        ""patientname"": ""นาย TEST1 TEST2"",
-        ""ward"": ""Ward A"",
-        ""bed"": ""12"",
-        ""status"": ""รอจัด"",
-        ""package"": [
+            DataTable dtPrescriptions = new DataTable();
+            dtPrescriptions = _query.GetPrescription(clsvariable.shelfzone);
+            List<Prescription> list = new List<Prescription>();
+
+            foreach (DataRow row in dtPrescriptions.Rows)
             {
-                ""orderitemcode"": ""P001"",
-                ""orderitemname"": ""Package 1"",
-                ""orderqty"": 1
-            },
-            {
-                ""orderitemcode"": ""P002"",
-                ""orderitemcode"": ""Package 2"",
-                ""orderqty"": 2
+                var prescriptions = dtPrescriptions.AsEnumerable()
+                .GroupBy(r => new
+                {
+                    prescriptionno = r["prescriptionno"].ToString(),
+                    hn = r["hn"].ToString(),
+                    an = r["an"].ToString(),
+                    patientname = r["patientname"].ToString(),
+                    ward = r["ward"].ToString(),
+                    bed = r["bed"].ToString()
+                })
+                .Select(g => new
+                {
+                    prescriptionno = g.Key.prescriptionno,
+                    hn = g.Key.hn,
+                    an = g.Key.an,
+                    patientname = g.Key.patientname,
+                    ward = g.Key.ward,
+                    bed = g.Key.bed,
+                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    package = g.Select(r => new
+                    {
+                        orderitemcode = r["orderitemcode"].ToString(),
+                        orderitemname = r["orderitemname"].ToString(),
+                        orderqty = Convert.ToInt32(r["orderqty"])
+                    }).ToList()
+                })
+                .ToList();
+
+                // แปลง JSON
+                string jsonResult = JsonConvert.SerializeObject(prescriptions, Formatting.Indented);
+
+                allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(jsonResult);
+                filteredPrescriptions = allPrescriptions.ToList();
+                DisplayPrescriptions();
             }
-        ]
-    }
-]";
-
-
-            allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(jsonData);
-            filteredPrescriptions = allPrescriptions.ToList();
-            DisplayPrescriptions();
         }
 
         private void UpdateStatistics()
@@ -518,8 +555,7 @@ namespace GD4_LED.page
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-
-            //PerformSearch();
+            var dataLoadingTask = LoadDataAsync();
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -552,7 +588,23 @@ namespace GD4_LED.page
         private void PrintPrescription(Prescription prescription)
         {
             MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
-                          "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
+                         "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            string orderitemcode = "";
+            string qty = "";
+            for (int i = 0; i < prescription.Package.Count; i++)
+            {
+                orderitemcode = prescription.Package[i].OrderItemCode.ToString();
+                qty = prescription.Package[i].OrderQty.ToString();
+
+                if(orderitemcode != "")
+                {
+                    InvenStock(orderitemcode, qty);
+                }
+                
+            }
+
+
         }
 
         private void CancelPrescription(Prescription prescription)
@@ -570,6 +622,73 @@ namespace GD4_LED.page
                 UpdateStatistics();
 
                 MessageBox.Show("ยกเลิกใบสั่งยาเรียบร้อยแล้ว", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        public void InvenStock(string orderitem, string qty)
+        {
+            DataTable dt_stock = new DataTable();
+            bool result = false;
+            dt_stock = _query.GetStockByCode(orderitem);
+            int order_qty = Convert.ToInt32(qty);
+            if (dt_stock.Rows.Count == 1)
+            {
+                int R = Convert.ToInt32(clsvariable.RGD_dispense[0].ToString());
+                int G = Convert.ToInt32(clsvariable.RGD_dispense[1].ToString());
+                int B = Convert.ToInt32(clsvariable.RGD_dispense[2].ToString());
+                int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                //clsvariable.Instance.SerialCan.SetLED(1, position_id,R, G, B);
+                clsvariable.Instance.SerialCan.Order(1, position_id,qty,"","","","", R, G, B);
+                foreach (DataRow row in dt_stock.Rows)
+                {
+
+                    int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                    int new_qty = stock_qty - order_qty;                   
+                    string lot = row["LotNo"].ToString();
+                    string exp = row["Exp"].ToString();
+
+                    //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                    //if (result)
+                    //{
+                    //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                    //}
+                    //else
+                    //{
+                    //    Debug.WriteLine($"Update stock {orderitem} error");
+                    //}
+                }
+            }
+            else if (dt_stock.Rows.Count > 1)
+            {
+                foreach (DataRow row in dt_stock.Rows)
+                {
+                    int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                    int new_qty = stock_qty - order_qty;
+
+                    string lot = row["LotNo"].ToString();
+                    string exp = row["Exp"].ToString();
+                    //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                    //if (result)
+                    //{
+                    //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                    //}
+                    //else
+                    //{
+                    //    Debug.WriteLine($"Update stock {orderitem} error");
+                    //}
+
+                    if (new_qty == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -675,15 +794,11 @@ namespace GD4_LED.page
             var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
             loadingStoryboard?.Stop();
         }
+        
 
     }
 
 
-    //allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(data);
-    //            filteredPrescriptions = allPrescriptions.ToList();
-    //            DisplayPrescriptions();
-    //UpdateStatistics();
-    // Helper class for ScrollViewer animation
     public static class ScrollViewerBehavior
     {
         public static readonly DependencyProperty VerticalOffsetProperty =
@@ -707,24 +822,6 @@ namespace GD4_LED.page
             {
                 scrollViewer.ScrollToVerticalOffset((double)e.NewValue);
             }
-        }
-
-
-
-
-
-
-
-
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // Test button
-        //    MessageBox.Show("Button clicked");
-        //}
-
-        //private void Button_Click_1(object sender, RoutedEventArgs e)
-        //{
-        //    MessageBox.Show("Button clicked");
-        //}
+        }       
     }
 }
