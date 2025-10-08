@@ -98,7 +98,8 @@
                                            Padding="16,12"
                                            VerticalAlignment="Center"
                                            x:Name="SearchTextBox"
-                                           TextChanged="SearchTextBox_TextChanged"/>
+                                           TextChanged="SearchTextBox_TextChanged" KeyDown="SearchTextBox_KeyDown"
+                                           />
                             </Grid>
                         </Border>
 

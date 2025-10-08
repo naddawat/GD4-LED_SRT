@@ -1,4 +1,6 @@
-﻿using GD4_LED.cls;
+﻿using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Windows.Forms;
+using GD4_LED.cls;
 using GD4_LED.models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -67,12 +69,26 @@ namespace GD4_LED.page
             if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
             {
                 // ตรวจว่าเป็นตัวเลขและ > 0
-                if (int.TryParse(clsvariable.StrU_array[2], out int value) && value > 0)
+                if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
                 {
-                    MessageBox.Show(clsvariable.StrU);
-                    clsvariable.StrU = "";
+                    DataTable dt_stock = new DataTable();
+                    dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1],clsvariable.shelfzone);
+                    if(dt_stock.Rows.Count != 0)
+                    {
+                        InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
+
+                    }
+                    else
+                    {
+                        clsvariable.StrU = "";
+                    }
+
+                    
                 }
             }
+
+            clsvariable.StrU = "";
+            clsvariable.StrU_array = new string[3];
 
         }
 
@@ -232,6 +248,51 @@ namespace GD4_LED.page
                 DisplayPrescriptions();
             }
         }
+        private void LoadPrescriptionsByCode(string prescriptionno)
+        {
+            DataTable dtPrescriptions = new DataTable();
+            dtPrescriptions = _query.GetPrescriptionByCode(prescriptionno);
+            clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescriptionno);
+            List<Prescription> list = new List<Prescription>();
+
+            foreach (DataRow row in dtPrescriptions.Rows)
+            {
+                var prescriptions = dtPrescriptions.AsEnumerable()
+                .GroupBy(r => new
+                {
+                    prescriptionno = r["prescriptionno"].ToString(),
+                    hn = r["hn"].ToString(),
+                    an = r["an"].ToString(),
+                    patientname = r["patientname"].ToString(),
+                    ward = r["ward"].ToString(),
+                    bed = r["bed"].ToString()
+                })
+                .Select(g => new
+                {
+                    prescriptionno = g.Key.prescriptionno,
+                    hn = g.Key.hn,
+                    an = g.Key.an,
+                    patientname = g.Key.patientname,
+                    ward = g.Key.ward,
+                    bed = g.Key.bed,
+                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    package = g.Select(r => new
+                    {
+                        orderitemcode = r["orderitemcode"].ToString(),
+                        orderitemname = r["orderitemname"].ToString(),
+                        orderqty = Convert.ToInt32(r["orderqty"])
+                    }).ToList()
+                })
+                .ToList();
+
+                // แปลง JSON
+                string jsonResult = JsonConvert.SerializeObject(prescriptions, Formatting.Indented);
+
+                allPrescriptions = JsonConvert.DeserializeObject<List<Prescription>>(jsonResult);
+                filteredPrescriptions = allPrescriptions.ToList();
+                DisplayPrescriptions();
+            }
+        }
 
         private void UpdateStatistics()
         {
@@ -248,15 +309,28 @@ namespace GD4_LED.page
         {
             PrescriptionPanel.Children.Clear();
 
+            string Searchtxt = SearchTextBox.Text?.Trim()?? "";
+
+            if (filteredPrescriptions.Count == 0)
+            {
+                LoadPrescriptionsByCode(Searchtxt);
+            }
+            else
+            {
+                
+            }
+
             foreach (var prescription in filteredPrescriptions)
             {
                 CreatePrescriptionCard(prescription);
             }
+
+
         }
 
         private void CreatePrescriptionCard(Prescription prescription)
         {
-            Border cardBorder = new Border();
+            System.Windows.Controls.Border cardBorder = new System.Windows.Controls.Border();
             cardBorder.Style = (Style)FindResource("CardStyle");
             cardBorder.Cursor = System.Windows.Input.Cursors.Hand;
             cardBorder.Margin = new Thickness(0, 0, 0, 12);
@@ -281,7 +355,7 @@ namespace GD4_LED.page
             Grid.SetColumn(patientPanel, 0);
 
             // Status badge
-            Border statusBorder = new Border
+            System.Windows.Controls.Border statusBorder = new System.Windows.Controls.Border
             {
                 CornerRadius = new CornerRadius(4),
                 Padding = new Thickness(8, 4, 8, 4)
@@ -405,7 +479,7 @@ namespace GD4_LED.page
             // Print Button
             Button printButton = new Button
             {
-                Content = "ปริ้น",
+                Content = "จัดยา",
                 Width = 80,
                 Height = 36,
                 Margin = new Thickness(0, 0, 8, 0),
@@ -465,7 +539,7 @@ namespace GD4_LED.page
 
             foreach (var package in prescription.Package)
             {
-                Border packageBorder = new Border
+                System.Windows.Controls.Border packageBorder = new System.Windows.Controls.Border
                 {
                     Background = new SolidColorBrush(Color.FromRgb(248, 249, 250)),
                     CornerRadius = new CornerRadius(4),
@@ -599,10 +673,12 @@ namespace GD4_LED.page
 
                 if(orderitemcode != "")
                 {
-                    InvenStock(orderitemcode, qty);
+                    ShowLed(orderitemcode, qty);
                 }
                 
             }
+
+            clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
 
 
         }
@@ -624,13 +700,23 @@ namespace GD4_LED.page
                 MessageBox.Show("ยกเลิกใบสั่งยาเรียบร้อยแล้ว", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
-        public void InvenStock(string orderitem, string qty)
+        private void LoadReport(DataTable dt)
+        {            
+            ReportDocument report = new ReportDocument();
+            report.Load(@"D:\GitHub\GD4-LED_SRT\GD4_LED\report\crp_stricker.rpt");
+            report.SetDataSource(dt);
+            report.PrintOptions.PrinterName = "";
+            report.PrintToPrinter(1, false, 0, 0);
+            report.Close();
+            report.Dispose();
+        }
+        public void ShowLed(string orderitem, string qty)
         {
             DataTable dt_stock = new DataTable();
             bool result = false;
             dt_stock = _query.GetStockByCode(orderitem);
             int order_qty = Convert.ToInt32(qty);
-            if (dt_stock.Rows.Count == 1)
+            if (dt_stock.Rows.Count > 0)
             {
                 int R = Convert.ToInt32(clsvariable.RGD_dispense[0].ToString());
                 int G = Convert.ToInt32(clsvariable.RGD_dispense[1].ToString());
@@ -638,59 +724,112 @@ namespace GD4_LED.page
                 int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
                 //clsvariable.Instance.SerialCan.SetLED(1, position_id,R, G, B);
                 clsvariable.Instance.SerialCan.Order(1, position_id,qty,"","","","", R, G, B);
-                foreach (DataRow row in dt_stock.Rows)
-                {
-
-                    int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                    int new_qty = stock_qty - order_qty;                   
-                    string lot = row["LotNo"].ToString();
-                    string exp = row["Exp"].ToString();
-
-                    //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                    //if (result)
-                    //{
-                    //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-                    //}
-                    //else
-                    //{
-                    //    Debug.WriteLine($"Update stock {orderitem} error");
-                    //}
-                }
-            }
-            else if (dt_stock.Rows.Count > 1)
-            {
-                foreach (DataRow row in dt_stock.Rows)
-                {
-                    int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                    int new_qty = stock_qty - order_qty;
-
-                    string lot = row["LotNo"].ToString();
-                    string exp = row["Exp"].ToString();
-                    //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                    //if (result)
-                    //{
-                    //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-                    //}
-                    //else
-                    //{
-                    //    Debug.WriteLine($"Update stock {orderitem} error");
-                    //}
-
-                    if (new_qty == 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-            }
+               
+            }           
             else
             {
                 MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        public void InvenStock(string orderitem, string qty)
+        {
+            DataTable dt_stock = new DataTable();
+            bool result = false;
+            dt_stock = _query.GetStockByCode(orderitem);
+            int order_qty = Convert.ToInt32(qty);
+
+            DataTable db_print = new DataTable();
+            db_print.Columns.Add("prescriptionno", typeof(String));
+            db_print.Columns.Add("orderitemname", typeof(String));
+            db_print.Columns.Add("orderqty", typeof(String));
+            db_print.Columns.Add("patientname", typeof(String));
+            db_print.Columns.Add("hn", typeof(String));
+            db_print.Columns.Add("freetext1", typeof(String));
+            db_print.Columns.Add("freetext2", typeof(String));
+            db_print.Columns.Add("freetext3", typeof(String));
+            db_print.Columns.Add("freetext4", typeof(String));
+            db_print.TableName = "db_print";
+            if (clsvariable.dt_Prescr.Rows.Count > 0)
+            {
+                if (dt_stock.Rows.Count == 1)
+                {
+                    foreach (DataRow row in dt_stock.Rows)
+                    {
+
+                        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                        int new_qty = stock_qty - order_qty;
+                        string lot = row["LotNo"].ToString();
+                        string exp = row["Exp"].ToString();
+
+                        //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                        //if (result)
+                        //{
+                        //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                        //}
+                        //else
+                        //{
+                        //    Debug.WriteLine($"Update stock {orderitem} error");
+                        //}
+
+                        
+                    }
+                }
+                else if (dt_stock.Rows.Count > 1)
+                {
+                    foreach (DataRow row in dt_stock.Rows)
+                    {
+                        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                        int new_qty = stock_qty - order_qty;
+
+                        string lot = row["LotNo"].ToString();
+                        string exp = row["Exp"].ToString();
+                        //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                        //if (result)
+                        //{
+                        //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                        //}
+                        //else
+                        //{
+                        //    Debug.WriteLine($"Update stock {orderitem} error");
+                        //}
+
+                        if (new_qty == 0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                foreach(DataRow row in clsvariable.dt_Prescr.Rows)
+                {
+                    DataRow r = db_print.Rows.Add();
+                    r["prescriptionno"] = row["prescriptionno"].ToString();
+                    r["orderitemname"] = row["orderitemname"].ToString();
+                    r["orderqty"] = row["orderqty"].ToString();
+                    r["patientname"] = row["patientname"].ToString();
+                    r["hn"] = row["hn"].ToString();
+                    r["freetext1"] = row["freetext1"].ToString();
+                    r["freetext2"] = row["freetext2"].ToString();
+                    r["freetext3"] = row["freetext3"].ToString();
+                    r["freetext4"] = row["freetext4"].ToString();
+                }
+
+                if(db_print.Rows.Count > 0)
+                {
+                    LoadReport(db_print);
+                }
+            }
+            
+        }
+
 
         private void Rx_OnTriggerReceived(string data)
         {
@@ -794,8 +933,17 @@ namespace GD4_LED.page
             var loadingStoryboard = (Storyboard)this.Resources["LoadingAnimation"];
             loadingStoryboard?.Stop();
         }
-        
 
+        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                //MessageBox.Show("คุณกด Enter แล้ว!");
+                DisplayPrescriptions();
+
+
+            }
+        }
     }
 
 

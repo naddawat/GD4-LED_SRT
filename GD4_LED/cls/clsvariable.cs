@@ -42,5 +42,6 @@ namespace GD4_LED.cls
 
         public static DataTable dt_Ledinfo = new DataTable();
         public static DataTable dt_LedConfig = new DataTable();
+        public static DataTable dt_Prescr = new DataTable();
     }
 }

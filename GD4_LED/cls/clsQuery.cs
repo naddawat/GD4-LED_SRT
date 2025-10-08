@@ -75,6 +75,21 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
+        public DataTable GetPrescriptionByCode(string prescriptionno)
+        {
+
+            SQL = $@" SELECT
+                      *
+                    FROM
+                      packagemaster_ipd 
+                    WHERE
+                      prescriptionno = '{prescriptionno}' 
+                      AND leddatetime IS NULL
+                      AND voiddatetime is null
+                      AND shelfzone = '{clsvariable.shelfzone}' ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
         public DataTable GetPrescrfinished(string shelfzone)
         {
 
@@ -163,6 +178,33 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
+        public DataTable GetLedStockByAddr(string Addr, string _id,string shelfzone)
+        {
+
+            SQL = $@"  SELECT
+              ml.shelfzone AS location,
+              ml.shelfname AS drugPosition,
+              ms.LotNo AS lot,
+              ml.orderitemcode AS drugCode,
+              ml.orderitemENname AS drugName,
+              ms.In_Qty AS Quantity,
+              ms.Exp AS exp,
+              ml.max AS max,
+              ml.min AS min,
+              '' AS firmname ,
+              CASE 
+                WHEN (ms.In_Qty / ml.max) * 100 < 0 
+                    THEN 0
+                ELSE ROUND((ms.In_Qty / ml.max) * 100 ,0)
+            END AS Percent
+            FROM
+              ms_stock ms
+              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            where ml.addr = '{Addr}' and ml.position_id = '{_id}' and ml.shelfzone = '{shelfzone}'
+              ORDER BY Percent";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
 
         public bool InsertStock(string DrugCode,int In_Qty,string LotNo,string Exp, string shelfzone, string shelfname,string max,string min)
         {
@@ -180,6 +222,19 @@ namespace GD4_LED.cls
                     In_Qty = {In_Qty},
                     lastmodify = CURRENT_DATE
                     where orderitemcode = '{DrugCode}' and LotNo = '{LotNo}'; ";
+
+            using (MySqlCommand cmd = new MySqlCommand(SQL))
+            {
+                return Execute.dataExecuteNonQuery(connectst, cmd);
+            }
+        }
+        public bool UpdateJob(string leduserid, string prescriptionno)
+        {
+            SQL = $@" UPDATE packagemaster_ipd 
+                        SET leddatetime = CURDATE(),
+                        leduserid = '{leduserid}' 
+                        WHERE
+                        prescriptionno = '{prescriptionno}'";
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
