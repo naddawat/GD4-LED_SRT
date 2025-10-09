@@ -12,6 +12,7 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +25,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-
 namespace GD4_LED.page
 {
     public partial class DispensePage : Page
@@ -661,6 +661,11 @@ namespace GD4_LED.page
 
         private void PrintPrescription(Prescription prescription)
         {
+            string json = System.Text.Json.JsonSerializer.Serialize(prescription, new JsonSerializerOptions { WriteIndented = true });
+
+            var popup = new PrescriptionPopup(json);
+
+            popup.ShowDialog();
             MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
                          "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
 
