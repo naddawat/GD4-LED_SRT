@@ -35,7 +35,7 @@ namespace GD4_LED.page
         private RxService _RX;
         private bool _isLoading = true;
         clsQuery _query = new clsQuery();
-        private DispatcherTimer timer;
+       
         clsvariable clsvariable = clsvariable.Instance;
         public DispensePage()
         {
@@ -47,10 +47,6 @@ namespace GD4_LED.page
             // โหลดข้อมูลแบบ Async
             _ = InitializePageAsync();
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1); // ตั้งเวลา 1 วินาที
-            timer.Tick += Timer_Tick;
-            timer.Start();
         }
 
         private void StartLoadingAnimation()
@@ -63,35 +59,7 @@ namespace GD4_LED.page
             var fadeInStoryboard = (Storyboard)this.Resources["FadeInLoading"];
             fadeInStoryboard.Begin();
         }
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            // ตรวจว่า array มีค่า และมีอย่างน้อย 3 ตัว
-            if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
-            {
-                // ตรวจว่าเป็นตัวเลขและ > 0
-                if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
-                {
-                    DataTable dt_stock = new DataTable();
-                    dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1],clsvariable.shelfzone);
-                    if(dt_stock.Rows.Count != 0)
-                    {
-                        InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
-
-                    }
-                    else
-                    {
-                        clsvariable.StrU = "";
-                    }
-
-                    
-                }
-            }
-
-            clsvariable.StrU = "";
-            clsvariable.StrU_array = new string[3];
-
-        }
-
+        
         private async Task InitializePageAsync()
         {
             try
@@ -324,7 +292,6 @@ namespace GD4_LED.page
             {
                 CreatePrescriptionCard(prescription);
             }
-
 
         }
 
@@ -666,24 +633,27 @@ namespace GD4_LED.page
             var popup = new PrescriptionPopup(json);
 
             popup.ShowDialog();
-            MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
-                         "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            string orderitemcode = "";
-            string qty = "";
-            for (int i = 0; i < prescription.Package.Count; i++)
-            {
-                orderitemcode = prescription.Package[i].OrderItemCode.ToString();
-                qty = prescription.Package[i].OrderQty.ToString();
+            LoadPrescriptions();
 
-                if(orderitemcode != "")
-                {
-                    ShowLed(orderitemcode, qty);
-                }
-                
-            }
+            //MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
+            //             "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+            //string orderitemcode = "";
+            //string qty = "";
+            //for (int i = 0; i < prescription.Package.Count; i++)
+            //{
+            //    orderitemcode = prescription.Package[i].OrderItemCode.ToString();
+            //    qty = prescription.Package[i].OrderQty.ToString();
+
+            //    if(orderitemcode != "")
+            //    {
+            //        ShowLed(orderitemcode, qty);
+            //    }
+
+            //}
+
+            //clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
 
 
         }
@@ -945,6 +915,7 @@ namespace GD4_LED.page
             {
                 //MessageBox.Show("คุณกด Enter แล้ว!");
                 DisplayPrescriptions();
+
 
 
             }

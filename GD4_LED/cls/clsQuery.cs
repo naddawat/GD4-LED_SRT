@@ -65,13 +65,16 @@ namespace GD4_LED.cls
                       bedcode as bed,
                       orderitemcode,
                       orderitemname,
-                      orderqty
+                      orderqty,
+                      shelfzone,
+                      shelfname
                     FROM
                       packagemaster_ipd 
                     WHERE
                       shelfzone = '{shelfzone}' 
                       AND leddatetime IS NULL
-                      AND voiddatetime is null";
+                      AND voiddatetime is null
+                      AND ordercreatedate > CURRENT_DATE();";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
@@ -216,6 +219,16 @@ namespace GD4_LED.cls
                 return Execute.dataExecuteNonQuery(connectst, cmd);
             }
         }
+        public bool InsertLog(string eventstr, int createdate, string user, string lacation)
+        {
+            SQL = $@" INSERT INTO logevent (event,createdate, user, lacation) 
+                        VALUES ('{createdate}',CURRENT_DATE(), '{user}','{lacation}') ; ";
+
+            using (MySqlCommand cmd = new MySqlCommand(SQL))
+            {
+                return Execute.dataExecuteNonQuery(connectst, cmd);
+            }
+        }
         public bool UpdateStockWhere(string DrugCode, int In_Qty, string LotNo, string Exp, string UserId)
         {
             SQL = $@" update ms_stock set 
@@ -228,13 +241,15 @@ namespace GD4_LED.cls
                 return Execute.dataExecuteNonQuery(connectst, cmd);
             }
         }
-        public bool UpdateJob(string leduserid, string prescriptionno)
+        public bool UpdateJob(string leduserid, string prescriptionno,string seq,string orderitemcode)
         {
             SQL = $@" UPDATE packagemaster_ipd 
                         SET leddatetime = CURDATE(),
                         leduserid = '{leduserid}' 
                         WHERE
-                        prescriptionno = '{prescriptionno}'";
+                        prescriptionno = '{prescriptionno}'
+                        AND seq = '{seq}'
+                        AND orderitemcode = '{orderitemcode}' ";
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {

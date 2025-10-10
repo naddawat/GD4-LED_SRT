@@ -1,7 +1,13 @@
-﻿using System;
+﻿using GD4_LED.cls;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data;
+using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,15 +16,10 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Newtonsoft.Json;
-using System.ComponentModel;
-using System.Data;
-using System.Globalization;
-using System.Windows.Media.Animation;
-using GD4_LED.cls;
 
 namespace GD4_LED.page
 {
@@ -336,6 +337,9 @@ namespace GD4_LED.page
 
                 ShowPopup(SelectedDrug);
             }
+
+            StartLoadingAnimation();
+            _ = InitializePageAsync();
         }
 
         // Event สำหรับปุ่มเติมยา (ซ่อนไว้แล้ว แต่เก็บไว้กรณีต้องการใช้)
@@ -343,7 +347,7 @@ namespace GD4_LED.page
         {
             var button = sender as Button;
             var drugData = button?.DataContext;
-
+            int _id = 0;
             if (drugData != null)
             {
                 SelectedDrug = drugData;
@@ -352,12 +356,14 @@ namespace GD4_LED.page
                 DataTable dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.comname);
                 if (dt_stock.Rows.Count > 0)
                 {
-                    int _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
                     clsvariable.Instance.SerialCan.SetLED(1, _id, 255, 0, 0);
                 }
             }
 
             ShowPopup(SelectedDrug);
+
+            clsvariable.Instance.SerialCan.SetLED(1, _id, 0, 0, 0);
         }
 
         // Event handlers สำหรับ Summary Cards

@@ -297,6 +297,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DataSet1.xsd</DependentUpon>
     </Compile>
+    <Compile Include="PrescriptionPopup.xaml.cs">
+      <DependentUpon>PrescriptionPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="report\crp_stricker.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -356,6 +359,10 @@
     <Page Include="page\StockWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PrescriptionPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

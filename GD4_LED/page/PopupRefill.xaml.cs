@@ -97,6 +97,7 @@ namespace GD4_LED.page
         {
             //CloseRefillPopup_Click(sender, e);
             Window.GetWindow(this).Close();
+
         }
 
         private void ConfirmRefill_Click(object sender, RoutedEventArgs e)

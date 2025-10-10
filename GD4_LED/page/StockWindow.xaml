@@ -44,7 +44,7 @@
     </Page.Resources>
 
     <Grid>
-        <Grid x:Name="MainContent" Opacity="1">
+        <Grid x:Name="MainContent" Opacity="0">
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="MainContentTransform" Y="100"/>
             </Grid.RenderTransform>
@@ -306,7 +306,7 @@
         </Grid>
 
         <!-- Loading Overlay -->
-        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1" d:IsHidden="True">
+        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="0">
             <Grid.Effect>
                 <BlurEffect Radius="0"/>
             </Grid.Effect>
