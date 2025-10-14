@@ -529,7 +529,7 @@
                                     </StackPanel>
 
                                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" 
-                                              x:Name="AutoPrintToggle" VerticalAlignment="Center"/>
+                                              x:Name="AutoPrintToggle" VerticalAlignment="Center" Checked="AutoPrintToggle_Checked" Click="AutoPrintToggle_Click"/>
                                 </Grid>
 
 
@@ -612,7 +612,7 @@
                                     </StackPanel>
 
                                     <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" 
-                                              x:Name="SoundNotificationToggle" VerticalAlignment="Center" IsChecked="True"/>
+                                              x:Name="SoundNotificationToggle" VerticalAlignment="Center" Click="SoundNotificationToggle_Click" Checked="SoundNotificationToggle_Checked"/>
                                 </Grid>
 
                                 <Grid Margin="0,0,0,16">

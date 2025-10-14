@@ -212,17 +212,17 @@ namespace GD4_LED.cls
         public bool InsertStock(string DrugCode,int In_Qty,string LotNo,string Exp, string shelfzone, string shelfname,string max,string min)
         {
             SQL = $@" INSERT INTO ms_stock (orderitemcode,In_Qty, LotNo, Exp, lastmodify,shelfzone,shelfname,max,min,log_refill,type_refill) 
-                        VALUES ('{DrugCode}',{In_Qty}, '{LotNo}','{Exp}',CURRENT_DATE(),'{shelfzone}','{shelfname}','{max}','{min}',NULL,1) ; "; 
+                        VALUES ('{DrugCode}',{In_Qty}, '{LotNo}','{Exp}',CURRENT_TIMESTAMP(),'{shelfzone}','{shelfname}','{max}','{min}',NULL,1) ; "; 
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
                 return Execute.dataExecuteNonQuery(connectst, cmd);
             }
         }
-        public bool InsertLog(string eventstr, int createdate, string user, string lacation)
+        public bool InsertLog(string eventstr, string user, string location)
         {
-            SQL = $@" INSERT INTO logevent (event,createdate, user, lacation) 
-                        VALUES ('{createdate}',CURRENT_DATE(), '{user}','{lacation}') ; ";
+            SQL = $@" INSERT INTO logevent (event,createdate, user, location) 
+                        VALUES ('{eventstr}',CURRENT_TIMESTAMP(), '{user}','{location}') ; ";
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
@@ -233,8 +233,30 @@ namespace GD4_LED.cls
         {
             SQL = $@" update ms_stock set 
                     In_Qty = {In_Qty},
-                    lastmodify = CURRENT_DATE
+                    lastmodify = CURRENT_TIMESTAMP()
                     where orderitemcode = '{DrugCode}' and LotNo = '{LotNo}'; ";
+
+            using (MySqlCommand cmd = new MySqlCommand(SQL))
+            {
+                return Execute.dataExecuteNonQuery(connectst, cmd);
+            }
+        }
+        public bool UpdatePrintStatus(string status,string comname)
+        {
+            SQL = $@" update ms_ledconfig set 
+                    print_isenable = '{status}'
+                    where comname = '{comname}'; ";
+
+            using (MySqlCommand cmd = new MySqlCommand(SQL))
+            {
+                return Execute.dataExecuteNonQuery(connectst, cmd);
+            }
+        }
+        public bool UpdateTrigger(string status, string comname)
+        {
+            SQL = $@" update ms_ledconfig set 
+                    trigger_isenable = '{status}'
+                    where comname = '{comname}'; ";
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
@@ -244,7 +266,7 @@ namespace GD4_LED.cls
         public bool UpdateJob(string leduserid, string prescriptionno,string seq,string orderitemcode)
         {
             SQL = $@" UPDATE packagemaster_ipd 
-                        SET leddatetime = CURDATE(),
+                        SET leddatetime = CURRENT_TIMESTAMP(),
                         leduserid = '{leduserid}' 
                         WHERE
                         prescriptionno = '{prescriptionno}'

@@ -1,10 +1,12 @@
 ﻿using GD4_LED.cls;
 using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 //using System.Drawing.Printing;
 using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -23,6 +25,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static Org.BouncyCastle.Math.EC.ECCurve;
+using Color = System.Windows.Media.Color;
 
 namespace GD4_LED.page
 {
@@ -34,6 +37,7 @@ namespace GD4_LED.page
         private ObservableCollection<LedCabinetModel> ledCabinets;
         private int activeTabIndex = 0;
         clsConfig _config = new clsConfig();
+        clsQuery _query = new clsQuery();   
         public SettingsPage()
         {
             InitializeComponent();
@@ -219,6 +223,14 @@ namespace GD4_LED.page
                 if(clsvariable.comport != "")
                 {
                     CbSerialPort.Items.Add(clsvariable.comport);
+                }
+                if (clsvariable.trigger_isenable)
+                {
+                    SoundNotificationToggle.IsChecked = true;
+                }
+                else
+                {
+                    SoundNotificationToggle.IsChecked = false;
                 }
 
                 ServerTextBox.Text = clsvariable.sever;
@@ -433,6 +445,7 @@ namespace GD4_LED.page
         {
             // Save all general settings
             bool autoPrint = AutoPrintToggle.IsChecked ?? false;
+            bool autoTrig = SoundNotificationToggle.IsChecked ?? false;
             //bool printPrescription = PrintPrescriptionToggle.IsChecked ?? false;
             //bool soundNotification = SoundNotificationToggle.IsChecked ?? false;
             //bool darkMode = DarkModeToggle.IsChecked ?? false;
@@ -570,7 +583,7 @@ namespace GD4_LED.page
             {
                 Text = $"#{currentColor.R:X2}{currentColor.G:X2}{currentColor.B:X2}",
                 FontSize = 12,
-                FontFamily = new FontFamily("Consolas"),
+                FontFamily = new System.Windows.Media.FontFamily("Consolas"),
                 Foreground = new SolidColorBrush(Color.FromRgb(100, 100, 100)),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 8, 0, 0)
@@ -616,7 +629,7 @@ namespace GD4_LED.page
                 Style = (Style)FindResource("ModernComboBoxStyle"),
                 ItemsSource = Enumerable.Range(1, 8).ToList(),
                 SelectedIndex = 0,
-                BorderBrush = Brushes.DarkGray,  // สีขอบ
+                BorderBrush = System.Windows.Media.Brushes.DarkGray,  // สีขอบ
                 BorderThickness = new Thickness(2), // ความหนาขอบ
                 //CornerRadius = new CornerRadius(5) // ถ้า ModernComboBoxStyle รองรับ
             };
@@ -638,7 +651,7 @@ namespace GD4_LED.page
                 Style = (Style)FindResource("ModernComboBoxStyle"),
                 ItemsSource = Enumerable.Range(1, 6).ToList(),
                 SelectedIndex = 0,
-                BorderBrush = Brushes.DarkGray,  // สีขอบ
+                BorderBrush = System.Windows.Media.Brushes.DarkGray,  // สีขอบ
                 BorderThickness = new Thickness(2), // ความหนาขอบ
             };
             colPanel.Children.Add(colCombo);
@@ -696,8 +709,8 @@ namespace GD4_LED.page
                 Width = 120,
                 Height = 38,
                 Margin = new Thickness(5, 0, 5, 0),
-                Background = new SolidColorBrush(Color.FromRgb(67, 160, 71)),
-                Foreground = Brushes.White,
+                Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(67, 160, 71)),
+                Foreground = System.Windows.Media.Brushes.White,
                 FontWeight = FontWeights.SemiBold,
                 FontSize = 14,
                 BorderThickness = new Thickness(0),
@@ -709,8 +722,29 @@ namespace GD4_LED.page
             // ปรับสีปุ่ม OK ให้บันทึกสีที่เลือก
             okButton.Click += (s, e4) =>
             {
+                 MessageBoxResult result = MessageBox.Show("คุณต้องการบันทึกหรือไม่?", "ยืนยัน", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                // โค้ดเมื่อกด Yes
+                string selectedColor = colorCodeText.Text;
+                string hexColor = "#0080FF";
+                System.Drawing.Color color = ColorTranslator.FromHtml(hexColor);
+
+                int r = color.R;
+                int g = color.G;
+                int b = color.B;
+                selectedColor = $"{r}|{g}|{b}|";
                 clickedButton.Background = previewBorder.Background;
                 colorPickerDialog.Close();
+
+            }
+                else
+            {
+                // โค้ดเมื่อกด No
+            }
+
+                
             };
 
             // ปุ่มเปิดไฟ/ปิดไฟ
@@ -775,6 +809,8 @@ namespace GD4_LED.page
             colorPickerDialog.Content = scrollViewer;
             colorPickerDialog.Owner = Window.GetWindow(this);
             colorPickerDialog.ShowDialog();
+
+           
         }
 
         // ========== Helper Methods ==========
@@ -913,11 +949,77 @@ namespace GD4_LED.page
 
             return style;
         }
+        
 
+        private void AutoPrintToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
 
+        private void AutoPrintToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool result = false;
+            if (AutoPrintToggle.IsChecked == true)
+            {
+                clsvariable.print_isenable = true;
+                result = _query.InsertLog("ตั้งค่า", "user", "เปิดใช้งานการพิมพ์ฉลากยา");
+                if (result)
+                {
+                    result = false;
+                    result = _query.UpdatePrintStatus("Y", clsvariable.comname);
+                }
+            }
+            else if (AutoPrintToggle.IsChecked == false)
+            {
+                clsvariable.print_isenable = false;
+                result = _query.InsertLog("ตั้งค่า", "user", "ปิดใช้งานการพิมพ์ฉลากยา");
+                if (result)
+                {
+                    result = false;
+                    result = _query.UpdatePrintStatus("N", clsvariable.comname);
+                }
+            }
 
+            if (result)
+            {
+                LoadSettings();
+            }
+        }
 
+        private void SoundNotificationToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool result = false;
+            if (SoundNotificationToggle.IsChecked == true)
+            {
+                clsvariable.print_isenable = true;
+                result = _query.InsertLog("ตั้งค่า", "user", "เปิดการรับข้อมูลจาก Server");
+                if (result)
+                {
+                    result = false;
+                    result = _query.UpdateTrigger("Y", clsvariable.comname);
+                }
+            }
+            else if (SoundNotificationToggle.IsChecked == false)
+            {
+                clsvariable.print_isenable = false;
+                result = _query.InsertLog("ตั้งค่า", "user", "ปิดการรับข้อมูลจาก Server");
+                if (result)
+                {
+                    result = false;
+                    result = _query.UpdateTrigger("N", clsvariable.comname);
+                }
+            }
 
+            if (result)
+            {
+                LoadSettings();
+            }
+        }
+
+        private void SoundNotificationToggle_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
     public class LedCabinetModel
     {
