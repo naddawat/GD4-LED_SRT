@@ -27,29 +27,120 @@ using Border = System.Windows.Controls.Border;
 
 namespace GD4_LED
 {
-    /// <summary>
-    /// Interaction logic for PrescriptionPopup.xaml
-    /// </summary>
     public partial class PrescriptionPopup : Window
     {
         private HashSet<PackageItem> selectedItems = new HashSet<PackageItem>();
         private Prescription prescriptionData;
         private DispatcherTimer timer;
+        private DispatcherTimer scanTimer;
         clsvariable clsvariable = clsvariable.Instance;
         clsQuery _query = new clsQuery();
         int CountItem = 0;
+        private string scannedBarcode = "";
+        private bool isVerified = false;
+
         public PrescriptionPopup(string jsonString)
         {
             InitializeComponent();
             LoadSampleData(jsonString);
 
+            scanTimer = new DispatcherTimer();
+            scanTimer.Interval = TimeSpan.FromMilliseconds(100);
+            scanTimer.Tick += ScanTimer_Tick;
+
+            this.Loaded += (s, e) => this.Focus();
+            this.KeyDown += Window_KeyDown;
+
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1); // ตั้งเวลา 1 วินาที
+            timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Timer_Tick;
-            timer.Start();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (isVerified) return;
+
+            if (e.Key == Key.Enter)
+            {
+                if (!string.IsNullOrEmpty(scannedBarcode))
+                {
+                    VerifyDispenser(scannedBarcode);
+                    scannedBarcode = "";
+                }
+            }
+            else if (e.Key >= Key.D0 && e.Key <= Key.Z || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
+            {
+
+                string key = e.Key.ToString().Replace("D", "").Replace("NumPad", "");
+                scannedBarcode += key;
+
+                txtScannedCode.Text = scannedBarcode;
+                txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
+
+
+                scanTimer.Stop();
+                scanTimer.Start();
+            }
+        }
+
+        private void ScanTimer_Tick(object sender, EventArgs e)
+        {
+            // Auto-verify after brief pause in scanning
+            scanTimer.Stop();
+            if (!string.IsNullOrEmpty(scannedBarcode))
+            {
+                VerifyDispenser(scannedBarcode);
+                scannedBarcode = "";
+            }
+        }
+
+        private void VerifyDispenser(string code)
+        {
+
+            if (string.IsNullOrEmpty(code) || code.Length < 4)
+            {
+                txtVerificationStatus.Text = "⚠️ รหัสไม่ถูกต้อง กรุณาสแกนใหม่อีกครั้ง";
+                txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc2626"));
+                txtVerificationStatus.Visibility = Visibility.Visible;
+
+                txtScannedCode.Text = "รอการสแกน...";
+                txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
+                return;
+            }
+
+            isVerified = true;
+
+
+            txtStatus.Text = code;
+
+            txtScannedCode.Text = code;
+            txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+            txtVerificationStatus.Text = "✓ ยืนยันตัวตนสำเร็จ";
+            txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+            txtVerificationStatus.Visibility = Visibility.Visible;
+
+  
+            var fadeOut = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromMilliseconds(500),
+                BeginTime = TimeSpan.FromMilliseconds(500)
+            };
+
+            fadeOut.Completed += (s, e) =>
+            {
+                verificationOverlay.Visibility = Visibility.Collapsed;
+                // Start the main timer after verification
+                timer.Start();
+            };
+
+            verificationOverlay.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+        }
+
         private void PrintPrescription(Prescription prescription)
-        {            
+        {
             string orderitemcode = "";
             string qty = "";
             for (int i = 0; i < prescription.Package.Count; i++)
@@ -61,13 +152,11 @@ namespace GD4_LED
                 {
                     ShowLed(orderitemcode, qty);
                 }
-
             }
 
             clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
-
-
         }
+
         public void ShowLed(string orderitem, string qty)
         {
             DataTable dt_stock = new DataTable();
@@ -80,9 +169,7 @@ namespace GD4_LED
                 int G = Convert.ToInt32(clsvariable.RGD_dispense[1].ToString());
                 int B = Convert.ToInt32(clsvariable.RGD_dispense[2].ToString());
                 int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                //clsvariable.Instance.SerialCan.SetLED(1, position_id,R, G, B);
                 clsvariable.Instance.SerialCan.Order(1, position_id, qty, "", "", "", "", R, G, B);
-
             }
             else
             {
@@ -90,17 +177,17 @@ namespace GD4_LED
             }
         }
 
-
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            timer?.Stop();
+            scanTimer?.Stop();
             this.Close();
         }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
-            // ตรวจว่า array มีค่า และมีอย่างน้อย 3 ตัว
             if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
             {
-                // ตรวจว่าเป็นตัวเลขและ > 0
                 if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
                 {
                     DataTable dt_stock = new DataTable();
@@ -108,21 +195,18 @@ namespace GD4_LED
                     if (dt_stock.Rows.Count != 0)
                     {
                         InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
-
                     }
                     else
                     {
                         clsvariable.StrU = "";
                     }
-
-
                 }
             }
-          
+
             clsvariable.StrU = "";
             clsvariable.StrU_array = new string[3];
-
         }
+
         public void InvenStock(string orderitem, string qty)
         {
             DataTable dt_stock = new DataTable();
@@ -141,6 +225,7 @@ namespace GD4_LED
             db_print.Columns.Add("freetext3", typeof(String));
             db_print.Columns.Add("freetext4", typeof(String));
             db_print.TableName = "db_print";
+
             if (clsvariable.dt_Prescr.Rows.Count > 0)
             {
                 if (dt_stock.Rows.Count == 1)
@@ -165,8 +250,6 @@ namespace GD4_LED
                         {
                             Debug.WriteLine($"Update stock {orderitem} error");
                         }
-
-
                     }
                 }
                 else if (dt_stock.Rows.Count > 1)
@@ -177,7 +260,7 @@ namespace GD4_LED
                         string seq = clsvariable.dt_Prescr.Rows[0]["seq"].ToString();
                         string orderitemcode = clsvariable.dt_Prescr.Rows[0]["orderitemcode"].ToString();
                         int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                        int new_qty = stock_qty - order_qty;                        
+                        int new_qty = stock_qty - order_qty;
                         string lot = row["LotNo"].ToString();
                         string exp = row["Exp"].ToString();
                         result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
@@ -219,6 +302,7 @@ namespace GD4_LED
                     r["freetext3"] = row["freetext3"].ToString();
                     r["freetext4"] = row["freetext4"].ToString();
                 }
+
                 if (clsvariable.print_isenable)
                 {
                     if (db_print.Rows.Count > 0)
@@ -226,22 +310,20 @@ namespace GD4_LED
                         LoadReport(db_print);
                     }
                 }
-                
+
                 CountItem += 1;
                 txtSelectedItems.Text = CountItem.ToString();
                 clsvariable.StrU = "";
                 clsvariable.StrU_array = new string[3];
-
             }
 
-            if(CountItem >= prescriptionData.Package.Count)
+            if (CountItem >= prescriptionData.Package.Count)
             {
                 timer.Stop();
                 this.Close();
-
             }
-
         }
+
         private void LoadReport(DataTable dt)
         {
             ReportDocument report = new ReportDocument();
@@ -253,15 +335,9 @@ namespace GD4_LED
             report.Dispose();
         }
 
-
-
         private void LoadSampleData(string jsonString)
         {
-            // Sample JSON data
             string jsonData = jsonString;
-
-            jsonData = jsonString;
-
             LoadData(jsonData);
         }
 
@@ -269,9 +345,6 @@ namespace GD4_LED
         {
             prescriptionData = JsonConvert.DeserializeObject<Prescription>(jsonData);
 
-            //CountItem = prescriptionData.Package.Count;
-
-            // Set header information
             txtPrescriptionNo.Text = $"เลขที่ใบสั่ง: {prescriptionData.PrescriptionNo}";
             txtPatientName.Text = prescriptionData.PatientName;
             txtHN.Text = prescriptionData.HN;
@@ -280,16 +353,15 @@ namespace GD4_LED
             txtBed.Text = prescriptionData.Bed;
             txtStatus.Text = prescriptionData.Status;
 
-            // Set status color
             SetStatusColor(prescriptionData.Status);
-
-            // Bind package items
             PackageItemsControl.ItemsSource = prescriptionData.Package;
-
-            // Update footer
             UpdateFooter();
 
-            PrintPrescription(prescriptionData);
+            // Don't print until verified
+            if (isVerified)
+            {
+                PrintPrescription(prescriptionData);
+            }
         }
 
         private void SetStatusColor(string status)
@@ -323,23 +395,19 @@ namespace GD4_LED
             var item = border.Tag as PackageItem;
             if (item == null) return;
 
-            // Find the checkMark border
             var grid = border.Child as Grid;
             if (grid == null) return;
 
             var checkMark = FindVisualChild<Border>(grid, "checkMark");
             if (checkMark == null) return;
 
-            // Toggle selection
             if (selectedItems.Contains(item))
             {
-                // Unselect
                 selectedItems.Remove(item);
                 AnimateCheckMark(checkMark, border, false);
             }
             else
             {
-                // Select
                 selectedItems.Add(item);
                 AnimateCheckMark(checkMark, border, true);
             }
@@ -353,7 +421,6 @@ namespace GD4_LED
             {
                 checkMark.Visibility = Visibility.Visible;
 
-                // Animate background to green
                 var colorAnimation = new ColorAnimation
                 {
                     To = (Color)ColorConverter.ConvertFromString("#10b981"),
@@ -362,7 +429,6 @@ namespace GD4_LED
                 checkMark.Background = new SolidColorBrush(Colors.Transparent);
                 checkMark.Background.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
 
-                // Scale animation
                 var scaleTransform = new ScaleTransform(0, 0, 30, 30);
                 checkMark.RenderTransform = scaleTransform;
 
@@ -382,13 +448,11 @@ namespace GD4_LED
                 scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnimation);
                 scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleYAnimation);
 
-                // Card border animation
                 cardBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
                 cardBorder.BorderThickness = new Thickness(2);
             }
             else
             {
-                // Fade out animation
                 var opacityAnimation = new DoubleAnimation
                 {
                     To = 0,
@@ -397,7 +461,6 @@ namespace GD4_LED
                 opacityAnimation.Completed += (s, e) => checkMark.Visibility = Visibility.Collapsed;
                 checkMark.BeginAnimation(Border.OpacityProperty, opacityAnimation);
 
-                // Reset card border
                 cardBorder.BorderThickness = new Thickness(0);
             }
         }
@@ -429,7 +492,6 @@ namespace GD4_LED
             return null;
         }
 
-
         private void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             if (selectedItems.Count == 0)
@@ -450,14 +512,10 @@ namespace GD4_LED
             }
         }
 
-        // Method to get selected items (สำหรับเรียกใช้จาก Window อื่น)
         public List<PackageItem> GetSelectedItems()
         {
             return selectedItems.ToList();
         }
-
-
-
     }
 
     public class PrescriptionData

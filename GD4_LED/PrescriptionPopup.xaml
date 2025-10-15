@@ -57,6 +57,8 @@
             <Setter Property="Margin" Value="0,4,0,0"/>
         </Style>
     </Window.Resources>
+    
+    
 
     <Border Background="White" 
             CornerRadius="24" 
@@ -81,6 +83,79 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <!-- Verification Overlay -->
+                <Border x:Name="verificationOverlay"
+                    Grid.RowSpan="3"
+                    Background="#F0FFFFFF"
+                    Visibility="Visible"
+                    Panel.ZIndex="1000">
+                    <Grid>
+                        <StackPanel VerticalAlignment="Center" 
+                                HorizontalAlignment="Center"
+                                Margin="50">
+                            <Border Background="White"
+                                CornerRadius="20"
+                                Padding="50,40"
+                                BorderThickness="2">
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#3b82f6" Offset="0"/>
+                                        <GradientStop Color="#8b5cf6" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.BorderBrush>
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#3b82f6" BlurRadius="30" ShadowDepth="0" Opacity="0.3"/>
+                                </Border.Effect>
+
+                                <StackPanel>
+                                    <TextBlock Text="🔐" 
+                                         FontSize="64" 
+                                         HorizontalAlignment="Center"
+                                         Margin="0,0,0,20"/>
+
+                                    <TextBlock Text="กรุณายืนยันผู้จัดยา" 
+                                         FontSize="28" 
+                                         FontWeight="Bold" 
+                                         Foreground="#1e293b"
+                                         HorizontalAlignment="Center"
+                                         Margin="0,0,0,10"/>
+
+                                    <TextBlock Text="โดยการสแกนบาร์โค้ดหรือคิวอาร์โค้ด" 
+                                         FontSize="16" 
+                                         Foreground="#64748b"
+                                         HorizontalAlignment="Center"
+                                         Margin="0,0,0,30"/>
+
+                                    <Border Background="#f1f5f9"
+                                        CornerRadius="10"
+                                        Padding="20,15"
+                                        MinWidth="300">
+                                        <StackPanel>
+                                            <TextBlock Text="รหัสที่สแกน:" 
+                                                 FontSize="13" 
+                                                 Foreground="#64748b"
+                                                 Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="txtScannedCode" 
+                                                 Text="รอการสแกน..." 
+                                                 FontSize="16" 
+                                                 FontWeight="Bold" 
+                                                 Foreground="#3b82f6"
+                                                 TextAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <TextBlock x:Name="txtVerificationStatus"
+                                         Text="" 
+                                         FontSize="14" 
+                                         Foreground="#dc2626"
+                                         HorizontalAlignment="Center"
+                                         Margin="0,15,0,0"
+                                         Visibility="Collapsed"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
                 <!-- Header Section -->
                 <Border Grid.Row="0" 
@@ -190,7 +265,7 @@
                             </StackPanel>
 
                             <StackPanel Grid.Row="2" Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="สถานะ" Style="{StaticResource HeaderTextStyle}"/>
+                                <TextBlock Text="ผู้จัดยา" Style="{StaticResource HeaderTextStyle}"/>
                                 <Border x:Name="statusBorder" 
                                     Background="#dcfce7" 
                                     CornerRadius="6" 
