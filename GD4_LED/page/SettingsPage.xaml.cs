@@ -1,9 +1,13 @@
 ﻿using GD4_LED.cls;
 using Microsoft.Win32;
+using MySql.Data.MySqlClient;
+using Mysqlx.Expr;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+
 //using System.Drawing.Printing;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
@@ -463,7 +467,14 @@ namespace GD4_LED.page
         private void ColorPickerButton_Click(object sender, RoutedEventArgs e)
         {
             Button clickedButton = sender as Button;
+            ColorPicker(clickedButton);
+        }
 
+        private void ColorPicker(Button clickedButton)
+        {
+            //Button clickedButton = sender as Button;
+
+            //Button clickedButton = new Button();
 
             var colorPickerDialog = new Window
             {
@@ -1020,7 +1031,149 @@ namespace GD4_LED.page
         {
 
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            LoadLocation();
+        }
+        public bool SyncDrug()
+        {
+            DataTable dt_stock = new DataTable();
+            dt_stock = _query.GetLedStockByZone(clsvariable.shelfzone);
+            string connStr = GD4_LED.Properties.Settings.Default.connectstringlocal;
+            int position_id =0;
+            int addr=0;
+            string qty="";
+            string LotNo="";
+            string exp="";
+            string orderitemENname ="";
+            string position = "";
+
+            foreach (DataRow dr in dt_stock.Rows)
+            {
+                if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
+                {
+                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                    qty = dt_stock.Rows[0]["In_Qty"].ToString();
+                    LotNo = dt_stock.Rows[0]["LotNo"].ToString();
+                    exp = dt_stock.Rows[0]["Exp"].ToString();
+                    orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
+                    position = dt_stock.Rows[0]["shelfname"].ToString();
+
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id,orderitemENname,"","", position);
+                    //return true;
+                }
+                else
+                {
+                    //return false;
+                }
+                clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+            }
+
+            return true;
+            
+        }
+        public void LoadLocation()
+        {
+            DataTable dt = new DataTable();
+            dt = _query.GetLocation_main(clsvariable.shelfzone);
+            string connStr = clsvariable.connectionST;
+            if (dt.Rows.Count > 0)
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                    string insertCols = string.Join(", ", columns);
+                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                    string updateCols = string.Join(", ", columns
+                                                    .Where(c => c != "orderitemcode")
+                                                    .Select(c => $"{c} = VALUES({c})"));
+
+                    string sql = $@" INSERT INTO ms_location ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            cmd.Parameters.Clear();
+
+                            foreach (DataColumn col in dt.Columns)
+                            {
+                                object value = row[col.ColumnName] ?? DBNull.Value;
+                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        public void LoadLocationByCode(string code)
+        {
+            DataTable dt = new DataTable();
+            dt = _query.GetLocation_main(clsvariable.shelfzone);
+            string connStr = GD4_LED.Properties.Settings.Default.connectstringlocal;
+            if (dt.Rows.Count > 0)
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                    string insertCols = string.Join(", ", columns);
+                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                    string updateCols = string.Join(", ", columns
+                                                    .Where(c => c != "orderitemcode")
+                                                    .Select(c => $"{c} = VALUES({c})"));
+
+                    string sql = $@" INSERT INTO ms_location ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            cmd.Parameters.Clear();
+
+                            foreach (DataColumn col in dt.Columns)
+                            {
+                                object value = row[col.ColumnName] ?? DBNull.Value;
+                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            SyncDrug();
+        }
     }
+
+
     public class LedCabinetModel
     {
         public string ID { get; set; }

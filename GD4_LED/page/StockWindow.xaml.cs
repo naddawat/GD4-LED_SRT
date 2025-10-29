@@ -1,4 +1,5 @@
 ﻿using GD4_LED.cls;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace GD4_LED.page
         public string RefillNotes { get; set; }
         private bool _isLoading = true;
 
-        cls.clsQuery _STK = new cls.clsQuery();
+        cls.clsQuery _query = new cls.clsQuery();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -54,6 +55,8 @@ namespace GD4_LED.page
             InitializeComponent();
             StartLoadingAnimation();
             _ = InitializePageAsync();
+            LoadStock();
+            
         }
 
         // ตรวจสอบว่ายาใกล้หมดอายุภายใน 6 เดือนหรือไม่
@@ -81,6 +84,56 @@ namespace GD4_LED.page
             {
                 StopLoadingAnimation();
                 MessageBox.Show($"เกิดข้อผิดพลาด: {ex.Message}");
+            }
+        }
+        public void LoadStock()
+        {
+            bool v = false;
+            v = _query.CheckConnection(Properties.Settings.Default.connectstringlocal.ToString());
+            //MessageBox.Show(v.ToString());
+            DataTable dt = new DataTable();
+            dt = _query.GetAllLedStock(clsvariable.shelfzone);
+            string connStr = GD4_LED.Properties.Settings.Default.connectstring;
+            //MessageBox.Show(GD4_LED.Properties.Settings.Default.connectstring);
+            if (dt.Rows.Count > 0)
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                    string insertCols = string.Join(", ", columns);
+                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                    string updateCols = string.Join(", ", columns
+                                                    .Where(c => c != "orderitemcode")
+                                                    .Select(c => $"{c} = VALUES({c})"));
+
+                    string sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            cmd.Parameters.Clear();
+
+                            foreach (DataColumn col in dt.Columns)
+                            {
+                                object value = row[col.ColumnName] ?? DBNull.Value;
+                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -124,7 +177,7 @@ namespace GD4_LED.page
                 Dispatcher.Invoke(() =>
                 {
                     SetupSmoothScrolling();
-                    DataTable dt = _STK.GetLedStock(clsvariable.shelfzone);
+                    DataTable dt = _query.GetLedStock(clsvariable.shelfzone);
 
 
                     string jsonData = JsonConvert.SerializeObject(dt, Formatting.Indented);
@@ -320,13 +373,14 @@ namespace GD4_LED.page
                 SelectedDrug = drugData;
                 DrugStockGroupModel drug = drugData as DrugStockGroupModel;
 
-                DataTable dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.shelfzone);
+                DataTable dt_stock = _query.GetLocation(drug.drugCode, clsvariable.shelfzone);
                 if (dt_stock.Rows.Count > 0)
                 {
-                    if(dt_stock.Rows[0]["position_id"].ToString() !="")
+                    if(dt_stock.Rows[0]["position_id"].ToString() !="" && dt_stock.Rows[0]["addr"].ToString() != "")
                     {
-                        int _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                        clsvariable.Instance.SerialCan.SetLED(1, _id, 255, 0, 0);
+                        int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                        int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                        clsvariable.Instance.SerialCan.SetLED(addr, position_id, 255, 0, 0);
                     }
                     else
                     {
@@ -353,7 +407,7 @@ namespace GD4_LED.page
                 SelectedDrug = drugData;
                 DrugStockGroupModel drug = drugData as DrugStockGroupModel;
 
-                DataTable dt_stock = _STK.GetLocation(drug.drugCode, clsvariable.comname);
+                DataTable dt_stock = _query.GetLocation(drug.drugCode, clsvariable.comname);
                 if (dt_stock.Rows.Count > 0)
                 {
                     _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());

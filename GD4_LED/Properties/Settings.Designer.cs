@@ -25,8 +25,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=kcmh-pharma.chula.or.th;Initial Catalog=led_demo;Persist Security Inf" +
-            "o=True;User ID=root;Password=Admin@gd4; Max Pool Size=10000;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=192.168.209.2;Initial Catalog=meddispense;Persist Security Info=True;" +
+            "User ID=root;Password=Admin@gd4; Max Pool Size=10000;charset=utf8mb4;")]
         public string connectstring {
             get {
                 return ((string)(this["connectstring"]));
@@ -38,8 +38,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=kcmh-pharma.chula.or.th;Initial Catalog=led_demo;Persist Security Inf" +
-            "o=True;User ID=root;Password=Admin@gd4; Max Pool Size=10000;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Initial Catalog=led;Persist Security Info=True;User ID=root" +
+            ";Password=root; Max Pool Size=10000;charset=utf8mb4;")]
         public string connectstringlocal {
             get {
                 return ((string)(this["connectstringlocal"]));

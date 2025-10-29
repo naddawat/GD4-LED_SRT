@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,8 @@ namespace GD4_LED.cls
         public static string SQL;
         public static bool result;
 
-        string connectst = GD4_LED.Properties.Settings.Default.connectstringlocal;
+        string connectst = clsvariable.connectionST; /*GD4_LED.Properties.Settings.Default.connectstringlocal;*/
+        string connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
         public DataTable GetLedStock(string shelfzone)
         {
 
@@ -44,12 +46,7 @@ namespace GD4_LED.cls
                       RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode 
                     WHERE
                       ml.shelfzone = '{shelfzone}' 
-                    GROUP BY
-                      ms.orderitemcode,
-                      ms.LotNo,
-                      ms.Exp 
-                    ORDER BY
-                      Percent";
+                    ";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
@@ -57,26 +54,40 @@ namespace GD4_LED.cls
         {
 
             SQL = $@" SELECT
-                      prescriptionno,
-                      hn,
-                      an,
-                      patientname,
-                      wardname As ward,
-                      bedcode as bed,
-                      orderitemcode,
-                      orderitemname,
-                      orderqty,
-                      shelfzone,
-                      shelfname
+                      p.prescriptionno,
+                      p.hn,
+                      p.an,
+                      p.patientname,
+                      p.wardname As ward,
+                      p.bedcode as bed,
+                      p.orderitemcode,
+                      p.orderitemname,
+                      p.orderqty,
+                      p.shelfzone,
+                      p.shelfname,
+                      ms.addr,
+                      ms.position_id
                     FROM
-                      packagemaster_ipd 
+                      packagemaster_ipd  p INNER JOIN ms_location ms on p.orderitemcode = ms.orderitemcode
                     WHERE
-                      shelfzone = '{shelfzone}' 
-                      AND leddatetime IS NULL
-                      AND voiddatetime is null
-                      AND ordercreatedate > CURRENT_DATE();";
+                      p.shelfzone = '{shelfzone}' 
+                      AND p.leddatetime IS NULL
+                      AND p.voiddatetime is null
+                      AND p.ordercreatedate > CURRENT_DATE();";
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
+        public DataTable GetUser(string username,string password)
+        {
+
+            SQL = $@" SELECT
+                      *
+                    FROM
+                      ms_users 
+                    WHERE
+                      username = '{username}' ;";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
         public DataTable GetPrescriptionByCode(string prescriptionno)
         {
@@ -91,7 +102,7 @@ namespace GD4_LED.cls
                       AND voiddatetime is null
                       AND shelfzone = '{clsvariable.shelfzone}' ";
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
         public DataTable GetPrescrfinished(string shelfzone)
         {
@@ -113,7 +124,7 @@ namespace GD4_LED.cls
                       AND leddatetime IS not NULL
                       AND voiddatetime is null";
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
         public DataTable GetStockByCode(string orderitemcode)
         {
@@ -121,7 +132,8 @@ namespace GD4_LED.cls
             SQL = $@" SELECT
                     st.*,
                       STR_TO_DATE( st.Exp, '%Y-%m-%d' ) AS ExpDate ,
-                      ml.position_id
+                      ml.position_id,
+                      ml.addr
                     FROM
                       ms_stock st LEFT JOIN ms_location ml on st.orderitemcode = ml.orderitemcode
                     Where 
@@ -140,7 +152,7 @@ namespace GD4_LED.cls
               
             Where ms.computername = '{comname}' ";
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }        
         public DataTable GetLocation(string code,string device)
         {
@@ -153,6 +165,28 @@ namespace GD4_LED.cls
               AND ml.shelfzone = '{device}'";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLocation_main(string device)
+        {
+
+            SQL = $@"  SELECT *
+            FROM
+              ms_location ml
+            WHERE
+              ml.shelfzone = '{device}'";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
+        public DataTable GetLocationBycode_main(string device, string code)
+        {
+
+            SQL = $@"  SELECT *
+            FROM
+              ms_location ml
+            WHERE
+              ml.shelfzone = '{device}' and ml.orderitemcode ='{code}'";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
         public DataTable GetLedStockByCode(string orderitemcode,string shelfzone)
         {
@@ -181,6 +215,28 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
+        public DataTable GetAllLedStockByCode(string orderitemcode, string shelfzone)
+        {
+
+            SQL = $@"  SELECT
+              *
+            FROM
+              ms_stock ms
+            where ms.orderitemcode = '{orderitemcode}' and ms.shelfzone = '{shelfzone}' ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetAllLedStock(string shelfzone)
+        {
+
+            SQL = $@"  SELECT
+              *
+            FROM
+              ms_stock ms
+            where  ms.shelfzone = '{shelfzone}' ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
         public DataTable GetLedStockByAddr(string Addr, string _id,string shelfzone)
         {
 
@@ -205,6 +261,30 @@ namespace GD4_LED.cls
               RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
             where ml.addr = '{Addr}' and ml.position_id = '{_id}' and ml.shelfzone = '{shelfzone}'
               ORDER BY Percent";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLedStockByZone(string shelfzone)
+        {
+
+            SQL = $@"  SELECT
+              *
+            FROM
+              ms_stock ms
+              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            where  ml.shelfzone = '{shelfzone}' ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLedStockByZoneCode(string orderitemcode, string shelfzone)
+        {
+
+            SQL = $@"  SELECT
+              *
+            FROM
+              ms_stock ms
+              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            where  ml.orderitemcode = '{orderitemcode}' and  ml.shelfzone = '{shelfzone}' ";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
@@ -249,7 +329,7 @@ namespace GD4_LED.cls
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
-                return Execute.dataExecuteNonQuery(connectst, cmd);
+                return Execute.dataExecuteNonQuery(connectst_main, cmd);
             }
         }
         public bool UpdateTrigger(string status, string comname)
@@ -260,7 +340,7 @@ namespace GD4_LED.cls
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
-                return Execute.dataExecuteNonQuery(connectst, cmd);
+                return Execute.dataExecuteNonQuery(connectst_main, cmd);
             }
         }
         public bool UpdateJob(string leduserid, string prescriptionno,string seq,string orderitemcode)
@@ -275,7 +355,7 @@ namespace GD4_LED.cls
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
-                return Execute.dataExecuteNonQuery(connectst, cmd);
+                return Execute.dataExecuteNonQuery(connectst_main, cmd);
             }
         }
         public bool UpdateDisStock(string new_qty, string orderitem,string lot,string exp)
@@ -294,7 +374,7 @@ namespace GD4_LED.cls
                 return Execute.dataExecuteNonQuery(connectst, cmd);
             }
         }
-        public static bool CheckConnection(string ConnectionString)
+        public bool CheckConnection(string ConnectionString)
         {
             try
             {

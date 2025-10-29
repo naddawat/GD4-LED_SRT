@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO.Packaging;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace GD4_LED
     public partial class PrescriptionPopup : Window
     {
         private HashSet<PackageItem> selectedItems = new HashSet<PackageItem>();
-        private Prescription prescriptionData;
+        private PrescriptionData prescriptionData;
         private DispatcherTimer timer;
         private DispatcherTimer scanTimer;
         clsvariable clsvariable = clsvariable.Instance;
@@ -39,21 +40,24 @@ namespace GD4_LED
         private string scannedBarcode = "";
         private bool isVerified = false;
 
-        public PrescriptionPopup(string jsonString)
+        string jsonString = "";
+
+        public PrescriptionPopup(string _jsonString)
         {
             InitializeComponent();
-            LoadSampleData(jsonString);
-
+            //LoadSampleData(jsonString);
+            jsonString = _jsonString;
             scanTimer = new DispatcherTimer();
             scanTimer.Interval = TimeSpan.FromMilliseconds(100);
             scanTimer.Tick += ScanTimer_Tick;
 
-            this.Loaded += (s, e) => this.Focus();
-            this.KeyDown += Window_KeyDown;
-
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += Timer_Tick;
+            this.Loaded += (s, e) => this.Focus();
+            this.KeyDown += Window_KeyDown;
+            //timer.Start();
+
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -65,8 +69,12 @@ namespace GD4_LED
             {
                 if (!string.IsNullOrEmpty(scannedBarcode))
                 {
-                    VerifyDispenser(scannedBarcode);
+                    VerifyDispenser(scannedBarcode,"");
                     scannedBarcode = "";
+
+
+                    LoadSampleData(jsonString);
+
                 }
             }
             else if (e.Key >= Key.D0 && e.Key <= Key.Z || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
@@ -90,16 +98,19 @@ namespace GD4_LED
             scanTimer.Stop();
             if (!string.IsNullOrEmpty(scannedBarcode))
             {
-                VerifyDispenser(scannedBarcode);
+                VerifyDispenser(scannedBarcode,"");
                 scannedBarcode = "";
+
+
+                LoadSampleData(jsonString);
+
             }
         }
 
-        private void VerifyDispenser(string code)
-        {
-
-            if (string.IsNullOrEmpty(code) || code.Length < 4)
-            {
+        private void VerifyDispenser(string code,string password)
+        {            
+            if (string.IsNullOrEmpty(code))
+            {                
                 txtVerificationStatus.Text = "⚠️ รหัสไม่ถูกต้อง กรุณาสแกนใหม่อีกครั้ง";
                 txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc2626"));
                 txtVerificationStatus.Visibility = Visibility.Visible;
@@ -108,18 +119,36 @@ namespace GD4_LED
                 txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
                 return;
             }
+            else
+            {
+                DataTable dt_user = new DataTable();
+                dt_user = _query.GetUser(code, password);
+                if(dt_user.Rows.Count > 0)
+                {
 
-            isVerified = true;
+                    txtname.Text = dt_user.Rows[0]["fullname"].ToString();
+                    isVerified = true;
 
+                    txtStatus.Text = dt_user.Rows[0]["fullname"].ToString();
+                    txtScannedCode.Text = code;
+                    txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+                    txtVerificationStatus.Text = "✓ ยืนยันตัวตนสำเร็จ";
+                    txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+                    txtVerificationStatus.Visibility = Visibility.Visible;
 
-            txtStatus.Text = code;
+                }
+                else
+                {
+                    txtVerificationStatus.Text = "⚠️ ไม่พบข้อมูลผู้ใช้ กรุณาสแกนใหม่อีกครั้ง";
+                    txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc2626"));
+                    txtVerificationStatus.Visibility = Visibility.Visible;
+                    txtScannedCode.Text = "รอการสแกน...";
+                    txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
+                    return;
+                }
+            }
 
-            txtScannedCode.Text = code;
-            txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
-            txtVerificationStatus.Text = "✓ ยืนยันตัวตนสำเร็จ";
-            txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
-            txtVerificationStatus.Visibility = Visibility.Visible;
-
+          
   
             var fadeOut = new DoubleAnimation
             {
@@ -139,7 +168,7 @@ namespace GD4_LED
             verificationOverlay.BeginAnimation(UIElement.OpacityProperty, fadeOut);
         }
 
-        private void PrintPrescription(Prescription prescription)
+        private void PrintPrescription(PrescriptionData prescription)
         {
             string orderitemcode = "";
             string qty = "";
@@ -156,6 +185,75 @@ namespace GD4_LED
 
             clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
         }
+        private void PrintPrescriptionNoLed(object prescription)
+        {
+            timer.Stop();
+            string orderitemcode = ((dynamic)prescription).OrderItemCode;
+            int qty = ((dynamic)prescription).OrderQty;
+            string addr = ((dynamic)prescription).Addr;
+            string id = ((dynamic)prescription).id;
+
+            DataTable dt_stock = new DataTable();
+            dt_stock = _query.GetLedStockByAddr(addr, id, clsvariable.shelfzone);
+            if (dt_stock.Rows.Count != 0)
+            {
+                InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), qty.ToString());
+            }
+            else
+            {
+                clsvariable.StrU = "";
+            }
+
+            //for (int i = 0; i < prescription.Package.Count; i++)
+            //{
+            //    orderitemcode = prescription.Package[i].OrderItemCode.ToString();
+            //    qty = prescription.Package[i].OrderQty.ToString();
+
+            //    if (orderitemcode != "")
+            //    {
+            //        //ShowLed(orderitemcode, qty);
+            //    }
+            //}
+
+            //clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+        }
+        public bool SyncDrug(string code)
+        {
+            DataTable dt_stock = new DataTable();
+            dt_stock = _query.GetLedStockByZoneCode(code, clsvariable.shelfzone);
+            int position_id = 0;
+            int addr = 0;
+            string qty = "";
+            string LotNo = "";
+            string exp = "";
+            string orderitemENname = "";
+            string position = "";
+
+            foreach (DataRow dr in dt_stock.Rows)
+            {
+                if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
+                {
+                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                    qty = dt_stock.Rows[0]["In_Qty"].ToString();
+                    LotNo = dt_stock.Rows[0]["LotNo"].ToString();
+                    exp = dt_stock.Rows[0]["Exp"].ToString();
+                    orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
+                    position = dt_stock.Rows[0]["shelfname"].ToString();
+
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                    //return true;
+                }
+                else
+                {
+                    //return false;
+                }
+                clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+            }
+
+            return true;
+
+        }
 
         public void ShowLed(string orderitem, string qty)
         {
@@ -169,7 +267,8 @@ namespace GD4_LED
                 int G = Convert.ToInt32(clsvariable.RGD_dispense[1].ToString());
                 int B = Convert.ToInt32(clsvariable.RGD_dispense[2].ToString());
                 int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                clsvariable.Instance.SerialCan.Order(1, position_id, qty, "", "", "", "", R, G, B);
+                int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, "", "", "", "", R, G, B);
             }
             else
             {
@@ -195,6 +294,8 @@ namespace GD4_LED
                     if (dt_stock.Rows.Count != 0)
                     {
                         InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
+
+                        this.Close();
                     }
                     else
                     {
@@ -228,99 +329,106 @@ namespace GD4_LED
 
             if (clsvariable.dt_Prescr.Rows.Count > 0)
             {
-                if (dt_stock.Rows.Count == 1)
-                {
-                    foreach (DataRow row in dt_stock.Rows)
-                    {
-                        string prescriptionno = clsvariable.dt_Prescr.Rows[0]["prescriptionno"].ToString();
-                        string seq = clsvariable.dt_Prescr.Rows[0]["seq"].ToString();
-                        string orderitemcode = clsvariable.dt_Prescr.Rows[0]["orderitemcode"].ToString();
-                        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                        int new_qty = stock_qty - order_qty;
-                        string lot = row["LotNo"].ToString();
-                        string exp = row["Exp"].ToString();
+                DataTable dt_prescr = new DataTable();
+                DataRow[] rows = clsvariable.dt_Prescr.Select("orderitemcode = '" + orderitem.Replace("'", "''")+"'" );
 
-                        result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                        if (result)
-                        {
-                            Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-                            result = _query.UpdateJob("USER", prescriptionno, seq, orderitemcode);
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Update stock {orderitem} error");
-                        }
-                    }
-                }
-                else if (dt_stock.Rows.Count > 1)
+                if (rows.Length > 0)
                 {
-                    foreach (DataRow row in dt_stock.Rows)
-                    {
-                        string prescriptionno = clsvariable.dt_Prescr.Rows[0]["prescriptionno"].ToString();
-                        string seq = clsvariable.dt_Prescr.Rows[0]["seq"].ToString();
-                        string orderitemcode = clsvariable.dt_Prescr.Rows[0]["orderitemcode"].ToString();
-                        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                        int new_qty = stock_qty - order_qty;
-                        string lot = row["LotNo"].ToString();
-                        string exp = row["Exp"].ToString();
-                        result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                        if (result)
-                        {
-                            Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-                            result = _query.UpdateJob("USER", prescriptionno, seq, orderitemcode);
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Update stock {orderitem} error");
-                        }
-
-                        if (new_qty == 0)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
+                    dt_prescr = rows.CopyToDataTable();
                 }
                 else
                 {
-                    MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    dt_prescr = clsvariable.dt_Prescr.Clone(); // คืน DataTable โครงสร้างเดิมแต่ไม่มีข้อมูล
                 }
 
-                foreach (DataRow row in clsvariable.dt_Prescr.Rows)
+                if (dt_prescr.Rows.Count > 0)
                 {
-                    DataRow r = db_print.Rows.Add();
-                    r["prescriptionno"] = row["prescriptionno"].ToString();
-                    r["orderitemname"] = row["orderitemname"].ToString();
-                    r["orderqty"] = row["orderqty"].ToString();
-                    r["patientname"] = row["patientname"].ToString();
-                    r["hn"] = row["hn"].ToString();
-                    r["freetext1"] = row["freetext1"].ToString();
-                    r["freetext2"] = row["freetext2"].ToString();
-                    r["freetext3"] = row["freetext3"].ToString();
-                    r["freetext4"] = row["freetext4"].ToString();
-                }
-
-                if (clsvariable.print_isenable)
-                {
-                    if (db_print.Rows.Count > 0)
+                    string prescriptionno = dt_prescr.Rows[0]["prescriptionno"].ToString();
+                    string seq = dt_prescr.Rows[0]["seq"].ToString();
+                    if (dt_stock.Rows.Count == 0)
                     {
-                        LoadReport(db_print);
+                        MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+                    else
+                    {
+                        int remaining_qty = order_qty; // จำนวนที่ต้องตัดออก
+                        int index = 0;
+                        timer.Stop();
+
+                        while (index < dt_stock.Rows.Count && remaining_qty > 0)
+                        {
+                            DataRow row = dt_stock.Rows[index];
+                            int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                            string lot = row["LotNo"].ToString();
+                            string exp = row["Exp"].ToString();
+
+                            int new_qty = stock_qty - remaining_qty;
+
+                            if (new_qty >= 0) // ใช้ lot นี้พอหรือเหลือ
+                            {
+                                result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                                if (result) Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                                remaining_qty = 0; // ตัดครบแล้ว
+                            }
+                            else // ไม่พอ ต้องใช้ lot ถัดไป
+                            {
+                                result = _query.UpdateDisStock("0", orderitem, lot, exp);
+                                if (result) Debug.WriteLine($"Update stock {orderitem} new qty: 0");
+                                remaining_qty = Math.Abs(new_qty); // ยังเหลือให้ตัดแถวถัดไป
+                            }
+
+                            index++;
+                        }
+
+                        if (result)
+                        {
+                            result = _query.UpdateJob(txtStatus.Text, prescriptionno, seq, orderitem);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Update stock {orderitem} error");
+                        }
+                    }
+
+                    foreach (DataRow row in dt_prescr.Rows)
+                    {
+                        DataRow r = db_print.Rows.Add();
+                        r["prescriptionno"] = row["prescriptionno"].ToString();
+                        r["orderitemname"] = row["orderitemname"].ToString();
+                        r["orderqty"] = row["orderqty"].ToString();
+                        r["patientname"] = row["patientname"].ToString();
+                        r["hn"] = row["hn"].ToString();
+                        r["freetext1"] = row["freetext1"].ToString();
+                        r["freetext2"] = row["freetext2"].ToString();
+                        r["freetext3"] = row["freetext3"].ToString();
+                        r["freetext4"] = row["freetext4"].ToString();
+                    }
+
+                    if (clsvariable.print_isenable)
+                    {
+                        if (db_print.Rows.Count > 0)
+                        {
+                            LoadReport(db_print);
+                        }
+                    }
+                    timer.Start();
+
+                    CountItem += 1;
+                    txtSelectedItems.Text = CountItem.ToString();
+                    clsvariable.StrU = "";
+                    clsvariable.StrU_array = new string[3];
+                    //SyncDrug(orderitem);
                 }
 
-                CountItem += 1;
-                txtSelectedItems.Text = CountItem.ToString();
-                clsvariable.StrU = "";
-                clsvariable.StrU_array = new string[3];
-            }
-
-            if (CountItem >= prescriptionData.Package.Count)
-            {
-                timer.Stop();
-                this.Close();
+                if (CountItem >= prescriptionData.Package.Count)
+                {
+                    timer.Stop();
+                    
+                    //PackageItemsControl.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AFE1AF"));
+                    txtSelectedItems.Text = CountItem.ToString();
+                    clsvariable.StrU = "";
+                    clsvariable.StrU_array = new string[3];
+                }
             }
         }
 
@@ -343,7 +451,7 @@ namespace GD4_LED
 
         public void LoadData(string jsonData)
         {
-            prescriptionData = JsonConvert.DeserializeObject<Prescription>(jsonData);
+            prescriptionData = JsonConvert.DeserializeObject<PrescriptionData>(jsonData);
 
             txtPrescriptionNo.Text = $"เลขที่ใบสั่ง: {prescriptionData.PrescriptionNo}";
             txtPatientName.Text = prescriptionData.PatientName;
@@ -351,10 +459,11 @@ namespace GD4_LED
             txtAN.Text = prescriptionData.AN;
             txtWard.Text = prescriptionData.Ward;
             txtBed.Text = prescriptionData.Bed;
-            txtStatus.Text = prescriptionData.Status;
+            //txtStatus.Text = prescriptionData.Status;
 
             SetStatusColor(prescriptionData.Status);
             PackageItemsControl.ItemsSource = prescriptionData.Package;
+     
             UpdateFooter();
 
             // Don't print until verified
@@ -389,30 +498,38 @@ namespace GD4_LED
 
         public void PackageCard_Click(object sender, MouseButtonEventArgs e)
         {
-            var border = sender as Border;
-            if (border == null) return;
-
-            var item = border.Tag as PackageItem;
-            if (item == null) return;
-
-            var grid = border.Child as Grid;
-            if (grid == null) return;
-
-            var checkMark = FindVisualChild<Border>(grid, "checkMark");
-            if (checkMark == null) return;
-
-            if (selectedItems.Contains(item))
+            
+            if (PackageItemsControl != null) 
             {
-                selectedItems.Remove(item);
-                AnimateCheckMark(checkMark, border, false);
-            }
-            else
-            {
-                selectedItems.Add(item);
-                AnimateCheckMark(checkMark, border, true);
-            }
+                var border = sender as System.Windows.Controls.Border;
+                if (border == null) return;
 
-            UpdateFooter();
+                var item = border.Tag as PackageItem;
+                if (item == null) return;
+                //selectedItems.Add(item);
+
+                var grid = border.Child as Grid;
+                if (grid == null) return;
+
+                var checkMark = FindVisualChild<Border>(grid, "checkMark");
+                if (checkMark == null) return;
+
+                if (selectedItems.Contains(item))
+                {
+                    selectedItems.Remove(item);
+                    AnimateCheckMark(checkMark, border, false);
+                }
+                else
+                {
+                    selectedItems.Add(item);
+                    AnimateCheckMark(checkMark, border, true);
+                }
+
+                UpdateFooter();
+
+                PrintPrescriptionNoLed(item);
+            }
+          
         }
 
         private void AnimateCheckMark(Border checkMark, Border cardBorder, bool show)
@@ -501,20 +618,37 @@ namespace GD4_LED
                 return;
             }
 
-            string selectedList = string.Join("\n", selectedItems.Select(x => $"- {x.OrderItemName} (จำนวน: {x.OrderQty})"));
-            var result = MessageBox.Show($"ยืนยันการเลือกรายการยา {selectedItems.Count} รายการ?\n\n{selectedList}",
-                "ยืนยัน", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            //string selectedList = string.Join("\n", selectedItems.Select(x => $"- {x.OrderItemName} (จำนวน: {x.OrderQty})"));
+            //var result = MessageBox.Show($"ยืนยันการเลือกรายการยา {selectedItems.Count} รายการ?\n\n{selectedList}",
+            //    "ยืนยัน", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (result == MessageBoxResult.Yes)
-            {
-                MessageBox.Show("บันทึกข้อมูลสำเร็จ!", "สำเร็จ", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.Close();
-            }
+            //if (result == MessageBoxResult.Yes)
+            //{
+            //    MessageBox.Show("บันทึกข้อมูลสำเร็จ!", "สำเร็จ", MessageBoxButton.OK, MessageBoxImage.Information);
+            //    this.Close();
+            //}
+
+            this.Close();
         }
 
         public List<PackageItem> GetSelectedItems()
         {
             return selectedItems.ToList();
+        }
+
+        private void txtScannedCode_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (!string.IsNullOrEmpty(txtScannedCode.Text))
+                {
+                    VerifyDispenser(txtScannedCode.Text,"");
+                    scannedBarcode = "";
+
+                    LoadSampleData(jsonString);
+                    
+                }
+            }
         }
     }
 
@@ -527,6 +661,8 @@ namespace GD4_LED
         public string Ward { get; set; }
         public string Bed { get; set; }
         public string Status { get; set; }
+        public string Addr { get; set; }
+        public string id { get; set; }
         public List<PackageItem> Package { get; set; }
     }
 
@@ -535,6 +671,8 @@ namespace GD4_LED
         public string OrderItemCode { get; set; }
         public string OrderItemName { get; set; }
         public int OrderQty { get; set; }
+        public string Addr { get; set; }
+        public string id { get; set; }
 
         public override bool Equals(object obj)
         {

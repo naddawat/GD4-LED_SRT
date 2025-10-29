@@ -14,10 +14,10 @@ namespace GD4_LED.cls
         clsFillMyDB fill = new clsFillMyDB();
         clsExecuteMYSQL Execute = new clsExecuteMYSQL();
         public static string SQL;
-        public  string getDeviceName()
+        public  string getDeviceName(string computerName)
         {
             DataTable dt = new DataTable();
-            string computerName = Environment.MachineName;
+            //string computerName = Environment.MachineName;
             SQL = $"SELECT   shelfzone  FROM ms_shelf WHERE computername = '{computerName}'";
             dt = clsFillMyDB.GetDataSet(GD4_LED.Properties.Settings.Default.connectstring, SQL);
 

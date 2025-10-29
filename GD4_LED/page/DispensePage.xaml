@@ -58,8 +58,8 @@
             </Grid.RowDefinitions>
 
             <!-- Search and Filter Section - Fixed at top -->
-            <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0">
-                <Grid>
+            <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0" d:IsHidden="True">
+                <Grid d:IsHidden="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="24"/>
@@ -68,9 +68,9 @@
 
                     <TextBlock Grid.Row="0" 
                                  Text="ค้นหาใบสั่งยา" 
-                                 Style="{StaticResource SubHeaderTextStyle}"/>
+                                 Style="{StaticResource SubHeaderTextStyle}" d:IsHidden="True"/>
 
-                    <Grid Grid.Row="2" Margin="0,0,0,0">
+                    <Grid Grid.Row="2" Margin="0,0,0,0" d:IsHidden="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="16"/>
@@ -85,20 +85,20 @@
                                   CornerRadius="8"
                                   BorderBrush="{StaticResource TextSecondary}"
                                   BorderThickness="1"
-                                  Height="48">
-                            <Grid>
+                                  Height="48" d:IsHidden="True">
+                            <Grid d:IsHidden="True">
                                 <TextBlock Text="ค้นหาด้วย HN, ชื่อ, เลขใบสั่งยา..." 
                                              Foreground="{StaticResource TextSecondary}"
                                              Margin="16,0,0,0"
                                              VerticalAlignment="Center"
-                                             x:Name="SearchPlaceholder"/>
+                                             x:Name="SearchPlaceholder" d:IsHidden="True"/>
                                 <TextBox Background="Transparent"
                                            BorderThickness="0"
                                            FontSize="14"
                                            Padding="16,12"
                                            VerticalAlignment="Center"
                                            x:Name="SearchTextBox"
-                                           TextChanged="SearchTextBox_TextChanged" KeyDown="SearchTextBox_KeyDown"
+                                           TextChanged="SearchTextBox_TextChanged" KeyDown="SearchTextBox_KeyDown" d:IsHidden="True"
                                            />
                             </Grid>
                         </Border>
@@ -109,13 +109,13 @@
                                   Content="⟳ Refresh"
                                 FontSize="18"
                                  Style="{StaticResource PrimaryButtonStyle}"
-                                  Height="48" Click="SearchButton_Click" />
+                                  Height="48" Click="SearchButton_Click" d:IsHidden="True" />
                     </Grid>
                 </Grid>
             </Border>
 
             <!-- Summary Statistics - Fixed at top -->
-            <Grid Grid.Row="1" Margin="0,16,0,0">
+            <Grid Grid.Row="1" Margin="0,16,0,0" d:IsHidden="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="16"/>
@@ -124,24 +124,24 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0">
-                    <StackPanel>
-                        <TextBlock Text="รอจัด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                        <TextBlock x:Name="PendingCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Warning}"/>
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0" d:IsHidden="True">
+                    <StackPanel d:IsHidden="True">
+                        <TextBlock Text="รอจัด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold" d:IsHidden="True"/>
+                        <TextBlock x:Name="PendingCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Warning}" d:IsHidden="True"/>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="0">
-                    <StackPanel>
-                        <TextBlock Text="เสร็จแล้ว" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                        <TextBlock x:Name="CompletedCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Success}"/>
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="0" d:IsHidden="True">
+                    <StackPanel d:IsHidden="True">
+                        <TextBlock Text="เสร็จแล้ว" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold" d:IsHidden="True"/>
+                        <TextBlock x:Name="CompletedCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Success}" d:IsHidden="True"/>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="0">
-                    <StackPanel>
-                        <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold"/>
-                        <TextBlock x:Name="TotalCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="0" d:IsHidden="True">
+                    <StackPanel d:IsHidden="True">
+                        <TextBlock Text="ทั้งหมด" Style="{StaticResource SecondaryTextStyle}" FontSize="16" FontWeight="Bold" d:IsHidden="True"/>
+                        <TextBlock x:Name="TotalCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" d:IsHidden="True"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -152,25 +152,25 @@
                           Margin="0,16,0,0"
                           PanningMode="VerticalOnly"
                           IsManipulationEnabled="True"
-                          x:Name="MainScrollViewer">
-                <StackPanel x:Name="PrescriptionPanel">
+                          x:Name="MainScrollViewer" d:IsHidden="True">
+                <StackPanel x:Name="PrescriptionPanel" d:IsHidden="True">
                     <!-- Cards will be generated here dynamically -->
                 </StackPanel>
             </ScrollViewer>
         </Grid>
 
         <!-- Loading Overlay -->
-        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1">
+        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1" d:IsHidden="True">
             <Grid.Effect>
                 <BlurEffect Radius="0"/>
             </Grid.Effect>
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" d:IsHidden="True">
                 <!-- Modern Loading Icon -->
                 <Border Width="100" Height="100" 
                         Background="White"
                         CornerRadius="20"
-                        Margin="0,0,0,32">
+                        Margin="0,0,0,32" d:IsHidden="True">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" 
                                         Direction="270" 
@@ -179,14 +179,14 @@
                                         BlurRadius="20"/>
                     </Border.Effect>
 
-                    <Grid>
+                    <Grid d:IsHidden="True">
                         <!-- Medicine Icon Background -->
                         <Ellipse Width="60" Height="60" 
                                 Fill="Transparent"
                                 Stroke="#4285F4"
                                 StrokeThickness="4"
                                 StrokeDashArray="8,4"
-                                x:Name="LoadingIcon">
+                                x:Name="LoadingIcon" d:IsHidden="True">
                             <Ellipse.RenderTransform>
                                 <RotateTransform CenterX="30" CenterY="30"/>
                             </Ellipse.RenderTransform>
@@ -198,7 +198,7 @@
                               Fill="#4285F4"
                               Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"
                               HorizontalAlignment="Left"
-                              VerticalAlignment="Top" Margin="38,39,0,0" RenderTransformOrigin="0.812,0.196"/>
+                              VerticalAlignment="Top" Margin="38,39,0,0" RenderTransformOrigin="0.812,0.196" d:IsHidden="True"/>
                     </Grid>
                 </Border>
 
@@ -208,18 +208,18 @@
                            FontWeight="Medium"
                            Foreground="#2C3E50"
                            HorizontalAlignment="Center"
-                           Margin="0,0,0,8"/>
+                           Margin="0,0,0,8" d:IsHidden="True"/>
 
                 <TextBlock Text="โปรดรอสักครู่..." 
                            FontSize="14"
                            Foreground="#7F8C8D"
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Center" d:IsHidden="True"/>
 
                 <!-- Progress Dots -->
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Center"
-                            Margin="0,24,0,0">
-                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4">
+                            Margin="0,24,0,0" d:IsHidden="True">
+                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4" d:IsHidden="True">
                         <Ellipse.Triggers>
                             <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>
@@ -234,7 +234,7 @@
                         </Ellipse.Triggers>
                     </Ellipse>
 
-                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4">
+                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4" d:IsHidden="True">
                         <Ellipse.Triggers>
                             <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>
@@ -249,7 +249,7 @@
                         </Ellipse.Triggers>
                     </Ellipse>
 
-                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4">
+                    <Ellipse Width="8" Height="8" Fill="#4285F4" Margin="4" d:IsHidden="True">
                         <Ellipse.Triggers>
                             <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>

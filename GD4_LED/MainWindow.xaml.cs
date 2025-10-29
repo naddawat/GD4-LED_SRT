@@ -25,7 +25,7 @@ namespace GD4_LED
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
-            clsvariable.comname = "GD4-ILED1";
+            clsvariable.comname = "GD4-LED-01";
            
             // สร้าง SerialCan แค่ครั้งเดียว
             if (clsvariable.Instance.SerialCan == null)
@@ -51,7 +51,7 @@ namespace GD4_LED
             SetWindowToSecondaryScreen();
             SetActiveTab(DispenseButton);
             MainFrame.Navigate(new DispensePage());
-            txtdevice.Text = _Man.getDeviceName();
+            txtdevice.Text = _Man.getDeviceName(clsvariable.comname);
             txtdatetime.Text = datetimeNow;
 
             clsvariable.dt_LedConfig = _config.GetLedConfig(clsvariable.comname);

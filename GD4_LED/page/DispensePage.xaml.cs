@@ -188,7 +188,9 @@ namespace GD4_LED.page
                     an = r["an"].ToString(),
                     patientname = r["patientname"].ToString(),
                     ward = r["ward"].ToString(),
-                    bed = r["bed"].ToString()
+                    bed = r["bed"].ToString(),
+                    addr = r["addr"].ToString(),
+                    id = r["position_id"].ToString()
                 })
                 .Select(g => new
                 {
@@ -198,12 +200,16 @@ namespace GD4_LED.page
                     patientname = g.Key.patientname,
                     ward = g.Key.ward,
                     bed = g.Key.bed,
-                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    addr = g.Key.addr,
+                    id = g.Key.id,
+                    //status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
                     package = g.Select(r => new
                     {
                         orderitemcode = r["orderitemcode"].ToString(),
                         orderitemname = r["orderitemname"].ToString(),
-                        orderqty = Convert.ToInt32(r["orderqty"])
+                        orderqty = Convert.ToInt32(r["orderqty"]),
+                        addr = r["addr"].ToString(),
+                        id = r["position_id"].ToString()
                     }).ToList()
                 })
                 .ToList();
@@ -243,7 +249,7 @@ namespace GD4_LED.page
                     patientname = g.Key.patientname,
                     ward = g.Key.ward,
                     bed = g.Key.bed,
-                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    //status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
                     package = g.Select(r => new
                     {
                         orderitemcode = r["orderitemcode"].ToString(),
@@ -264,12 +270,12 @@ namespace GD4_LED.page
 
         private void UpdateStatistics()
         {
-            int pendingCount = filteredPrescriptions.Count(p => p.Status == "รอจัด");
-            int completedCount = filteredPrescriptions.Count(p => p.Status == "เสร็จแล้ว");
+            //int pendingCount = filteredPrescriptions.Count(p => p.Status == "รอจัด");
+            //int completedCount = filteredPrescriptions.Count(p => p.Status == "เสร็จแล้ว");
             int totalCount = filteredPrescriptions.Count;
 
-            PendingCountText.Text = pendingCount.ToString();
-            CompletedCountText.Text = completedCount.ToString();
+            //PendingCountText.Text = pendingCount.ToString();
+            //CompletedCountText.Text = completedCount.ToString();
             TotalCountText.Text = totalCount.ToString();
         }
 
@@ -329,14 +335,14 @@ namespace GD4_LED.page
             };
 
             // Set color based on status
-            if (prescription.Status == "รอจัด")
-            {
-                statusBorder.Background = (Brush)FindResource("Warning");
-            }
-            else if (prescription.Status == "เสร็จแล้ว")
-            {
-                statusBorder.Background = (Brush)FindResource("Success");
-            }
+            //if (prescription.Status == "รอจัด")
+            //{
+            //    statusBorder.Background = (Brush)FindResource("Warning");
+            //}
+            //else if (prescription.Status == "เสร็จแล้ว")
+            //{
+            //    statusBorder.Background = (Brush)FindResource("Success");
+            //}
 
             TextBlock statusText = new TextBlock
             {
@@ -646,7 +652,7 @@ namespace GD4_LED.page
             //    orderitemcode = prescription.Package[i].OrderItemCode.ToString();
             //    qty = prescription.Package[i].OrderQty.ToString();
 
-            //    if(orderitemcode != "")
+            //    if (orderitemcode != "")
             //    {
             //        ShowLed(orderitemcode, qty);
             //    }
@@ -726,64 +732,69 @@ namespace GD4_LED.page
             db_print.TableName = "db_print";
             if (clsvariable.dt_Prescr.Rows.Count > 0)
             {
-                if (dt_stock.Rows.Count == 1)
-                {
-                    foreach (DataRow row in dt_stock.Rows)
-                    {
+                //if (dt_stock.Rows.Count == 1)
+                //{
+                //    foreach (DataRow row in dt_stock.Rows)
+                //    {
+                //        string prescriptionno = clsvariable.dt_Prescr.Rows[0]["prescriptionno"].ToString();
+                //        string seq = clsvariable.dt_Prescr.Rows[0]["seq"].ToString();
+                //        string orderitemcode = clsvariable.dt_Prescr.Rows[0]["orderitemcode"].ToString();
+                //        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                //        int new_qty = stock_qty - order_qty;
+                //        string lot = row["LotNo"].ToString();
+                //        string exp = row["Exp"].ToString();
 
-                        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                        int new_qty = stock_qty - order_qty;
-                        string lot = row["LotNo"].ToString();
-                        string exp = row["Exp"].ToString();
+                //        result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                //        if (result)
+                //        {
+                //            Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                //            result = _query.UpdateJob("USER", prescriptionno, seq, orderitemcode);
+                //        }
+                //        else
+                //        {
+                //            Debug.WriteLine($"Update stock {orderitem} error");
+                //        }
+                //    }
+                //}
+                //else if (dt_stock.Rows.Count > 1)
+                //{
+                //    foreach (DataRow row in dt_stock.Rows)
+                //    {
+                //        string prescriptionno = clsvariable.dt_Prescr.Rows[0]["prescriptionno"].ToString();
+                //        string seq = clsvariable.dt_Prescr.Rows[0]["seq"].ToString();
+                //        string orderitemcode = clsvariable.dt_Prescr.Rows[0]["orderitemcode"].ToString();
+                //        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                //        int new_qty = stock_qty - order_qty;
+                //        string lot = row["LotNo"].ToString();
+                //        string exp = row["Exp"].ToString();
+                //        result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                //        if (result)
+                //        {
+                //            Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                //            result = _query.UpdateJob("USER", prescriptionno, seq, orderitemcode);
+                //        }
+                //        else
+                //        {
+                //            Debug.WriteLine($"Update stock {orderitem} error");
+                //        }
 
-                        //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                        //if (result)
-                        //{
-                        //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-                        //}
-                        //else
-                        //{
-                        //    Debug.WriteLine($"Update stock {orderitem} error");
-                        //}
+                //        if (new_qty == 0)
+                //        {
+                //            break;
+                //        }
+                //        else
+                //        {
+                //            continue;
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //}
 
-                        
-                    }
-                }
-                else if (dt_stock.Rows.Count > 1)
-                {
-                    foreach (DataRow row in dt_stock.Rows)
-                    {
-                        int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                        int new_qty = stock_qty - order_qty;
 
-                        string lot = row["LotNo"].ToString();
-                        string exp = row["Exp"].ToString();
-                        //result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                        //if (result)
-                        //{
-                        //    Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-                        //}
-                        //else
-                        //{
-                        //    Debug.WriteLine($"Update stock {orderitem} error");
-                        //}
-
-                        if (new_qty == 0)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
-                foreach(DataRow row in clsvariable.dt_Prescr.Rows)
+                foreach (DataRow row in clsvariable.dt_Prescr.Rows)
                 {
                     DataRow r = db_print.Rows.Add();
                     r["prescriptionno"] = row["prescriptionno"].ToString();

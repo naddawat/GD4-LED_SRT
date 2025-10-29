@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GD4_LED.cls;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -14,7 +16,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using GD4_LED.cls;
 
 namespace GD4_LED.page
 {
@@ -31,7 +32,7 @@ namespace GD4_LED.page
         public string RefillNotes { get; set; }
 
         public object objDrug = new object();
-        clsQuery clsst = new clsQuery();
+        clsQuery _query = new clsQuery();
         public PopupRefill(List<RefillRecord> _SelectedDrug)
         {
             InitializeComponent();
@@ -111,9 +112,10 @@ namespace GD4_LED.page
                     // บันทึกข้อมูลการเติมยา
                     if(SaveRefillData())
                     {
+
                         // แสดงข้อความสำเร็จ
                         ShowSuccessMessage();
-
+                       
                         Window.GetWindow(this).Close();
 
                     }
@@ -133,6 +135,139 @@ namespace GD4_LED.page
                     // รีเฟรชข้อมูล
                     RefreshDrugStocks();
                 }
+            }
+        }
+        public bool SyncDrug(string code)
+        {
+            DataTable dt_stock = new DataTable();
+            dt_stock = _query.GetLedStockByZoneCode(code,clsvariable.shelfzone);
+            int position_id = 0;
+            int addr = 0;
+            string qty = "";
+            string LotNo = "";
+            string exp = "";
+            string orderitemENname = "";
+            string position = "";
+
+            foreach (DataRow dr in dt_stock.Rows)
+            {
+                if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
+                {
+                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                    qty = dt_stock.Rows[0]["In_Qty"].ToString();
+                    LotNo = dt_stock.Rows[0]["LotNo"].ToString();
+                    exp = dt_stock.Rows[0]["Exp"].ToString();
+                    orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
+                    position = dt_stock.Rows[0]["shelfname"].ToString();
+
+                    //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                    //return true;
+                }
+                else
+                {
+                    //return false;
+                }
+                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
+                //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+            }
+
+            return true;
+
+        }
+        public void LoadStockByCode(string code)
+        {
+            DataTable dt = new DataTable();
+            dt = _query.GetAllLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
+            string connStr = GD4_LED.Properties.Settings.Default.connectstring;
+            if (dt.Rows.Count > 0)
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                    string insertCols = string.Join(", ", columns);
+                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                    string updateCols = string.Join(", ", columns
+                                                    .Where(c => c != "orderitemcode")
+                                                    .Select(c => $"{c} = VALUES({c})"));
+
+                    string sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            cmd.Parameters.Clear();
+
+                            foreach (DataColumn col in dt.Columns)
+                            {
+                                object value = row[col.ColumnName] ?? DBNull.Value;
+                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                }
+
+                SyncDrug(code);
+            }
+            else
+            {
+                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        public void LoadStock()
+        {
+            DataTable dt = new DataTable();
+            dt = _query.GetAllLedStock(clsvariable.shelfzone);
+            string connStr = GD4_LED.Properties.Settings.Default.connectstring;
+            if (dt.Rows.Count > 0)
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                    string insertCols = string.Join(", ", columns);
+                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                    string updateCols = string.Join(", ", columns
+                                                    .Where(c => c != "orderitemcode")
+                                                    .Select(c => $"{c} = VALUES({c})"));
+
+                    string sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            cmd.Parameters.Clear();
+
+                            foreach (DataColumn col in dt.Columns)
+                            {
+                                object value = row[col.ColumnName] ?? DBNull.Value;
+                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -194,7 +329,7 @@ namespace GD4_LED.page
             // TODO: บันทึกข้อมูลลงฐานข้อมูล
             // ตัวอย่างการบันทึก:
             DataTable dt_stock = new DataTable();
-            dt_stock = clsst.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
+            dt_stock = _query.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
             bool sameLot = false;
             bool result = false;
             int qty_old = 0;
@@ -240,13 +375,14 @@ namespace GD4_LED.page
             if (sameLot) // มี Lot เดิม
             {
                 RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
-                result = clsst.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
+                result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
             }
             else
             {
-                result = clsst.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
+                result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
             }
 
+            LoadStockByCode(refillRecord.DrugCode);
 
             return result;
             RefreshDrugStocks();

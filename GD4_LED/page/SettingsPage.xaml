@@ -211,6 +211,8 @@
                             Style="{StaticResource TabButtonStyle}"
                             Click="TabButton_Click" Tag="2"/>
                 </StackPanel>
+                <Button Content="Sync Location" HorizontalAlignment="Left" Margin="626,31,0,0" Grid.RowSpan="3" VerticalAlignment="Top" Height="50" Width="111" Click="Button_Click_1"/>
+                <Button Content="Sync Drug" HorizontalAlignment="Left" Margin="496,31,0,0" Grid.RowSpan="3" VerticalAlignment="Top" Height="50" Width="111" Click="Button_Click_2"/>
             </Grid>
         </Border>
 
@@ -680,15 +682,13 @@
                                                    Style="{StaticResource SecondaryTextStyle}" Margin="0,4,0,0"/>
                                     </StackPanel>
                                     <Button Grid.Column="1"
-        VerticalAlignment="Center"
         Click="ColorPickerButton_Click"
         Width="90"
-        Height="32"
         Cursor="Hand"
         BorderThickness="0"
         FontWeight="Bold"
         Foreground="White"
-        Content="เลือกสี">
+        Content="เลือกสี" Margin="0,3,0,4">
                                         <Button.Background>
                                             <SolidColorBrush x:Name="SelectedColorBrush" Color="#FF0080FF"/>
                                         </Button.Background>
@@ -714,16 +714,17 @@
 
                                 <Grid Margin="0,0,0,16">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="169*"/>
+                                        <ColumnDefinition Width="25*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <StackPanel Grid.Column="0">
+                                    <StackPanel Grid.Column="0" Grid.ColumnSpan="2">
                                         <TextBlock Text="จัดยา" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold"/>
                                         <TextBlock Text="ไฟแสดงตำแหน่งจัดยา" 
                                                    Style="{StaticResource SecondaryTextStyle}" Margin="0,4,0,0"/>
                                     </StackPanel>
-                                    <Button Grid.Column="1"
+                                    <Button Grid.Column="2"
         VerticalAlignment="Center"
         Click="ColorPickerButton_Click"
         Width="90"

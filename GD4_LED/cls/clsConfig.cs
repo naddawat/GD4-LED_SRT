@@ -19,12 +19,13 @@ namespace GD4_LED.cls
         public static bool result;
 
         string connectst = GD4_LED.Properties.Settings.Default.connectstringlocal;
+        string connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
         public DataTable GetLedConfig(string comname)
         {
 
             SQL = $@" SELECT * FROM ms_ledconfig ms Where ms.comname = '{comname}' ";
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
     }
 }

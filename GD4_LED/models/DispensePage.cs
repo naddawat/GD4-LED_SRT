@@ -32,6 +32,12 @@ namespace GD4_LED.models
         [JsonProperty("bed")]
         public string Bed { get; set; }
 
+        [JsonProperty("addr")]
+        public string addr { get; set; }
+
+        [JsonProperty("id")]
+        public string id { get; set; }
+
         [JsonProperty("status")]
         public string Status { get; set; } = "รอจัด";
 
@@ -49,6 +55,12 @@ namespace GD4_LED.models
 
         [JsonProperty("orderqty")]
         public int OrderQty { get; set; }
+
+        [JsonProperty("addr")]
+        public string addr { get; set; }
+
+        [JsonProperty("id")]
+        public string id { get; set; }
     }
 
 }
