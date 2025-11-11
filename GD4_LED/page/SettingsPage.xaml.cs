@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
 using Mysqlx.Expr;
+using MySqlX.XDevAPI.Common;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -771,7 +773,7 @@ namespace GD4_LED.page
                     int blue = (int)blueSlider.Value;
                     for (int i = 0; i < 6; i++)
                     {
-                        clsvariable.Instance.SerialCan.SetLED(1, i, red, green, blue);
+                        clsvariable.Instance.SerialCan.SetLED(5, i, red, green, blue);
                     }
                     
                 }
@@ -783,7 +785,7 @@ namespace GD4_LED.page
 
                     for (int i = 0; i < 6; i++)
                     {
-                        clsvariable.Instance.SerialCan.SetLED(1, i, 0, 0, 0);
+                        clsvariable.Instance.SerialCan.SetLED(6, i, 0, 0, 0);
                     }
                 }
             };
@@ -1040,35 +1042,67 @@ namespace GD4_LED.page
         {
             DataTable dt_stock = new DataTable();
             dt_stock = _query.GetLedStockByZone(clsvariable.shelfzone);
-            string connStr = GD4_LED.Properties.Settings.Default.connectstringlocal;
+            string connStr = clsvariable.connectionST;
             int position_id =0;
             int addr=0;
             string qty="";
             string LotNo="";
             string exp="";
             string orderitemENname ="";
+            string orderitemcode = "";
             string position = "";
+            int HAD = 0;
+
+            //clsvariable.Instance.SerialCan.Order(8, 0, "10", "SOD PHOSPHATE(MONO/DIBASIC)(XUBIL 90 ML)", "test", "2029-01-01", "599", 255, 0, 0);
+            //clsvariable.Instance.SerialCan.Order(6, 2, "10", "(อ)CETIRIZINE 1 MG/ML 60 ML (ZYMED)", "test", "2029-01-01", "599", 255, 0, 0);
+
+            //for (int i = 1; i < 9; i++) // วนรอบแรก 8 ครั้ง
+            //{
+            //    for (int j = 0; j < 7; j++) // วนรอบใน 12 ครั้ง
+            //    {
+            //        clsvariable.Instance.SerialCan.SetEEprom(i, i, j, " ", " ", " ", " ");
+            //        Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+            //    }
+            //}
+
 
             foreach (DataRow dr in dt_stock.Rows)
             {
-                if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
+                if (dr["position_id"].ToString() != "" && dr["addr"].ToString() != "")
                 {
-                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
-                    qty = dt_stock.Rows[0]["In_Qty"].ToString();
-                    LotNo = dt_stock.Rows[0]["LotNo"].ToString();
-                    exp = dt_stock.Rows[0]["Exp"].ToString();
-                    orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
-                    position = dt_stock.Rows[0]["shelfname"].ToString();
+                    position_id = Convert.ToInt32(dr["position_id"].ToString());
+                    addr = Convert.ToInt32(dr["addr"].ToString());
+                    qty = dr["In_Qty"].ToString();
+                    LotNo = dr["LotNo"].ToString();
+                    exp = dr["Exp"].ToString();
+                    orderitemENname = dr["orderitemENname"].ToString();
 
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id,orderitemENname,"","", position);
-                    //return true;
+                    //// แปลง string → byte[]
+                    //byte[] bytes = Encoding.UTF8.GetBytes(orderitemENname);
+                    //// แปลง byte[] → string (โดยใช้ encoding เดิม)
+                    //orderitemENname = Encoding.UTF8.GetString(bytes);
+
+                    orderitemcode = dr["orderitemcode"].ToString();
+                    position = dr["shelfname"].ToString();
+                    if (dr["HAD"].ToString() == "Y")
+                    {
+                        HAD = 1;
+                    }
+                    else
+                    {
+                        HAD = 0;
+                    }
+
+                  
+
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                    //Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                 }
                 else
                 {
-                    //return false;
+                    
                 }
-                clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                
             }
 
             return true;
@@ -1076,49 +1110,67 @@ namespace GD4_LED.page
         }
         public void LoadLocation()
         {
-            DataTable dt = new DataTable();
-            dt = _query.GetLocation_main(clsvariable.shelfzone);
-            string connStr = clsvariable.connectionST;
-            if (dt.Rows.Count > 0)
+            try
             {
-                using (MySqlConnection conn = new MySqlConnection(connStr))
+                DataTable dt = new DataTable();
+                dt = _query.GetLocation_main(clsvariable.shelfzone);
+                string connStr = clsvariable.connectionST;
+                if (dt.Rows.Count > 0)
                 {
-                    conn.Open();
-
-                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
-
-                    string insertCols = string.Join(", ", columns);
-                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
-
-                    string updateCols = string.Join(", ", columns
-                                                    .Where(c => c != "orderitemcode")
-                                                    .Select(c => $"{c} = VALUES({c})"));
-
-                    string sql = $@" INSERT INTO ms_location ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
-
-                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    using (MySqlConnection conn = new MySqlConnection(connStr))
                     {
-                        foreach (DataRow row in dt.Rows)
+                        conn.Open();
+
+
+                        string sql = $@" DELETE FROM ms_location; ";
+
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
-                            cmd.Parameters.Clear();
-
-                            foreach (DataColumn col in dt.Columns)
-                            {
-                                object value = row[col.ColumnName] ?? DBNull.Value;
-                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
-                            }
-                            cmd.ExecuteNonQuery();
+                           cmd.ExecuteNonQuery();
                         }
-                    }
 
-                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+
+
+                        var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                        string insertCols = string.Join(", ", columns);
+                        string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                        string updateCols = string.Join(", ", columns
+                                                        .Where(c => c != "orderitemcode")
+                                                        .Select(c => $"{c} = VALUES({c})"));
+
+                        sql = $@" INSERT INTO ms_location ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                cmd.Parameters.Clear();
+
+                                foreach (DataColumn col in dt.Columns)
+                                {
+                                    object value = row[col.ColumnName] ?? DBNull.Value;
+                                    cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                                }
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
-            else
+            catch(Exception ex)
             {
-                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
-                              MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(ex.ToString());
             }
+            
         }
         public void LoadLocationByCode(string code)
         {
@@ -1170,6 +1222,20 @@ namespace GD4_LED.page
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             SyncDrug();
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+
+            for (int i = 1; i < 9; i++) // วนรอบแรก 8 ครั้ง
+            {
+                for (int j = 0; j < 7; j++) // วนรอบใน 12 ครั้ง
+                {
+                    clsvariable.Instance.SerialCan.SetEEprom(i, i, j, " ", " ", " ", " ");
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                }
+            }
+
         }
     }
 

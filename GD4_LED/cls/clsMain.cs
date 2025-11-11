@@ -30,5 +30,21 @@ namespace GD4_LED.cls
                 return string.Empty;
             }
         }
+        public string getDeviceDetail(string computerName)
+        {
+            DataTable dt = new DataTable();
+            //string computerName = Environment.MachineName;
+            SQL = $"SELECT   detail  FROM ms_shelf WHERE computername = '{computerName}'";
+            dt = clsFillMyDB.GetDataSet(GD4_LED.Properties.Settings.Default.connectstring, SQL);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["detail"].ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
     }
 }

@@ -216,7 +216,7 @@ namespace GD4_LED.page
                     Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
                 }
 
-                SyncDrug(code);
+                //SyncDrug(code);
             }
             else
             {
@@ -228,7 +228,7 @@ namespace GD4_LED.page
         {
             DataTable dt = new DataTable();
             dt = _query.GetAllLedStock(clsvariable.shelfzone);
-            string connStr = GD4_LED.Properties.Settings.Default.connectstring;
+            string connStr = clsvariable.connectionST;
             if (dt.Rows.Count > 0)
             {
                 using (MySqlConnection conn = new MySqlConnection(connStr))
@@ -326,70 +326,76 @@ namespace GD4_LED.page
 
         private bool SaveRefillData()
         {
-            // TODO: บันทึกข้อมูลลงฐานข้อมูล
-            // ตัวอย่างการบันทึก:
-            DataTable dt_stock = new DataTable();
-            dt_stock = _query.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
-            bool sameLot = false;
-            bool result = false;
-            int qty_old = 0;
-            string shelfzone = "";
-            string shelfname = "";
-            string max = "";
-            string min = "";
-            var refillRecord = new
+            bool v = false;
+            v = _query.CheckConnection(clsvariable.connectionST);
+            if (v)
             {
-                DrugCode = DrugCodeText.Text,
-                Quantity = RefillQuantity,
-                LotNumber = RefillLot,
-                ExpiryDate = RefillExpiryDate.Value,
-                Notes = RefillNotes,
-                RefillDate = DateTime.Now,
-                UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
-            };
-            if (dt_stock.Rows.Count > 0)
-            {
-                foreach (DataRow rw in dt_stock.Rows)
+                DataTable dt_stock = new DataTable();
+                dt_stock = _query.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
+                bool sameLot = false;
+                bool result = false;
+                int qty_old = 0;
+                string shelfzone = "";
+                string shelfname = "";
+                string max = "";
+                string min = "";
+                var refillRecord = new
                 {
-                    if (rw["drugcode"].ToString() == DrugCodeText.Text && rw["lot"].ToString() == RefillLotTextBox.Text)
+                    DrugCode = DrugCodeText.Text,
+                    Quantity = RefillQuantity,
+                    LotNumber = RefillLot,
+                    ExpiryDate = RefillExpiryDate.Value,
+                    Notes = RefillNotes,
+                    RefillDate = DateTime.Now,
+                    UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
+                };
+
+                if (dt_stock.Rows.Count > 0)
+                {
+                    foreach (DataRow rw in dt_stock.Rows)
                     {
-                        sameLot = true;
-                        qty_old = Convert.ToInt32(rw["Quantity"].ToString());
-                        break;
-                    }
-                    else
-                    {
-                        shelfzone = rw["location"].ToString();
-                        shelfname = rw["drugPosition"].ToString();
-                        max = rw["max"].ToString();
-                        min = rw["min"].ToString();
-                        sameLot = false;
+                        if (rw["drugcode"].ToString() == DrugCodeText.Text && rw["lot"].ToString() == RefillLotTextBox.Text)
+                        {
+                            sameLot = true;
+                            qty_old = Convert.ToInt32(rw["Quantity"].ToString());
+                            break;
+                        }
+                        else
+                        {
+                            shelfzone = rw["location"].ToString();
+                            shelfname = rw["drugPosition"].ToString();
+                            max = rw["max"].ToString();
+                            min = rw["min"].ToString();
+                            sameLot = false;
+                        }
                     }
                 }
+                else
+                {
+
+                }
+
+                if (sameLot) // มี Lot เดิม
+                {
+                    RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
+                    result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
+                }
+                else
+                {
+                    result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
+                }
+
+                //LoadStockByCode(refillRecord.DrugCode);
+
+                return result;
+                RefreshDrugStocks();
+               
             }
             else
             {
-
+                return false;
             }
 
-            if (sameLot) // มี Lot เดิม
-            {
-                RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
-                result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
-            }
-            else
-            {
-                result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
-            }
-
-            LoadStockByCode(refillRecord.DrugCode);
-
-            return result;
-            RefreshDrugStocks();
-            // อัพเดทสต็อกปัจจุบัน
-            // DatabaseService.UpdateDrugStock(drugCode, newQuantity);
-
-            //Console.WriteLine($"บันทึกการเติมยา: {refillRecord}");
         }
 
         private void ShowSuccessMessage()

@@ -28,6 +28,7 @@ namespace GD4_LED.cls
         public static string[] RGD_dispense;
         public static string Button_event = "";
         public string[] StrU_array = new string[3];
+        public static string StrU_rfid { get; set; } = "";
         public static clsvariable Instance
         {
             get

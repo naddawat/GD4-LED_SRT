@@ -191,27 +191,33 @@ namespace GD4_LED.cls
         public DataTable GetLedStockByCode(string orderitemcode,string shelfzone)
         {
 
+            //SQL = $@"  SELECT
+            //  ml.shelfzone AS location,
+            //  ml.shelfname AS drugPosition,
+            //  ms.LotNo AS lot,
+            //  ml.orderitemcode AS drugCode,
+            //  ml.orderitemENname AS drugName,
+            //  ms.In_Qty AS Quantity,
+            //  ms.Exp AS exp,
+            //  ml.max AS max,
+            //  ml.min AS min,
+            //  '' AS firmname ,
+            //  CASE 
+            //    WHEN (ms.In_Qty / ml.max) * 100 < 0 
+            //        THEN 0
+            //    ELSE ROUND((ms.In_Qty / ml.max) * 100 ,0)
+            //END AS Percent
+            //FROM
+            //  ms_stock ms
+            //  RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            //where ml.orderitemcode = '{orderitemcode}' and ml.shelfzone = '{shelfzone}'
+            //  ORDER BY Percent";
+
             SQL = $@"  SELECT
-              ml.shelfzone AS location,
-              ml.shelfname AS drugPosition,
-              ms.LotNo AS lot,
-              ml.orderitemcode AS drugCode,
-              ml.orderitemENname AS drugName,
-              ms.In_Qty AS Quantity,
-              ms.Exp AS exp,
-              ml.max AS max,
-              ml.min AS min,
-              '' AS firmname ,
-              CASE 
-                WHEN (ms.In_Qty / ml.max) * 100 < 0 
-                    THEN 0
-                ELSE ROUND((ms.In_Qty / ml.max) * 100 ,0)
-            END AS Percent
+              *
             FROM
               ms_stock ms
-              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
-            where ml.orderitemcode = '{orderitemcode}' and ml.shelfzone = '{shelfzone}'
-              ORDER BY Percent";
+            where ms.orderitemcode = '{orderitemcode}' and ms.shelfzone = '{shelfzone}' ";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
@@ -267,14 +273,32 @@ namespace GD4_LED.cls
         public DataTable GetLedStockByZone(string shelfzone)
         {
 
-            SQL = $@"  SELECT
-              *
-            FROM
-              ms_stock ms
-              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
-            where  ml.shelfzone = '{shelfzone}' ";
+            SQL = $@" SELECT
+                      ml.*,
+                    ms.In_Qty,
+                    ms.Exp,
+                    ms.LotNo
+                    FROM
+                      ms_location ml
+                      LEFT JOIN ms_stock ms ON ms.orderitemcode = ml.orderitemcode 
+                    WHERE  ml.shelfzone = '{shelfzone}' ";
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
+        public DataTable GetLedStockByZoneSync(string shelfzone)
+        {
+
+            SQL = $@" SELECT
+                      ml.*,
+                    ms.In_Qty,
+                    ms.Exp,
+                    ms.LotNo
+                    FROM
+                      ms_location ml
+                      LEFT JOIN ms_stock ms ON ms.orderitemcode = ml.orderitemcode 
+                    WHERE  ml.shelfzone = '{shelfzone}' ";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
         public DataTable GetLedStockByZoneCode(string orderitemcode, string shelfzone)
         {

@@ -34,7 +34,7 @@
                              Foreground="White" 
                              FontSize="18" 
                              FontWeight="Bold"/>
-                    <TextBlock Text="Medicine Management System | ver 1.0.1" 
+                    <TextBlock x:Name="txtversion" Text="Medicine Management System | ver 1.0.1" 
                              Foreground="White" 
                              Opacity="0.8" 
                              FontSize="12"/>

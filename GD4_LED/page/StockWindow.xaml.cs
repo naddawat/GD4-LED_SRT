@@ -89,7 +89,7 @@ namespace GD4_LED.page
         public void LoadStock()
         {
             bool v = false;
-            v = _query.CheckConnection(Properties.Settings.Default.connectstringlocal.ToString());
+            v = _query.CheckConnection(clsvariable.connectionST);
             //MessageBox.Show(v.ToString());
             DataTable dt = new DataTable();
             dt = _query.GetAllLedStock(clsvariable.shelfzone);
@@ -132,8 +132,8 @@ namespace GD4_LED.page
             }
             else
             {
-                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
-                              MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                //              MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -505,18 +505,18 @@ namespace GD4_LED.page
 
         public void ShowPopup(object SelectedDrug)
         {
-            Window popupWindow = new Window
-            {
-                Title = "Popup",
-                Width = 800,
-                Height = 1400,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                WindowStyle = WindowStyle.None,
-                ResizeMode = ResizeMode.NoResize,
-                Topmost = true,
-                AllowsTransparency = true,
-                Background = Brushes.Transparent
-            };
+            //Window popupWindow = new Window
+            //{
+            //    Title = "Popup",
+            //    Width = 800,
+            //    Height = 1400,
+            //    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            //    WindowStyle = WindowStyle.None,
+            //    ResizeMode = ResizeMode.NoResize,
+            //    Topmost = true,
+            //    AllowsTransparency = true,
+            //    Background = Brushes.Transparent
+            //};
 
             DrugStockGroupModel drug = SelectedDrug as DrugStockGroupModel;
 
@@ -532,9 +532,13 @@ namespace GD4_LED.page
                 }
             };
 
-            PopupRefill popupPage = new PopupRefill(refillList);
-            popupWindow.Content = popupPage;
-            popupWindow.ShowDialog();
+            //PopupRefill popupPage = new PopupRefill(refillList);
+                    var popup = new WinPopupRefill(refillList);
+            //popup.Content = popupPage;
+            popup.ShowDialog();
+
+            //popupWindow.Content = popupPage;
+            //popupWindow.ShowDialog();
         }
 
         public static class ScrollViewerBehavior

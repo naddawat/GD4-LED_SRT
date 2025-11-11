@@ -3,9 +3,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      mc:Ignorable="d"
-      d:DesignHeight="900" d:DesignWidth="800"
-      Background="{StaticResource BackgroundGray}">
+      mc:Ignorable="d" d:DesignWidth="800"
+      Background="{StaticResource BackgroundGray}" Height="886">
 
     <Page.Resources>
         <!-- Tab Button Style -->
@@ -182,7 +181,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="0,0,0,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -211,8 +210,19 @@
                             Style="{StaticResource TabButtonStyle}"
                             Click="TabButton_Click" Tag="2"/>
                 </StackPanel>
-                <Button Content="Sync Location" HorizontalAlignment="Left" Margin="626,31,0,0" Grid.RowSpan="3" VerticalAlignment="Top" Height="50" Width="111" Click="Button_Click_1"/>
-                <Button Content="Sync Drug" HorizontalAlignment="Left" Margin="496,31,0,0" Grid.RowSpan="3" VerticalAlignment="Top" Height="50" Width="111" Click="Button_Click_2"/>
+                <Button Content="Sync Location" Margin="497,0,0,0" VerticalAlignment="Center" Cursor="Hand"
+BorderThickness="0"
+FontWeight="Bold"
+Foreground="White" Click="Button_Click_1" Background="#FF0080FF" Height="40" HorizontalAlignment="Left" Width="93"/>
+                <Button Content="Sync Drug" HorizontalAlignment="Left" Margin="402,0,0,0" VerticalAlignment="Center" Width="90"
+Cursor="Hand"
+BorderThickness="0"
+FontWeight="Bold"
+Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
+                <Button Content="Clear Location" Margin="595,0,0,0" VerticalAlignment="Center" Cursor="Hand"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    Foreground="White" Click="Button_Click_3" Background="#FF0080FF" Height="40" HorizontalAlignment="Left" Width="93"/>
             </Grid>
         </Border>
 
@@ -507,7 +517,7 @@
                 </Border>
 
                 <!-- Tab 3: General Settings -->
-                <Border x:Name="GeneralContent" Style="{StaticResource CardStyle}" Visibility="Visible">
+                <Border x:Name="GeneralContent" Style="{StaticResource CardStyle}" Visibility="Visible" Margin="0,0,0,118">
                     <StackPanel Margin="0 0 0 10">
                         <TextBlock Text="การตั้งค่าทั่วไป" FontSize="18" FontWeight="Bold" 
                                    Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>
@@ -665,7 +675,7 @@
                             </StackPanel>
                         </Border>
 
-                        <Border Background="#F8F9FA" CornerRadius="8" Padding="20">
+                        <Border Background="#F8F9FA" CornerRadius="8" Padding="20" Height="181">
                             <StackPanel>
                                 <TextBlock Text="💡LED lights" FontSize="16" FontWeight="SemiBold" 
                                            Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>

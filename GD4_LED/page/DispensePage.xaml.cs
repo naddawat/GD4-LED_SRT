@@ -31,7 +31,7 @@ namespace GD4_LED.page
     {
         //private readonly RxService _RX;
         private List<Prescription> allPrescriptions = new List<Prescription>();
-        private List<Prescription> filteredPrescriptions = new List<Prescription>();
+        public List<Prescription> filteredPrescriptions = new List<Prescription>();
         private RxService _RX;
         private bool _isLoading = true;
         clsQuery _query = new clsQuery();
@@ -238,8 +238,8 @@ namespace GD4_LED.page
                     hn = r["hn"].ToString(),
                     an = r["an"].ToString(),
                     patientname = r["patientname"].ToString(),
-                    ward = r["ward"].ToString(),
-                    bed = r["bed"].ToString()
+                    ward = r["wardname"].ToString(),
+                    bed = r["bedcode"].ToString()
                 })
                 .Select(g => new
                 {
@@ -300,8 +300,319 @@ namespace GD4_LED.page
             }
 
         }
+        public Prescription DisplayPrescriptionsScanbarCode()
+        {
+            PrescriptionPanel.Children.Clear();
+            Prescription prescrip = new Prescription();
+            string Searchtxt = SearchTextBox.Text?.Trim() ?? "";
+
+            if (filteredPrescriptions.Count == 0)
+            {
+                LoadPrescriptionsByCode(Searchtxt);
+            }
+            else
+            {
+
+            }
+
+            foreach (var prescription in filteredPrescriptions)
+            {
+                prescrip = prescription;
+                CreatePrescriptionCard(prescription);                
+            }
+
+            return prescrip;
+        }
 
         private void CreatePrescriptionCard(Prescription prescription)
+        {
+            System.Windows.Controls.Border cardBorder = new System.Windows.Controls.Border();
+            cardBorder.Style = (Style)FindResource("CardStyle");
+            cardBorder.Cursor = System.Windows.Input.Cursors.Hand;
+            cardBorder.Margin = new Thickness(0, 0, 0, 12);
+
+            Grid mainGrid = new Grid();
+
+            // Column definitions
+            mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            // Row definitions
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Patient info
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(12, GridUnitType.Pixel) }); // Spacing
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Prescription info
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(12, GridUnitType.Pixel) }); // Spacing
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Package count & buttons
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Medicine details (collapsible)
+
+            // Patient Info
+            StackPanel patientPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            Grid.SetRow(patientPanel, 0);
+            Grid.SetColumn(patientPanel, 0);
+
+            // Status badge
+            System.Windows.Controls.Border statusBorder = new System.Windows.Controls.Border
+            {
+                CornerRadius = new CornerRadius(4),
+                Padding = new Thickness(8, 4, 8, 4)
+            };
+
+            // Set color based on status
+            //if (prescription.Status == "รอจัด")
+            //{
+            //    statusBorder.Background = (Brush)FindResource("Warning");
+            //}
+            //else if (prescription.Status == "เสร็จแล้ว")
+            //{
+            //    statusBorder.Background = (Brush)FindResource("Success");
+            //}
+
+            TextBlock statusText = new TextBlock
+            {
+                Text = prescription.Status,
+                Foreground = Brushes.White,
+                FontSize = 10,
+                FontWeight = FontWeights.Bold,
+                Height = 17
+            };
+            statusBorder.Child = statusText;
+
+            TextBlock patientName = new TextBlock
+            {
+                Text = prescription.PatientName,
+                Style = (Style)FindResource("SubHeaderTextStyle"),
+                Margin = new Thickness(12, 0, 0, 0)
+            };
+
+            patientPanel.Children.Add(statusBorder);
+            patientPanel.Children.Add(patientName);
+
+            // Prescription Info
+            Grid prescriptionGrid = new Grid();
+            Grid.SetRow(prescriptionGrid, 2);
+            Grid.SetColumn(prescriptionGrid, 0);
+
+            prescriptionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            prescriptionGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            StackPanel leftInfo = new StackPanel();
+            Grid.SetColumn(leftInfo, 0);
+
+            leftInfo.Children.Add(new TextBlock
+            {
+                Text = $"เลขใบสั่งยา: {prescription.PrescriptionNo}",
+                Style = (Style)FindResource("BodyTextStyle")
+            });
+            leftInfo.Children.Add(new TextBlock
+            {
+                Text = $"HN: {prescription.HN}",
+                Style = (Style)FindResource("SecondaryTextStyle")
+            });
+            leftInfo.Children.Add(new TextBlock
+            {
+                Text = $"AN: {prescription.AN}",
+                Style = (Style)FindResource("SecondaryTextStyle")
+            });
+
+            StackPanel rightInfo = new StackPanel();
+            Grid.SetColumn(rightInfo, 1);
+
+            rightInfo.Children.Add(new TextBlock
+            {
+                Text = $"หอผู้ป่วย: {prescription.Ward}",
+                Style = (Style)FindResource("BodyTextStyle")
+            });
+            rightInfo.Children.Add(new TextBlock
+            {
+                Text = $"เตียง: {prescription.Bed}",
+                Style = (Style)FindResource("SecondaryTextStyle")
+            });
+
+            prescriptionGrid.Children.Add(leftInfo);
+            prescriptionGrid.Children.Add(rightInfo);
+
+            // Package Count Summary and Action Buttons
+            Grid packageAndButtonGrid = new Grid();
+            Grid.SetRow(packageAndButtonGrid, 4);
+            Grid.SetColumn(packageAndButtonGrid, 0);
+            Grid.SetColumnSpan(packageAndButtonGrid, 2);
+
+            packageAndButtonGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            packageAndButtonGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            StackPanel packageSummary = new StackPanel { Orientation = Orientation.Horizontal };
+            Grid.SetColumn(packageSummary, 0);
+
+            TextBlock packageCountText = new TextBlock
+            {
+                Text = $"รายการยา: {prescription.Package.Count} รายการ",
+                Style = (Style)FindResource("BodyTextStyle"),
+                FontWeight = FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            TextBlock expandIcon = new TextBlock
+            {
+                Text = "▼",
+                FontSize = 30,
+                Margin = new Thickness(8, 0, 0, 0),
+                Foreground = (Brush)FindResource("TextSecondary"),
+                Name = "ExpandIcon",
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            packageSummary.Children.Add(packageCountText);
+            packageSummary.Children.Add(expandIcon);
+
+            // Action Buttons Panel
+            StackPanel buttonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            Grid.SetColumn(buttonPanel, 1);
+
+            // Print Button
+            Button printButton = new Button
+            {
+                Content = "จัดยา",
+                Width = 80,
+                Height = 36,
+                Margin = new Thickness(0, 0, 8, 0),
+                FontSize = 16,
+                Style = (Style)FindResource("PrintButtonStyle")
+
+                //Margin = new Thickness(0, 0, 8, 0),
+                //Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), // Green
+                //Foreground = Brushes.White,
+                //BorderThickness = new Thickness(0),
+                //FontSize = 12,
+                //FontWeight = FontWeights.Bold
+            };
+
+            // Cancel Button  
+            Button cancelButton = new Button
+            {
+                Content = "ยกเลิก",
+                Width = 80,
+                Height = 36,
+                FontSize = 16,
+                Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)),
+                Style = (Style)FindResource("PrintButtonStyle")
+
+
+                //Foreground = Brushes.White,
+                //BorderThickness = new Thickness(0),
+                //FontSize = 12,
+                //FontWeight = FontWeights.Bold
+            };
+
+            // Add button click events
+            printButton.Click += (sender, e) => {
+                e.Handled = true; // Prevent card toggle
+                PrintPrescription(prescription);
+            };
+
+            cancelButton.Click += (sender, e) => {
+                e.Handled = true; // Prevent card toggle
+                CancelPrescription(prescription);
+            };
+
+            //SearchTextBox.KeyDown += (sender, e) =>
+            //{
+            //    if (e.Key == Key.Enter)
+            //    {
+
+            //        PrintPrescription(prescription);
+            //    }
+            //};
+
+
+            buttonPanel.Children.Add(printButton);
+            buttonPanel.Children.Add(cancelButton);
+
+            packageAndButtonGrid.Children.Add(packageSummary);
+            packageAndButtonGrid.Children.Add(buttonPanel);
+
+            // Medicine Details (Initially Hidden)
+            StackPanel medicinePanel = new StackPanel
+            {
+                Visibility = Visibility.Collapsed,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            Grid.SetRow(medicinePanel, 5);
+            Grid.SetColumn(medicinePanel, 0);
+
+            foreach (var package in prescription.Package)
+            {
+                System.Windows.Controls.Border packageBorder = new System.Windows.Controls.Border
+                {
+                    Background = new SolidColorBrush(Color.FromRgb(248, 249, 250)),
+                    CornerRadius = new CornerRadius(4),
+                    Padding = new Thickness(12, 8, 12, 8),
+                    Margin = new Thickness(0, 4, 0, 0)
+                };
+
+                StackPanel packagePanel = new StackPanel();
+
+                TextBlock packageName = new TextBlock
+                {
+                    Text = $"{package.OrderItemName} (รหัส: {package.OrderItemCode})",
+                    Style = (Style)FindResource("BodyTextStyle"),
+                    FontWeight = FontWeights.SemiBold
+                };
+
+                TextBlock packageQty = new TextBlock
+                {
+                    Text = $"จำนวน: {package.OrderQty} หน่วย",
+                    Style = (Style)FindResource("SecondaryTextStyle"),
+                    Margin = new Thickness(0, 2, 0, 0)
+                };
+
+                packagePanel.Children.Add(packageName);
+                packagePanel.Children.Add(packageQty);
+                packageBorder.Child = packagePanel;
+                medicinePanel.Children.Add(packageBorder);
+            }
+
+            // Add click event to toggle details (only on package summary area)
+            packageSummary.MouseLeftButtonUp += (sender, e) => {
+                e.Handled = true;
+                ToggleCardDetails(medicinePanel, expandIcon);
+            };
+            packageSummary.TouchUp += (sender, e) => {
+                e.Handled = true;
+                ToggleCardDetails(medicinePanel, expandIcon);
+            };
+
+            // Make package summary area look clickable
+            packageSummary.Cursor = System.Windows.Input.Cursors.Hand;
+
+            // Remove card-wide click events since we now have buttons
+            cardBorder.Cursor = System.Windows.Input.Cursors.Arrow;
+
+            // Add hover effect
+            cardBorder.MouseEnter += (sender, e) =>
+            {
+                cardBorder.Background = new SolidColorBrush(Color.FromRgb(248, 250, 252));
+            };
+
+            cardBorder.MouseLeave += (sender, e) =>
+            {
+                cardBorder.Background = Brushes.White;
+            };
+
+            // Add all elements to main grid
+            mainGrid.Children.Add(patientPanel);
+            mainGrid.Children.Add(prescriptionGrid);
+            mainGrid.Children.Add(packageAndButtonGrid);
+            mainGrid.Children.Add(medicinePanel);
+
+            cardBorder.Child = mainGrid;
+            PrescriptionPanel.Children.Add(cardBorder);
+        }
+
+        public void CreatePrescriptionCardReturn(Prescription prescription)
         {
             System.Windows.Controls.Border cardBorder = new System.Windows.Controls.Border();
             cardBorder.Style = (Style)FindResource("CardStyle");
@@ -639,8 +950,9 @@ namespace GD4_LED.page
             var popup = new PrescriptionPopup(json);
 
             popup.ShowDialog();
+            popup.Topmost = true;
 
-            LoadPrescriptions();
+            //LoadPrescriptions();
 
             //MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
             //             "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -684,9 +996,9 @@ namespace GD4_LED.page
         private void LoadReport(DataTable dt)
         {            
             ReportDocument report = new ReportDocument();
-            report.Load(@"D:\GitHub\GD4-LED_SRT\GD4_LED\report\crp_stricker.rpt");
+            report.Load(clsvariable.crp_report);
             report.SetDataSource(dt);
-            report.PrintOptions.PrinterName = "";
+            report.PrintOptions.PrinterName = clsvariable.printname;
             report.PrintToPrinter(1, false, 0, 0);
             report.Close();
             report.Dispose();
@@ -810,6 +1122,7 @@ namespace GD4_LED.page
 
                 if(db_print.Rows.Count > 0)
                 {
+                    MessageBox.Show(clsvariable.crp_report.ToString() + "  " + cls.clsvariable.printname.ToString());
                     LoadReport(db_print);
                 }
             }
@@ -920,13 +1233,20 @@ namespace GD4_LED.page
             loadingStoryboard?.Stop();
         }
 
-        private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        public void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                //MessageBox.Show("คุณกด Enter แล้ว!");
-                DisplayPrescriptions();
+                if(!string.IsNullOrEmpty(SearchTextBox.Text))
+                {
+                    string prescrip = "";
+                    prescrip = SearchTextBox.Text.Trim();
+                    //MessageBox.Show("คุณกด Enter แล้ว!");
+                    Prescription presc = new Prescription();
 
+                    presc = DisplayPrescriptionsScanbarCode();
+                    PrintPrescription(presc);
+                }
 
 
             }

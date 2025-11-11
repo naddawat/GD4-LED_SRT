@@ -12,7 +12,7 @@ namespace GD4_LED.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,7 +26,7 @@ namespace GD4_LED.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=192.168.209.2;Initial Catalog=meddispense;Persist Security Info=True;" +
-            "User ID=root;Password=Admin@gd4; Max Pool Size=10000;charset=utf8mb4;")]
+            "User ID=root;Password=Admin@gd4; charset=utf8mb4;")]
         public string connectstring {
             get {
                 return ((string)(this["connectstring"]));
@@ -39,7 +39,7 @@ namespace GD4_LED.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Initial Catalog=led;Persist Security Info=True;User ID=root" +
-            ";Password=root; Max Pool Size=10000;charset=utf8mb4;")]
+            ";Password=root; charset=utf8mb4;")]
         public string connectstringlocal {
             get {
                 return ((string)(this["connectstringlocal"]));

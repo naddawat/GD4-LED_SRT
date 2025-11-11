@@ -58,8 +58,8 @@
             </Grid.RowDefinitions>
 
             <!-- Search and Filter Section - Fixed at top -->
-            <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0" d:IsHidden="True">
-                <Grid d:IsHidden="True">
+            <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,24,0,0">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="24"/>
@@ -115,7 +115,7 @@
             </Border>
 
             <!-- Summary Statistics - Fixed at top -->
-            <Grid Grid.Row="1" Margin="0,16,0,0" d:IsHidden="True">
+            <Grid Grid.Row="1" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="16"/>
@@ -152,7 +152,7 @@
                           Margin="0,16,0,0"
                           PanningMode="VerticalOnly"
                           IsManipulationEnabled="True"
-                          x:Name="MainScrollViewer" d:IsHidden="True">
+                          x:Name="MainScrollViewer">
                 <StackPanel x:Name="PrescriptionPanel" d:IsHidden="True">
                     <!-- Cards will be generated here dynamically -->
                 </StackPanel>
@@ -160,7 +160,7 @@
         </Grid>
 
         <!-- Loading Overlay -->
-        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1" d:IsHidden="True">
+        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1">
             <Grid.Effect>
                 <BlurEffect Radius="0"/>
             </Grid.Effect>

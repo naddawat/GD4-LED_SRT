@@ -3,6 +3,9 @@ using GD4_LED.page;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Deployment.Application;
+using System.Reflection;
+using System.Web.Configuration;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,13 +23,34 @@ namespace GD4_LED
         clsQuery _STK = new clsQuery();
         clsutilDB _con = new clsutilDB();
         clsConfig _config = new clsConfig();
+        bool v = false;
+        bool local = false;
         public MainWindow()
         {
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
-            clsvariable.comname = "GD4-LED-01";
+            //clsvariable.comname = "GD4-LED-1";
+            v = _STK.CheckConnection(GD4_LED.Properties.Settings.Default.connectstring);
+            if(!v)
+            {
+                MessageBox.Show(" ไม่สามารถเชื่อมฐานข้อมูล : " + GD4_LED.Properties.Settings.Default.connectstring);
+            }
+
            
+            string version = "";          
+
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            else
+            {
+                // ถ้ายังไม่ publish ให้ใช้ assembly version แทน
+                version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+            txtversion.Text = "Medicine Management System | ver : " + version + " comname : "+ clsvariable.comname;
+
             // สร้าง SerialCan แค่ครั้งเดียว
             if (clsvariable.Instance.SerialCan == null)
             {
@@ -41,7 +65,7 @@ namespace GD4_LED
         {
             //_var.SerialCan.SetLED(1, Convert.ToInt32(txtAddr.Text), 255, 0, 0);
         }
-
+      
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //_var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
@@ -51,7 +75,7 @@ namespace GD4_LED
             SetWindowToSecondaryScreen();
             SetActiveTab(DispenseButton);
             MainFrame.Navigate(new DispensePage());
-            txtdevice.Text = _Man.getDeviceName(clsvariable.comname);
+            txtdevice.Text = _Man.getDeviceDetail(clsvariable.comname);
             txtdatetime.Text = datetimeNow;
 
             clsvariable.dt_LedConfig = _config.GetLedConfig(clsvariable.comname);
@@ -60,6 +84,8 @@ namespace GD4_LED
                 clsvariable.RGD_dispense = clsvariable.dt_LedConfig.Rows[0]["RGB_dispense"].ToString().Split('|');
                 clsvariable.comport = clsvariable.dt_LedConfig.Rows[0]["serial_port"].ToString();
                 clsvariable.crp_report = clsvariable.dt_LedConfig.Rows[0]["crp_report"].ToString();
+                clsvariable.printname = clsvariable.dt_LedConfig.Rows[0]["printname"].ToString();
+                //MessageBox.Show(clsvariable.printname);
                 if (clsvariable.dt_LedConfig.Rows[0]["print_isenable"].ToString() == "Y")
                 {
                     clsvariable.print_isenable = true;
@@ -86,17 +112,23 @@ namespace GD4_LED
 
                 if(clsvariable.sever != "" && clsvariable.database != "" && clsvariable.username != "" && clsvariable.password != "")
                 {
-                    clsvariable.connectionST = $@"Data Source={clsvariable.sever};Initial Catalog={clsvariable.database};Persist Security Info=True;User ID={clsvariable.username};Password={clsvariable.password}; Max Pool Size=10000;";
+                    clsvariable.connectionST = $@"Data Source={clsvariable.sever};Initial Catalog={clsvariable.database};Persist Security Info=True;User ID={clsvariable.username};Password={clsvariable.password}; charset=utf8mb4;";
                 }
+            }
+
+            local = _STK.CheckConnection(clsvariable.connectionST);
+            if (!local)
+            {
+                MessageBox.Show(" ไม่สามารถเชื่อมฐานข้อมูล : " + clsvariable.connectionST);
             }
             clsvariable.dt_Ledinfo = _STK.GetLedInfo(clsvariable.comname);
             if (clsvariable.dt_Ledinfo.Rows.Count > 0)
             {
-                txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+                //txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
                 clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
             }
 
-            if (txtdevice.Text.Length > 0) // method ที่คุณเขียนไว้เช็คการต่อ
+            if (v&& local) // method ที่คุณเขียนไว้เช็คการต่อ
             {
                 myEllipse.Fill = (Brush)FindResource("Success"); // สีเขียว
                 myEllipse.ToolTip = "ระบบออนไลน์";
@@ -142,12 +174,12 @@ namespace GD4_LED
                 }
                 else
                 {
-                    // มีแค่จอเดียว
-                    MessageBox.Show(
-                        "ระบบตรวจพบจอเดียว โปรแกรมจะแสดงที่จอหลัก",
-                        "แจ้งเตือน",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    //// มีแค่จอเดียว
+                    //MessageBox.Show(
+                    //    "ระบบตรวจพบจอเดียว โปรแกรมจะแสดงที่จอหลัก",
+                    //    "แจ้งเตือน",
+                    //    MessageBoxButton.OK,
+                    //    MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)

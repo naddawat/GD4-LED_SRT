@@ -1,6 +1,7 @@
 ﻿using CrystalDecisions.CrystalReports.Engine;
 using GD4_LED.cls;
 using GD4_LED.models;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Ocsp;
 using System;
@@ -383,6 +384,8 @@ namespace GD4_LED
                         if (result)
                         {
                             result = _query.UpdateJob(txtStatus.Text, prescriptionno, seq, orderitem);
+                            //SyncDrug(orderitem);
+                            LoadStockByCode(orderitem);
                         }
                         else
                         {
@@ -417,7 +420,7 @@ namespace GD4_LED
                     txtSelectedItems.Text = CountItem.ToString();
                     clsvariable.StrU = "";
                     clsvariable.StrU_array = new string[3];
-                    //SyncDrug(orderitem);
+                    
                 }
 
                 if (CountItem >= prescriptionData.Package.Count)
@@ -431,13 +434,70 @@ namespace GD4_LED
                 }
             }
         }
+        public void LoadStockByCode(string code)
+        {
+            DataTable dt = new DataTable();
+            dt = _query.GetAllLedStockByCode(code, clsvariable.shelfzone);
+            string connStr = GD4_LED.Properties.Settings.Default.connectstring;
+            if (dt.Rows.Count > 0)
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                    string insertCols = string.Join(", ", columns);
+                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                    string updateCols = string.Join(", ", columns
+                                                    .Where(c => c != "orderitemcode")
+                                                    .Select(c => $"{c} = VALUES({c})"));
+
+                    string sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            cmd.Parameters.Clear();
+
+                            foreach (DataColumn col in dt.Columns)
+                            {
+                                object value = row[col.ColumnName] ?? DBNull.Value;
+                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                }
+
+                SyncDrug(code);
+            }
+            else
+            {
+                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                              MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
 
         private void LoadReport(DataTable dt)
         {
+            try
+            {
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            //MessageBox.Show(clsvariable.crp_report + " " + clsvariable.printname);
             ReportDocument report = new ReportDocument();
-            report.Load(@"D:\GitHub\GD4-LED_SRT\GD4_LED\report\crp_stricker.rpt");
+            report.Load(clsvariable.crp_report);
             report.SetDataSource(dt);
-            report.PrintOptions.PrinterName = "";
+            report.PrintOptions.PrinterName = clsvariable.printname;
             report.PrintToPrinter(1, false, 0, 0);
             report.Close();
             report.Dispose();
