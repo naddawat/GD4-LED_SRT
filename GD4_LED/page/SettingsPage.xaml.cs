@@ -771,22 +771,29 @@ namespace GD4_LED.page
                     int red = (int)redSlider.Value;
                     int green = (int)greenSlider.Value;
                     int blue = (int)blueSlider.Value;
-                    for (int i = 0; i < 6; i++)
+                   
+                    for (int i = 1; i < 9; i++) // วนรอบแรก 8 ครั้ง
                     {
-                        clsvariable.Instance.SerialCan.SetLED(5, i, red, green, blue);
+                        for (int j = 0; j < 13; j++) // วนรอบใน 12 ครั้ง
+                        {
+                            clsvariable.Instance.SerialCan.SetLED(i, j, red, green, blue);
+                        }
                     }
-                    
+
                 }
                 else
                 {
                     // Logic to turn off the light
                     //MessageBox.Show("ปิดไฟแล้ว", "Light Control",
                     //              MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 1; i < 9; i++)
                     {
-                        clsvariable.Instance.SerialCan.SetLED(6, i, 0, 0, 0);
+                        for (int j = 0; j < 13; j++)
+                        {
+                            clsvariable.Instance.SerialCan.SetLED(i, j, 0, 0, 0);
+                        }
                     }
+                    
                 }
             };
 
@@ -1065,6 +1072,36 @@ namespace GD4_LED.page
             //    }
             //}
 
+            //foreach (DataRow rw in dt_stock.Rows)
+            //{
+            //    string code = rw["orderitemcode"].ToString();
+            //    DataTable stock_local = new DataTable();
+            //    stock_local = _query.GetAllLedStockByCode(code,clsvariable.shelfzone);
+            //    if (stock_local.Rows.Count <= 0)
+            //    {
+            //        using (MySqlConnection conn = new MySqlConnection(connStr))
+            //        {
+            //            conn.Open();
+            //            var columns = stock_local.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+            //            string updateCols = string.Join(", ", columns
+            //                                            .Where(c => c != "orderitemcode")
+            //                                            .Select(c => $"{c} = VALUES({c})"));
+
+            //            string sql = $@" INSERT INTO ms_stock (orderitemcode) VALUES ('{code}') ;";
+
+            //            using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+            //            {
+            //                cmd.ExecuteNonQuery();
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // มี stock แล้ว
+            //    }
+            //}
+
 
             foreach (DataRow dr in dt_stock.Rows)
             {
@@ -1096,7 +1133,7 @@ namespace GD4_LED.page
                   
 
                     clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
-                    //Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                 }
                 else
                 {

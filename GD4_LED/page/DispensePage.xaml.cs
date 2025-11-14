@@ -189,8 +189,8 @@ namespace GD4_LED.page
                     patientname = r["patientname"].ToString(),
                     ward = r["ward"].ToString(),
                     bed = r["bed"].ToString(),
-                    addr = r["addr"].ToString(),
-                    id = r["position_id"].ToString()
+                    //addr = r["addr"].ToString(),
+                    //id = r["position_id"].ToString()
                 })
                 .Select(g => new
                 {
@@ -200,8 +200,8 @@ namespace GD4_LED.page
                     patientname = g.Key.patientname,
                     ward = g.Key.ward,
                     bed = g.Key.bed,
-                    addr = g.Key.addr,
-                    id = g.Key.id,
+                    //addr = g.Key.addr,
+                    //id = g.Key.id,
                     //status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
                     package = g.Select(r => new
                     {

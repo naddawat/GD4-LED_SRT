@@ -388,7 +388,7 @@ namespace GD4_LED.page
                 //LoadStockByCode(refillRecord.DrugCode);
 
                 return result;
-                RefreshDrugStocks();
+                //RefreshDrugStocks();
                
             }
             else

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace GD4_LED.cls
 {
@@ -73,7 +74,7 @@ namespace GD4_LED.cls
                       p.shelfzone = '{shelfzone}' 
                       AND p.leddatetime IS NULL
                       AND p.voiddatetime is null
-                      AND p.ordercreatedate > CURRENT_DATE();";
+                      AND p.lastmodified  > CURRENT_DATE();";
 
             return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
@@ -122,7 +123,8 @@ namespace GD4_LED.cls
                     WHERE
                       shelfzone = '{shelfzone}' 
                       AND leddatetime IS not NULL
-                      AND voiddatetime is null";
+                      AND voiddatetime is null
+                      AND lastmodified  > CURRENT_DATE();";
 
             return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
@@ -188,36 +190,47 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
+        public DataTable GetLocationBycode_ocal(string device, string code)
+        {
+
+            SQL = $@"  SELECT *
+            FROM
+              ms_location ml
+            WHERE
+              ml.shelfzone = '{device}' and ml.orderitemcode ='{code}'";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
         public DataTable GetLedStockByCode(string orderitemcode,string shelfzone)
         {
 
-            //SQL = $@"  SELECT
-            //  ml.shelfzone AS location,
-            //  ml.shelfname AS drugPosition,
-            //  ms.LotNo AS lot,
-            //  ml.orderitemcode AS drugCode,
-            //  ml.orderitemENname AS drugName,
-            //  ms.In_Qty AS Quantity,
-            //  ms.Exp AS exp,
-            //  ml.max AS max,
-            //  ml.min AS min,
-            //  '' AS firmname ,
-            //  CASE 
-            //    WHEN (ms.In_Qty / ml.max) * 100 < 0 
-            //        THEN 0
-            //    ELSE ROUND((ms.In_Qty / ml.max) * 100 ,0)
-            //END AS Percent
-            //FROM
-            //  ms_stock ms
-            //  RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
-            //where ml.orderitemcode = '{orderitemcode}' and ml.shelfzone = '{shelfzone}'
-            //  ORDER BY Percent";
-
             SQL = $@"  SELECT
-              *
+              ml.shelfzone AS location,
+              ml.shelfname AS drugPosition,
+              ms.LotNo AS lot,
+              ml.orderitemcode AS drugCode,
+              ml.orderitemENname AS drugName,
+              ms.In_Qty AS Quantity,
+              ms.Exp AS exp,
+              ml.max AS max,
+              ml.min AS min,
+              '' AS firmname ,
+              CASE 
+                WHEN (ms.In_Qty / ml.max) * 100 < 0 
+                    THEN 0
+                ELSE ROUND((ms.In_Qty / ml.max) * 100 ,0)
+            END AS Percent
             FROM
               ms_stock ms
-            where ms.orderitemcode = '{orderitemcode}' and ms.shelfzone = '{shelfzone}' ";
+              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            where ml.orderitemcode = '{orderitemcode}' and ml.shelfzone = '{shelfzone}'
+              ORDER BY Percent";
+
+            //SQL = $@"  SELECT
+            //  *
+            //FROM
+            //  ms_stock ms
+            //where ms.orderitemcode = '{orderitemcode}' and ms.shelfzone = '{shelfzone}' ";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
@@ -316,7 +329,9 @@ namespace GD4_LED.cls
         public bool InsertStock(string DrugCode,int In_Qty,string LotNo,string Exp, string shelfzone, string shelfname,string max,string min)
         {
             SQL = $@" INSERT INTO ms_stock (orderitemcode,In_Qty, LotNo, Exp, lastmodify,shelfzone,shelfname,max,min,log_refill,type_refill) 
-                        VALUES ('{DrugCode}',{In_Qty}, '{LotNo}','{Exp}',CURRENT_TIMESTAMP(),'{shelfzone}','{shelfname}','{max}','{min}',NULL,1) ; "; 
+                        VALUES ('{DrugCode}',{In_Qty}, '{LotNo}','{Exp}',CURRENT_TIMESTAMP(),'{shelfzone}','{shelfname}',{max},{min},NULL,1) ; ";
+
+            //MessageBox.Show(SQL);
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
