@@ -131,6 +131,8 @@ D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLE
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.pdb
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.xml
 D:\Projects\สุราช\GD4-LED-V2\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.config
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\report\crp_stricker.rpt
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\report\crp_stricker.cs
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.config
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe.manifest
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.application
@@ -171,6 +173,7 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Microsoft.Extensions.Options.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Microsoft.Extensions.Primitives.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\MySql.Data.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Newtonsoft.Json.dll
+D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\QRCoder.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIO.Core.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIO.Serializer.Core.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\SocketIO.Serializer.SystemTextJson.dll
@@ -288,5 +291,3 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.application
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.Up2Date
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
-D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\report\crp_stricker.rpt
-D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\report\crp_stricker.cs

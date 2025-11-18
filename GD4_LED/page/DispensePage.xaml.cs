@@ -35,7 +35,8 @@ namespace GD4_LED.page
         private RxService _RX;
         private bool _isLoading = true;
         clsQuery _query = new clsQuery();
-       
+        private DispatcherTimer timer;
+
         clsvariable clsvariable = clsvariable.Instance;
         public DispensePage()
         {
@@ -44,6 +45,37 @@ namespace GD4_LED.page
             // เริ่ม Loading Animation
             StartLoadingAnimation();
 
+            // โหลดข้อมูลแบบ Async
+            _ = InitializePageAsync();
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+            SearchTextBox.Focus();
+        }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(clsvariable.StrU) && clsvariable.StrU.Length >= 16 && clsvariable.StrU != "0")
+            {
+                DataTable dtPrescriptions = new DataTable();
+                
+                dtPrescriptions = _query.GetPrescription(clsvariable.shelfzone);
+                if (dtPrescriptions.Rows.Count > 0)
+                {
+                    SearchTextBox.Text = dtPrescriptions.Rows[0]["prescriptionno"].ToString();
+                }
+                else
+                {
+                    SearchTextBox.Text = "";
+                }
+
+
+                if (SearchTextBox.Text != "")
+                {
+                    Prescription presc = DisplayPrescriptionsScanbarCode();
+                    PrintPrescription(presc);
+                }
+
+            }
             // โหลดข้อมูลแบบ Async
             _ = InitializePageAsync();
 

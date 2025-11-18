@@ -297,6 +297,12 @@ namespace GD4_LED {
             
             private global::System.Data.DataColumn columnorderitemname;
             
+            private global::System.Data.DataColumn columnward;
+            
+            private global::System.Data.DataColumn columnorderitemnameTH;
+            
+            private global::System.Data.DataColumn columnQRcode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public dt_prescrDataTable() {
@@ -404,6 +410,30 @@ namespace GD4_LED {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn wardColumn {
+                get {
+                    return this.columnward;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn orderitemnameTHColumn {
+                get {
+                    return this.columnorderitemnameTH;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn QRcodeColumn {
+                get {
+                    return this.columnQRcode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -439,7 +469,7 @@ namespace GD4_LED {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public dt_prescrRow Adddt_prescrRow(string prescriptionno, string hn, string patientname, string orderqty, string freetext1, string freetext2, string freetext3, string freetext4, string orderitemname) {
+            public dt_prescrRow Adddt_prescrRow(string prescriptionno, string hn, string patientname, string orderqty, string freetext1, string freetext2, string freetext3, string freetext4, string orderitemname, string ward, string orderitemnameTH, byte[] QRcode) {
                 dt_prescrRow rowdt_prescrRow = ((dt_prescrRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         prescriptionno,
@@ -450,7 +480,10 @@ namespace GD4_LED {
                         freetext2,
                         freetext3,
                         freetext4,
-                        orderitemname};
+                        orderitemname,
+                        ward,
+                        orderitemnameTH,
+                        QRcode};
                 rowdt_prescrRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowdt_prescrRow);
                 return rowdt_prescrRow;
@@ -482,6 +515,9 @@ namespace GD4_LED {
                 this.columnfreetext3 = base.Columns["freetext3"];
                 this.columnfreetext4 = base.Columns["freetext4"];
                 this.columnorderitemname = base.Columns["orderitemname"];
+                this.columnward = base.Columns["ward"];
+                this.columnorderitemnameTH = base.Columns["orderitemnameTH"];
+                this.columnQRcode = base.Columns["QRcode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -505,6 +541,12 @@ namespace GD4_LED {
                 base.Columns.Add(this.columnfreetext4);
                 this.columnorderitemname = new global::System.Data.DataColumn("orderitemname", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnorderitemname);
+                this.columnward = new global::System.Data.DataColumn("ward", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnward);
+                this.columnorderitemnameTH = new global::System.Data.DataColumn("orderitemnameTH", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorderitemnameTH);
+                this.columnQRcode = new global::System.Data.DataColumn("QRcode", typeof(byte[]), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQRcode);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -791,6 +833,54 @@ namespace GD4_LED {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string ward {
+                get {
+                    try {
+                        return ((string)(this[this.tabledt_prescr.wardColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'ward\' in table \'dt_prescr\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tabledt_prescr.wardColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string orderitemnameTH {
+                get {
+                    try {
+                        return ((string)(this[this.tabledt_prescr.orderitemnameTHColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'orderitemnameTH\' in table \'dt_prescr\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tabledt_prescr.orderitemnameTHColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public byte[] QRcode {
+                get {
+                    try {
+                        return ((byte[])(this[this.tabledt_prescr.QRcodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'QRcode\' in table \'dt_prescr\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tabledt_prescr.QRcodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public bool IsprescriptionnoNull() {
                 return this.IsNull(this.tabledt_prescr.prescriptionnoColumn);
             }
@@ -895,6 +985,42 @@ namespace GD4_LED {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void SetorderitemnameNull() {
                 this[this.tabledt_prescr.orderitemnameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IswardNull() {
+                return this.IsNull(this.tabledt_prescr.wardColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetwardNull() {
+                this[this.tabledt_prescr.wardColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsorderitemnameTHNull() {
+                return this.IsNull(this.tabledt_prescr.orderitemnameTHColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetorderitemnameTHNull() {
+                this[this.tabledt_prescr.orderitemnameTHColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsQRcodeNull() {
+                return this.IsNull(this.tabledt_prescr.QRcodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetQRcodeNull() {
+                this[this.tabledt_prescr.QRcodeColumn] = global::System.Convert.DBNull;
             }
         }
         

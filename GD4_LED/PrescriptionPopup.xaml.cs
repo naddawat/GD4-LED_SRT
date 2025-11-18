@@ -4,10 +4,13 @@ using GD4_LED.models;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Ocsp;
+using QRCoder;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Security.Cryptography;
@@ -26,6 +29,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Border = System.Windows.Controls.Border;
+using DrawingBitmap = System.Drawing.Bitmap;
+using MediaColor = System.Windows.Media.Color;
+using MediaColorConverter = System.Windows.Media.ColorConverter;
+
 
 namespace GD4_LED
 {
@@ -58,7 +65,7 @@ namespace GD4_LED
             this.Loaded += (s, e) => this.Focus();
             this.KeyDown += Window_KeyDown;
             //timer.Start();
-
+            
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -85,7 +92,7 @@ namespace GD4_LED
                 scannedBarcode += key;
 
                 txtScannedCode.Text = scannedBarcode;
-                txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
+                txtScannedCode.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#3b82f6"));
 
 
                 scanTimer.Stop();
@@ -113,11 +120,11 @@ namespace GD4_LED
             if (string.IsNullOrEmpty(code))
             {                
                 txtVerificationStatus.Text = "⚠️ รหัสไม่ถูกต้อง กรุณาสแกนใหม่อีกครั้ง";
-                txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc2626"));
+                txtVerificationStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#dc2626"));
                 txtVerificationStatus.Visibility = Visibility.Visible;
 
                 txtScannedCode.Text = "รอการสแกน...";
-                txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
+                txtScannedCode.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#3b82f6"));
                 return;
             }
             else
@@ -132,19 +139,19 @@ namespace GD4_LED
 
                     txtStatus.Text = dt_user.Rows[0]["fullname"].ToString();
                     txtScannedCode.Text = code;
-                    txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+                    txtScannedCode.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#10b981"));
                     txtVerificationStatus.Text = "✓ ยืนยันตัวตนสำเร็จ";
-                    txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+                    txtVerificationStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#10b981"));
                     txtVerificationStatus.Visibility = Visibility.Visible;
 
                 }
                 else
                 {
                     txtVerificationStatus.Text = "⚠️ ไม่พบข้อมูลผู้ใช้ กรุณาสแกนใหม่อีกครั้ง";
-                    txtVerificationStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc2626"));
+                    txtVerificationStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#dc2626"));
                     txtVerificationStatus.Visibility = Visibility.Visible;
                     txtScannedCode.Text = "รอการสแกน...";
-                    txtScannedCode.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3b82f6"));
+                    txtScannedCode.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#3b82f6"));
                     return;
                 }
             }
@@ -326,12 +333,15 @@ namespace GD4_LED
             db_print.Columns.Add("freetext2", typeof(String));
             db_print.Columns.Add("freetext3", typeof(String));
             db_print.Columns.Add("freetext4", typeof(String));
+            db_print.Columns.Add("ward", typeof(String));
+            db_print.Columns.Add("orderitemnameTH", typeof(String));
+            db_print.Columns.Add("QRcode", typeof(byte[]));
             db_print.TableName = "db_print";
 
             if (clsvariable.dt_Prescr.Rows.Count > 0)
             {
                 DataTable dt_prescr = new DataTable();
-                DataRow[] rows = clsvariable.dt_Prescr.Select("orderitemcode = '" + orderitem.Replace("'", "''")+"'" );
+                DataRow[] rows = clsvariable.dt_Prescr.Select("orderitemcode = '" + orderitem.Replace("'", "''") + "'");
 
                 if (rows.Length > 0)
                 {
@@ -398,6 +408,7 @@ namespace GD4_LED
                         DataRow r = db_print.Rows.Add();
                         r["prescriptionno"] = row["prescriptionno"].ToString();
                         r["orderitemname"] = row["orderitemname"].ToString();
+                        //["orderitemnameTH"] = row["orderitemnameTH"].ToString();
                         r["orderqty"] = row["orderqty"].ToString();
                         r["patientname"] = row["patientname"].ToString();
                         r["hn"] = row["hn"].ToString();
@@ -405,6 +416,20 @@ namespace GD4_LED
                         r["freetext2"] = row["freetext2"].ToString();
                         r["freetext3"] = row["freetext3"].ToString();
                         r["freetext4"] = row["freetext4"].ToString();
+                        r["ward"] = "วอร์ด " + row["wardcode"].ToString() + " ห้อง " + row["wardname"].ToString();
+
+                        MemoryStream mss = new MemoryStream();
+                        byte[] bytess = mss.ToArray();
+                        genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        bytess = mss.ToArray();
+                        if (bytess.Length > 0)
+                        {
+                            r["QRcode"] = bytess;
+                        }
+                        else
+                        {
+                            r["QRcode"] = "";
+                        }
                     }
 
                     if (clsvariable.print_isenable)
@@ -420,19 +445,28 @@ namespace GD4_LED
                     txtSelectedItems.Text = CountItem.ToString();
                     clsvariable.StrU = "";
                     clsvariable.StrU_array = new string[3];
-                    
+
                 }
 
                 if (CountItem >= prescriptionData.Package.Count)
                 {
                     timer.Stop();
-                    
+
                     //PackageItemsControl.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AFE1AF"));
                     txtSelectedItems.Text = CountItem.ToString();
                     clsvariable.StrU = "";
                     clsvariable.StrU_array = new string[3];
                 }
             }
+        }
+        public System.Drawing.Image genQr(string txt)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            var QRCodeData = qrGenerator.CreateQrCode(txt, QRCodeGenerator.ECCLevel.M);
+            QRCode QRCode = new QRCode(QRCodeData);
+            DrawingBitmap qrCodeImage = QRCode.GetGraphic(20);
+
+            return qrCodeImage;
         }
         public void LoadStockByCode(string code)
         {
@@ -538,20 +572,20 @@ namespace GD4_LED
             switch (status)
             {
                 case "รอจัด":
-                    statusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fef3c7"));
-                    txtStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f59e0b"));
+                    statusBorder.Background = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#fef3c7"));
+                    txtStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#f59e0b"));
                     break;
                 case "จัดแล้ว":
-                    statusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dcfce7"));
-                    txtStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#16a34a"));
+                    statusBorder.Background = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#dcfce7"));
+                    txtStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#16a34a"));
                     break;
                 case "ยกเลิก":
-                    statusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fee2e2"));
-                    txtStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#dc2626"));
+                    statusBorder.Background = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#fee2e2"));
+                    txtStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#dc2626"));
                     break;
                 default:
-                    statusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f1f5f9"));
-                    txtStatus.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#64748b"));
+                    statusBorder.Background = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#f1f5f9"));
+                    txtStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#64748b"));
                     break;
             }
         }
@@ -600,7 +634,7 @@ namespace GD4_LED
 
                 var colorAnimation = new ColorAnimation
                 {
-                    To = (Color)ColorConverter.ConvertFromString("#10b981"),
+                    To = (MediaColor)MediaColorConverter.ConvertFromString("#10b981"),
                     Duration = TimeSpan.FromMilliseconds(300)
                 };
                 checkMark.Background = new SolidColorBrush(Colors.Transparent);
@@ -625,7 +659,7 @@ namespace GD4_LED
                 scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnimation);
                 scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleYAnimation);
 
-                cardBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10b981"));
+                cardBorder.BorderBrush = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#10b981"));
                 cardBorder.BorderThickness = new Thickness(2);
             }
             else
