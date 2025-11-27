@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Deployment.Application;
+using System.Diagnostics;
 using System.Reflection;
 using System.Web.Configuration;
 using System.Windows;
@@ -32,7 +33,7 @@ namespace GD4_LED
             clsvariable.comname = Environment.MachineName;
             if(clsvariable.comname == "DEV-MIM")
             {
-                clsvariable.comname = "GD4-LED-1";
+                clsvariable.comname = "GD4-LED-2";
             }
             
             v = _STK.CheckConnection(GD4_LED.Properties.Settings.Default.connectstring);
@@ -316,6 +317,12 @@ namespace GD4_LED
         {   
             SetActiveTab(SettingsButton);
             MainFrame.Navigate(new SettingsPage());
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
+
         }
     }
 }

@@ -1,9 +1,12 @@
-﻿using GD4_LED.cls;
+﻿using CrystalDecisions.CrystalReports.Engine;
+using GD4_LED.cls;
 using GD4_LED.models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +20,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Border = System.Windows.Controls.Border;
 
 namespace GD4_LED.page
 {
@@ -192,7 +196,7 @@ namespace GD4_LED.page
                     patientname = g.Key.patientname,
                     ward = g.Key.ward,
                     bed = g.Key.bed,
-                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    status = "เสร็จแล้ว", // ใส่เอง เพราะไม่มีใน SQL
                     package = g.Select(r => new
                     {
                         orderitemcode = r["orderitemcode"].ToString(),
@@ -213,13 +217,13 @@ namespace GD4_LED.page
 
         private void UpdateStatistics()
         {
-            int pendingCount = filteredPrescriptions.Count(p => p.Status == "รอจัด");
+            int pendingCount = filteredPrescriptions.Count(p => p.Status == "เสร็จแล้ว");
             int completedCount = filteredPrescriptions.Count(p => p.Status == "เสร็จแล้ว");
             int totalCount = filteredPrescriptions.Count;
 
-            PendingCountText.Text = pendingCount.ToString();
-            CompletedCountText.Text = completedCount.ToString();
-            TotalCountText.Text = totalCount.ToString();
+            //PendingCountText.Text = pendingCount.ToString();
+            CompletedCountText.Text = pendingCount.ToString();
+            //TotalCountText.Text = totalCount.ToString();
         }
 
         private void DisplayPrescriptions()
@@ -580,8 +584,114 @@ namespace GD4_LED.page
         {
             MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
                           "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
 
+            clsvariable.dt_Prescr_his = _query.GetPrescriptionByCodeHis(prescription.PrescriptionNo);
+            if (clsvariable.dt_Prescr_his.Rows.Count > 0)
+            {
+                foreach(DataRow row in clsvariable.dt_Prescr_his.Rows)
+                {
+                    InvenStock(row["orderitemcode"].ToString());
+                }
+            }
+        }
+        public void InvenStock(string orderitem)
+        {
+            DataTable dt_stock = new DataTable();
+            bool result = false;
+            dt_stock = _query.GetStockByCode(orderitem);
+            //int order_qty = Convert.ToInt32(qty);
+
+            DataTable db_print = new DataTable();
+            db_print.Columns.Add("prescriptionno", typeof(String));
+            db_print.Columns.Add("orderitemname", typeof(String));
+            db_print.Columns.Add("orderqty", typeof(String));
+            db_print.Columns.Add("patientname", typeof(String));
+            db_print.Columns.Add("hn", typeof(String));
+            db_print.Columns.Add("freetext1", typeof(String));
+            db_print.Columns.Add("freetext2", typeof(String));
+            db_print.Columns.Add("freetext3", typeof(String));
+            db_print.Columns.Add("freetext4", typeof(String));
+            db_print.Columns.Add("ward", typeof(String));
+            db_print.Columns.Add("orderitemnameTH", typeof(String));
+            db_print.Columns.Add("QRcode", typeof(byte[]));
+            db_print.Columns.Add("location", typeof(String));
+            db_print.TableName = "db_print";
+
+            if (clsvariable.dt_Prescr_his.Rows.Count > 0)
+            {
+                DataTable dt_prescr = new DataTable();
+                DataRow[] rows = clsvariable.dt_Prescr_his.Select("orderitemcode = '" + orderitem.Replace("'", "''") + "'");
+
+                if (rows.Length > 0)
+                {
+                    dt_prescr = rows.CopyToDataTable();
+                }
+                else
+                {
+                    dt_prescr = clsvariable.dt_Prescr_his.Clone(); // คืน DataTable โครงสร้างเดิมแต่ไม่มีข้อมูล
+                }
+
+                if (dt_prescr.Rows.Count > 0)
+                {
+                    string prescriptionno = dt_prescr.Rows[0]["prescriptionno"].ToString();
+                    string seq = dt_prescr.Rows[0]["seq"].ToString();
+
+                    foreach (DataRow row in dt_prescr.Rows)
+                    {
+                        DataRow r = db_print.Rows.Add();
+                        r["prescriptionno"] = row["prescriptionno"].ToString();
+                        r["orderitemname"] = row["orderitemname"].ToString();
+                        r["orderitemnameTH"] = row["orderitemnameTH"].ToString();
+                        r["orderqty"] = row["orderqty"].ToString().Split('.')[0];
+                        r["patientname"] = row["patientname"].ToString();
+                        r["hn"] = row["hn"].ToString();
+                        r["freetext1"] = row["freetext1"].ToString();
+                        r["freetext2"] = row["freetext2"].ToString();
+                        r["freetext3"] = row["freetext3"].ToString();
+                        r["freetext4"] = row["freetext4"].ToString();
+                        r["ward"] = row["wardcode"].ToString() + " " + row["wardname"].ToString();
+
+                        MemoryStream mss = new MemoryStream();
+                        byte[] bytess = mss.ToArray();
+                        PrescriptionPopup.genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        bytess = mss.ToArray();
+                        if (bytess.Length > 0)
+                        {
+                            r["QRcode"] = bytess;
+                        }
+                        else
+                        {
+                            r["QRcode"] = "";
+                        }
+                        r["location"] = row["shelfname"].ToString();
+                    }
+
+                    if (db_print.Rows.Count > 0)
+                    {
+                        LoadReport(db_print);
+                    }
+                }
+            }
+        }
+        private void LoadReport(DataTable dt)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            //MessageBox.Show(clsvariable.crp_report + " " + clsvariable.printname);
+            ReportDocument report = new ReportDocument();
+            report.Load(clsvariable.crp_report);
+            report.SetDataSource(dt);
+            report.PrintOptions.PrinterName = clsvariable.printname;
+            report.PrintToPrinter(1, false, 0, 0);
+            report.Close();
+            report.Dispose();
+        }
         private void CancelPrescription(Prescription prescription)
         {
             var result = MessageBox.Show($"ต้องการยกเลิกใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName} หรือไม่?",

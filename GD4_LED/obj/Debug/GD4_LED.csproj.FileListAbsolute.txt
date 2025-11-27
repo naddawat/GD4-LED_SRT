@@ -288,6 +288,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.GenerateResource.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CoreCompileInputs.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.manifest
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.application
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.Up2Date
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb

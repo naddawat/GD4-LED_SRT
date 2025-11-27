@@ -284,7 +284,7 @@
                                      IsEnabled="True"
                                      IsReadOnly="False"
                                      Focusable="True"
-                                     TabIndex="1"/>
+                                     TabIndex="1" TouchUp="RefillQuantityTextBox_TouchUp"/>
                     </StackPanel>
 
                     <!-- Lot Number และ Expiry Date -->
@@ -303,7 +303,7 @@
                                            Margin="0,0,0,8"/>
                             <TextBox x:Name="RefillLotTextBox" 
                                          Style="{StaticResource ModernTextBoxStyle}"
-                                         Text=""/>
+                                         Text="" PreviewMouseDown="RefillLotTextBox_PreviewMouseDown"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">

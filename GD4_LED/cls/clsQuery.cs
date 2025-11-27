@@ -63,7 +63,7 @@ namespace GD4_LED.cls
                       p.bedcode as bed,
                       p.orderitemcode,
                       p.orderitemname,
-                      p.orderqty,
+                      TRUNCATE(p.orderqty,0) as orderqty,
                       p.shelfzone,
                       p.shelfname,
                       ms.addr,
@@ -100,6 +100,66 @@ namespace GD4_LED.cls
                     WHERE
                       prescriptionno = '{prescriptionno}' 
                       AND leddatetime IS NULL
+                      AND voiddatetime is null
+                      AND shelfzone = '{clsvariable.shelfzone}' ";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
+        public DataTable GetStrickerByCode(string prescriptionno)
+        {
+
+            SQL = $@"WITH ranked AS (
+                        SELECT
+                            ps.prescriptionno,
+                            ps.patientname,
+                            ps.sex,
+                            ps.patientdob,
+                            ps.seq as seq_ps,
+                            pm.seq as seq_pm,
+                            ps.seqmax,
+                            ps.orderitemcode,
+                            ps.orderitemname,
+                            ps.orderqty,
+                            ps.orderunitdesc,
+                            ps.instructiondesc,
+                            ps.dosage,
+                            ps.dosagedesc,
+                            ps.frequencydesc,
+                            ps.freetext1,
+                            ps.freetext2,
+                            ps.freetext3,
+                            ps.freetext4,
+                            ps.freetext5,
+                            pm.shelfzone,
+                            pm.shelfname,
+                            ps.lastmodified,
+                            ROW_NUMBER() OVER (PARTITION BY ps.seq ORDER BY pm.seq DESC) as rn
+                        FROM packagemaster_ipd pm
+                        LEFT JOIN prescription_ipd ps
+                            ON pm.prescriptionno = ps.prescriptionno
+                        WHERE pm.prescriptionno = '{prescriptionno}'
+                          AND pm.leddatetime IS NULL
+                          AND pm.voiddatetime IS NULL
+                          AND pm.shelfzone = '{clsvariable.shelfzone}'
+                    )
+                    SELECT *
+                    FROM ranked
+                    WHERE rn = 1;
+                    ";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
+
+        public DataTable GetPrescriptionByCodeHis(string prescriptionno)
+        {
+
+            SQL = $@" SELECT
+                      *
+                    FROM
+                      packagemaster_ipd 
+                    WHERE
+                      prescriptionno = '{prescriptionno}' 
+                      AND leddatetime IS NOT NULL
                       AND voiddatetime is null
                       AND shelfzone = '{clsvariable.shelfzone}' ";
 
@@ -211,6 +271,8 @@ namespace GD4_LED.cls
               ml.orderitemcode AS drugCode,
               ml.orderitemENname AS drugName,
               ms.In_Qty AS Quantity,
+               ml.addr,
+               ml.position_id,
               ms.Exp AS exp,
               ml.max AS max,
               ml.min AS min,
@@ -294,7 +356,8 @@ namespace GD4_LED.cls
                     FROM
                       ms_location ml
                       LEFT JOIN ms_stock ms ON ms.orderitemcode = ml.orderitemcode 
-                    WHERE  ml.shelfzone = '{shelfzone}' ";
+                    WHERE  ml.shelfzone = '{shelfzone}' 
+                    ORDER BY addr,position_id ;";
 
             return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }

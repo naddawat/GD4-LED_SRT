@@ -4,6 +4,7 @@ using GD4_LED.cls;
 using GD4_LED.models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Crypto;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,6 +26,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Xml.Linq;
+using Border = System.Windows.Controls.Border;
+using DrawingBitmap = System.Drawing.Bitmap;
+using MediaColor = System.Windows.Media.Color;
+using MediaColorConverter = System.Windows.Media.ColorConverter;
 namespace GD4_LED.page
 {
     public partial class DispensePage : Page
@@ -36,8 +42,11 @@ namespace GD4_LED.page
         private bool _isLoading = true;
         clsQuery _query = new clsQuery();
         private DispatcherTimer timer;
-
+        public static DispatcherTimer timerRefresh;
+        private bool isVerified = false;
         clsvariable clsvariable = clsvariable.Instance;
+        private DispatcherTimer scanTimer;
+        private string scannedBarcode = "";
         public DispensePage()
         {
             InitializeComponent();
@@ -45,19 +54,47 @@ namespace GD4_LED.page
             // เริ่ม Loading Animation
             StartLoadingAnimation();
 
+            scanTimer = new DispatcherTimer();
+            scanTimer.Interval = TimeSpan.FromMilliseconds(100);
+            scanTimer.Tick += ScanTimer_Tick;
+
+            //timer = new DispatcherTimer();
+            //timer.Interval = TimeSpan.FromSeconds(1);
+            //timer.Start();
+            //timer.Tick += Timer_Tick;
+
+            timerRefresh = new DispatcherTimer();
+            timerRefresh.Interval = TimeSpan.FromSeconds(15);
+            timerRefresh.Start();
+            timerRefresh.Tick += Refresh_Tick;
+            this.Loaded += (s, e) =>
+            {
+                PrescriptionPanel.Focus();
+            };
+            this.KeyDown += Window_KeyDown;
+
+            //this.Loaded += (s, e) => SearchTextBox.Focus();
+
+
+            //this.Loaded += (s, e) => this.Focus();
+            //this.Loaded += (s, e) =>
+            //{
+            //    this.Focus();
+            //    MessageBox.Show("Loaded แล้ว!");
+            //};
+            ////PrescriptionPanel.Loaded += (s, e) => PrescriptionPanel.Focus();
+
             // โหลดข้อมูลแบบ Async
             _ = InitializePageAsync();
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-            SearchTextBox.Focus();
+
+
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(clsvariable.StrU) && clsvariable.StrU.Length >= 16 && clsvariable.StrU != "0")
             {
                 DataTable dtPrescriptions = new DataTable();
-                
+                timer.Start();
                 dtPrescriptions = _query.GetPrescription(clsvariable.shelfzone);
                 if (dtPrescriptions.Rows.Count > 0)
                 {
@@ -72,13 +109,15 @@ namespace GD4_LED.page
                 if (SearchTextBox.Text != "")
                 {
                     Prescription presc = DisplayPrescriptionsScanbarCode();
-                    PrintPrescription(presc);
+                    Print(presc);
+                    timerRefresh.Stop();
                 }
 
             }
             // โหลดข้อมูลแบบ Async
-            _ = InitializePageAsync();
-
+            //_ = InitializePageAsync();
+            clsvariable.StrU = "0";
+            timer.Start();
         }
 
         private void StartLoadingAnimation()
@@ -92,7 +131,7 @@ namespace GD4_LED.page
             fadeInStoryboard.Begin();
         }
         
-        private async Task InitializePageAsync()
+        public async Task InitializePageAsync()
         {
             try
             {
@@ -204,7 +243,7 @@ namespace GD4_LED.page
             }
         }
 
-        private void LoadPrescriptions()
+        public void LoadPrescriptions()
         {
             DataTable dtPrescriptions = new DataTable();
             dtPrescriptions = _query.GetPrescription(clsvariable.shelfzone);
@@ -234,14 +273,15 @@ namespace GD4_LED.page
                     bed = g.Key.bed,
                     //addr = g.Key.addr,
                     //id = g.Key.id,
-                    //status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
                     package = g.Select(r => new
                     {
                         orderitemcode = r["orderitemcode"].ToString(),
                         orderitemname = r["orderitemname"].ToString(),
                         orderqty = Convert.ToInt32(r["orderqty"]),
                         addr = r["addr"].ToString(),
-                        id = r["position_id"].ToString()
+                        id = r["position_id"].ToString(),
+                        location = r["shelfname"].ToString()
                     }).ToList()
                 })
                 .ToList();
@@ -281,12 +321,16 @@ namespace GD4_LED.page
                     patientname = g.Key.patientname,
                     ward = g.Key.ward,
                     bed = g.Key.bed,
-                    //status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
+                    status = "รอจัด", // ใส่เอง เพราะไม่มีใน SQL
                     package = g.Select(r => new
                     {
                         orderitemcode = r["orderitemcode"].ToString(),
                         orderitemname = r["orderitemname"].ToString(),
-                        orderqty = Convert.ToInt32(r["orderqty"])
+                        orderqty = Convert.ToInt32(r["orderqty"]),
+                        addr = r["addr"].ToString(),
+                        id = r["position_id"].ToString(),
+                        location = r["shelfname"].ToString()
+
                     }).ToList()
                 })
                 .ToList();
@@ -302,13 +346,13 @@ namespace GD4_LED.page
 
         private void UpdateStatistics()
         {
-            //int pendingCount = filteredPrescriptions.Count(p => p.Status == "รอจัด");
+            int pendingCount = filteredPrescriptions.Count(p => p.Status == "รอจัด");
             //int completedCount = filteredPrescriptions.Count(p => p.Status == "เสร็จแล้ว");
             int totalCount = filteredPrescriptions.Count;
 
-            //PendingCountText.Text = pendingCount.ToString();
+            PendingCountText.Text = pendingCount.ToString();
             //CompletedCountText.Text = completedCount.ToString();
-            TotalCountText.Text = totalCount.ToString();
+            //TotalCountText.Text = totalCount.ToString();
         }
 
         private void DisplayPrescriptions()
@@ -542,7 +586,9 @@ namespace GD4_LED.page
             // Add button click events
             printButton.Click += (sender, e) => {
                 e.Handled = true; // Prevent card toggle
-                PrintPrescription(prescription);
+                Print(prescription);
+
+
             };
 
             cancelButton.Click += (sender, e) => {
@@ -830,7 +876,7 @@ namespace GD4_LED.page
             // Add button click events
             printButton.Click += (sender, e) => {
                 e.Handled = true; // Prevent card toggle
-                PrintPrescription(prescription);
+                Print(prescription);
             };
 
             cancelButton.Click += (sender, e) => {
@@ -946,8 +992,10 @@ namespace GD4_LED.page
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             var dataLoadingTask = LoadDataAsync();
-        }
+            SearchTextBox.Clear();
 
+        }
+        
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             PerformSearch();
@@ -976,37 +1024,135 @@ namespace GD4_LED.page
         }
 
         private void PrintPrescription(Prescription prescription)
+        {           
+
+            clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+            if (clsvariable.dt_Prescr.Rows.Count > 0)
+            {
+                string json = System.Text.Json.JsonSerializer.Serialize(prescription, new JsonSerializerOptions { WriteIndented = true });
+
+                //var popup = new PrescriptionPopup(json);
+
+                //popup.ShowDialog();
+                //popup.Topmost = true;
+            }
+            else 
+            {
+                MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}","Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
+
+
+            }
+        }
+        private void Print(Prescription prescription)
         {
-            string json = System.Text.Json.JsonSerializer.Serialize(prescription, new JsonSerializerOptions { WriteIndented = true });
+            timerRefresh.Stop();
+            clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+            if (clsvariable.dt_Prescr.Rows.Count > 0)
+            {
+                string json = System.Text.Json.JsonSerializer.Serialize(prescription, new JsonSerializerOptions { WriteIndented = true });
 
-            var popup = new PrescriptionPopup(json);
+                var popup = new PrescriptionPopup(json);
+                popup.ShowDialog();
+                popup.Topmost = true;
+            }
+            else
+            {
+                MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
 
-            popup.ShowDialog();
-            popup.Topmost = true;
 
-            //LoadPrescriptions();
-
-            //MessageBox.Show($"พิมพ์ใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}",
-            //             "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            //string orderitemcode = "";
-            //string qty = "";
-            //for (int i = 0; i < prescription.Package.Count; i++)
-            //{
-            //    orderitemcode = prescription.Package[i].OrderItemCode.ToString();
-            //    qty = prescription.Package[i].OrderQty.ToString();
-
-            //    if (orderitemcode != "")
-            //    {
-            //        ShowLed(orderitemcode, qty);
-            //    }
-
-            //}
-
-            //clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+            }
 
 
         }
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("KeyDown called");
+            if (isVerified) return;
+
+            if (e.Key == Key.Enter)
+            {
+                if (!string.IsNullOrEmpty(scannedBarcode))
+                {
+                    VerifyDispenser(scannedBarcode, "");
+                    scannedBarcode = "";
+                    
+                    //LoadSampleData(jsonString);
+                }
+            }
+            else if (e.Key >= Key.D0 && e.Key <= Key.Z || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
+            {
+
+                string key = e.Key.ToString().Replace("D", "").Replace("NumPad", "");
+                scannedBarcode += key;
+                SearchTextBox.Text = scannedBarcode;
+                SearchTextBox.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#3b82f6"));
+
+
+                scanTimer.Stop();
+                scanTimer.Start();
+            }
+        }
+        private void ScanTimer_Tick(object sender, EventArgs e)
+        {
+            //// Auto-verify after brief pause in scanning
+            scanTimer.Stop();
+            if (!string.IsNullOrEmpty(scannedBarcode))
+            {
+                //VerifyDispenser(scannedBarcode, "");
+                scannedBarcode = "";
+                //LoadSampleData(jsonString);
+
+            }
+            return;
+        }
+
+
+        private void Refresh_Tick(object sender, EventArgs e)
+        {
+            scanTimer.Stop();
+            // โหลดข้อมูลแบบ Async
+            _ = InitializePageAsync();
+            string datetimeNow = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            var main = Application.Current.MainWindow as MainWindow;
+            main.txtdatetime.Text = datetimeNow;
+
+            return;
+        }
+
+        private void VerifyDispenser(string code, string password)        
+        {
+            try
+            {
+
+                string prescrip = "";
+                prescrip = SearchTextBox.Text.Trim();
+                clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
+                if (clsvariable.dt_Prescr.Rows.Count > 0)
+                {
+                    if (!string.IsNullOrEmpty(SearchTextBox.Text))
+                    {
+                        //MessageBox.Show("คุณกด Enter แล้ว!");
+                        Prescription presc = new Prescription();
+
+                        presc = DisplayPrescriptionsScanbarCode();
+                        Print(presc);
+                    }
+                    return;
+                }
+                else
+                {
+                    //MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescrip}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(" Search TextBox : " + ex.Message);
+            }
+        }
+
 
         private void CancelPrescription(Prescription prescription)
         {
@@ -1269,18 +1415,36 @@ namespace GD4_LED.page
         {
             if (e.Key == Key.Enter)
             {
-                if(!string.IsNullOrEmpty(SearchTextBox.Text))
+                try
                 {
+
                     string prescrip = "";
                     prescrip = SearchTextBox.Text.Trim();
-                    //MessageBox.Show("คุณกด Enter แล้ว!");
-                    Prescription presc = new Prescription();
+                    clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
+                    if (clsvariable.dt_Prescr.Rows.Count > 0)
+                    {
+                        if (!string.IsNullOrEmpty(SearchTextBox.Text))
+                        {
+                            //MessageBox.Show("คุณกด Enter แล้ว!");
+                            Prescription presc = new Prescription();
 
-                    presc = DisplayPrescriptionsScanbarCode();
-                    PrintPrescription(presc);
+                            presc = DisplayPrescriptionsScanbarCode();
+                            Print(presc);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescrip}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
+
+
+                    }
+
                 }
-
-
+                catch (Exception ex)
+                {
+                    MessageBox.Show(" Search TextBox : " + ex.Message);
+                }
+                
             }
         }
     }

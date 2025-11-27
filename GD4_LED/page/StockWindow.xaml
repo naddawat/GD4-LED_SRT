@@ -128,16 +128,9 @@
                                           ItemContainerStyle="{StaticResource ModernComboBoxItemStyle}"
                                           HorizontalContentAlignment="Left"
                                           VerticalContentAlignment="Center"
-                                          SelectionChanged="RowSelector_SelectionChanged">
-                                    <ComboBoxItem Content="ALL"/>
-                                    <ComboBoxItem Content="แถวที่ 1"/>
-                                    <ComboBoxItem Content="แถวที่ 2"/>
-                                    <ComboBoxItem Content="แถวที่ 3"/>
-                                    <ComboBoxItem Content="แถวที่ 4"/>
-                                    <ComboBoxItem Content="แถวที่ 5"/>
-                                    <ComboBoxItem Content="แถวที่ 6"/>
-                                    <ComboBoxItem Content="แถวที่ 7"/>
-                                    <ComboBoxItem Content="แถวที่ 8"/>
+                                          SelectionChanged="RowSelector_SelectionChanged"
+                                          >
+                                   
                                 </ComboBox>
                             </Grid>
                         </Border>
@@ -206,11 +199,13 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" 
-                                    Cursor="Hand" MouseLeftButtonDown="DrugCard_Click">
+                                    Cursor="Hand">
+
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="2*"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="120"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
@@ -296,7 +291,17 @@
                                             VerticalAlignment="Center" 
                                             Margin="16,0,0,0"
                                             Click="RefillMedicine_Click"
-                                            Visibility="Collapsed"/>
+                                            />
+                                    <Button Grid.Column="3" 
+                                            Content="อัพเดทข้อมูลยา" 
+                                            Style="{StaticResource PrimaryButtonStyle}" 
+                                            Width="130" 
+                                            Height="40"
+                                            VerticalAlignment="Center" 
+                                            Margin="16,0,0,0"
+                                            Background="#F5C827"
+                                            Click="Refresh_Click"
+                                            />              
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -306,7 +311,7 @@
         </Grid>
 
         <!-- Loading Overlay -->
-        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="0">
+        <Grid x:Name="LoadingOverlay" Background="#F0F4F8" Opacity="1">
             <Grid.Effect>
                 <BlurEffect Radius="0"/>
             </Grid.Effect>

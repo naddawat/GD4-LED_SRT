@@ -38,7 +38,7 @@ namespace GD4_LED.cls
         {
             base.RFID_event(RFID_Code);
 
-            _Variable.StrU += "RFID:" + RFID_Code + "\r\n";
+            _Variable.StrU = RFID_Code;
         }
     }
 }

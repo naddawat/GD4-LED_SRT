@@ -30,7 +30,7 @@ namespace GD4_LED.models
         public string Ward { get; set; }
 
         [JsonProperty("bed")]
-        public string Bed { get; set; }
+        public string Bed { get; set; }        
 
         [JsonProperty("addr")]
         public string addr { get; set; }
@@ -61,6 +61,9 @@ namespace GD4_LED.models
 
         [JsonProperty("id")]
         public string id { get; set; }
+
+        [JsonProperty("location")]
+        public string Location { get; set; }
     }
 
 }

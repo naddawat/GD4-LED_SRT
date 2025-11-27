@@ -210,19 +210,7 @@
                             Style="{StaticResource TabButtonStyle}"
                             Click="TabButton_Click" Tag="2"/>
                 </StackPanel>
-                <Button Content="Sync Location" Margin="497,0,0,0" VerticalAlignment="Center" Cursor="Hand"
-BorderThickness="0"
-FontWeight="Bold"
-Foreground="White" Click="Button_Click_1" Background="#FF0080FF" Height="40" HorizontalAlignment="Left" Width="93"/>
-                <Button Content="Sync Drug" HorizontalAlignment="Left" Margin="402,0,0,0" VerticalAlignment="Center" Width="90"
-Cursor="Hand"
-BorderThickness="0"
-FontWeight="Bold"
-Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
-                <Button Content="Clear Location" Margin="595,0,0,0" VerticalAlignment="Center" Cursor="Hand"
-                    BorderThickness="0"
-                    FontWeight="Bold"
-                    Foreground="White" Click="Button_Click_3" Background="#FF0080FF" Height="40" HorizontalAlignment="Left" Width="93"/>
+
             </Grid>
         </Border>
 
@@ -295,7 +283,7 @@ Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
                 </Border>
 
                 <!-- Tab 2: LED Cabinet Settings -->
-                <Border x:Name="LedCabinetContent" Style="{StaticResource CardStyleStg}" Visibility="Collapsed" Margin="0 0 0 0" d:IsHidden="True">
+                <Border x:Name="LedCabinetContent" Style="{StaticResource CardStyleStg}" Visibility="Collapsed" Margin="0 0 0 0" d:IsHidden="True" >
                     <StackPanel Margin="0 0 0 10">
                         <TextBlock Text="การตั้งค่าตู้ LED" FontSize="18" FontWeight="Bold" 
                                    Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>
@@ -304,8 +292,7 @@ Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="16"/>
-                                <RowDefinition Height="Auto"/>
+
                             </Grid.RowDefinitions>
 
                             <!-- Cabinet List -->
@@ -339,83 +326,25 @@ Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
 
                                         <!-- ปุ่มชั้น 8 -->
                                         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="5,0,0,0">
-                                            <Button x:Name="BtnLed801" Content="801" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button x:Name="BtnLed802" Content="802" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="803" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="804" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="805" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="806" Width="100" Height="80" Margin="2" Click="Button_Click"/>
+                                            <Button  Content="Sync Location" Width="100" Height="80" Margin="2" Click="Button_Click_1"/>
+                                            <Button  Content="Sync Drug" Width="100" Height="80" Margin="2" Click="Button_Click_2"/>
+                                            <Button  Content="Clear Location" Width="123" Height="80" Margin="2" Click="Button_Click_3"/>
+                                            
+                                            <!--<Button Content="Sync Location" Margin="497,0,0,0" VerticalAlignment="Center" Cursor="Hand"
+BorderThickness="0"
+FontWeight="Bold"
+Foreground="White" Click="Button_Click_1" Background="#FF0080FF" Height="40" HorizontalAlignment="Left" Width="93"/>
+                                            <Button Content="Sync Drug" HorizontalAlignment="Left" Margin="402,0,0,0" VerticalAlignment="Center" Width="90"
+Cursor="Hand"
+BorderThickness="0"
+FontWeight="Bold"
+Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
+                                            <Button Content="Clear Location" Margin="595,0,0,0" VerticalAlignment="Center" Cursor="Hand"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                    Foreground="White" Click="Button_Click_3" Background="#FF0080FF" Height="40" HorizontalAlignment="Left" Width="93"/>-->
                                         </StackPanel>
 
-                                        <!-- ปุ่มชั้น 7 -->
-                                        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="701" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="702" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="703" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="704" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="705" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="706" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
-
-                                        <!-- ปุ่มชั้น 6 -->
-                                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="601" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="602" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="603" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="604" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="605" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="606" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
-
-                                        <!-- ปุ่มชั้น 5 -->
-                                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="501" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="502" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="503" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="504" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="505" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="506" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
-
-                                        <!-- ปุ่มชั้น 4 -->
-                                        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="401" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="402" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="403" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="404" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="405" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="406" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
-
-                                        <!-- ปุ่มชั้น 3 -->
-                                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="301" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="302" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="303" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="304" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="305" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="306" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
-
-                                        <!-- ปุ่มชั้น 2 -->
-                                        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="201" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="202" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="203" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="204" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="205" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="206" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
-
-                                        <!-- ปุ่มชั้น 1 -->
-                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                            <Button Content="101" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="102" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="103" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="104" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="105" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                            <Button Content="106" Width="100" Height="80" Margin="2" Click="Button_Click"/>
-                                        </StackPanel>
                                     </Grid>
                                 </ScrollViewer>
                                 <!--<ItemsControl x:Name="CabinetItemsControl">
@@ -517,7 +446,7 @@ Foreground="White" Click="Button_Click_2" Height="40" Background="#FF0080FF"/>
                 </Border>
 
                 <!-- Tab 3: General Settings -->
-                <Border x:Name="GeneralContent" Style="{StaticResource CardStyle}" Visibility="Visible" Margin="0,0,0,118">
+                <Border x:Name="GeneralContent" Style="{StaticResource CardStyle}" Visibility="Collapsed" Margin="0,0,0,118">
                     <StackPanel Margin="0 0 0 10">
                         <TextBlock Text="การตั้งค่าทั่วไป" FontSize="18" FontWeight="Bold" 
                                    Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>

@@ -1,11 +1,14 @@
 ﻿using GD4_LED.cls;
 using MySql.Data.MySqlClient;
 using Mysqlx;
+using Mysqlx.Expr;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,6 +40,8 @@ namespace GD4_LED
         {
             InitializeComponent();
             SelectedDrug = _SelectedDrug;
+            Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
+
         }
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
@@ -147,6 +152,7 @@ namespace GD4_LED
             string exp = "";
             string orderitemENname = "";
             string position = "";
+            string HAD = "";
 
             foreach (DataRow dr in dt_stock.Rows)
             {
@@ -160,15 +166,24 @@ namespace GD4_LED
                     orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
                     position = dt_stock.Rows[0]["shelfname"].ToString();
 
+                    if(dt_stock.Rows[0]["HAD"].ToString() != "")
+                    {
+                        HAD = dt_stock.Rows[0]["HAD"].ToString();
+                    }
+                    else
+                    {
+                        HAD = "0";
+                    }
+
                     //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
                     //return true;
                 }
                 else
                 {
                     //return false;
                 }
-                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
+                //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
                 //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
             }
 
@@ -354,6 +369,9 @@ namespace GD4_LED
                 string shelfname = "";
                 string max = "";
                 string min = "";
+                int addr = 0;
+                int position_id = 0;
+                string orderitemname = "";
                 var refillRecord = new
                 {
                     DrugCode = DrugCodeText.Text,
@@ -366,10 +384,13 @@ namespace GD4_LED
                 };
                 if (dt_stock.Rows.Count > 0)
                 {
+                    orderitemname = dt_stock.Rows[0]["drugName"].ToString();
                     foreach (DataRow rw in dt_stock.Rows)
                     {
                         if (rw["drugcode"].ToString() == DrugCodeText.Text && rw["lot"].ToString() == RefillLotTextBox.Text)
                         {
+                            addr = Convert.ToInt32(rw["addr"].ToString());
+                            position_id = Convert.ToInt32(rw["position_id"].ToString());
                             sameLot = true;
                             qty_old = Convert.ToInt32(rw["Quantity"].ToString());
                             break;
@@ -390,6 +411,9 @@ namespace GD4_LED
                     dt_location = _query.GetLocationBycode_ocal(clsvariable.shelfzone, DrugCodeText.Text);
                     if (dt_location.Rows.Count > 0)
                     {
+                        orderitemname = dt_location.Rows[0]["orderitemENname"].ToString();
+                        addr = Convert.ToInt32(dt_location.Rows[0]["addr"].ToString());
+                        position_id = Convert.ToInt32(dt_location.Rows[0]["position_id"].ToString());   
                         shelfzone = dt_location.Rows[0]["shelfzone"].ToString();
                         shelfname = dt_location.Rows[0]["shelfname"].ToString();
                         max = dt_location.Rows[0]["max"].ToString();
@@ -397,11 +421,15 @@ namespace GD4_LED
                     }
                 }
 
+                
                 if (sameLot) // มี Lot เดิม
                 {
                     RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
                     result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
-                    //LoadStockByCode(refillRecord.DrugCode);
+                    
+                    clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);                  
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+
                 }
                 else
                 {
@@ -410,6 +438,8 @@ namespace GD4_LED
                         
                         result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
                         //LoadStockByCode(refillRecord.DrugCode);
+                        clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);                       
+                        Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                     }
                     else
                     {
@@ -459,6 +489,17 @@ namespace GD4_LED
         {
             RefreshDrugStocks();
 
+
+        }
+
+        private void RefillQuantityTextBox_TouchUp(object sender, TouchEventArgs e)
+        {
+            Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
+        }
+
+        private void RefillLotTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start(@"C:\Program Files\Common Files\Microsoft Shared\ink\TabTip.exe");
 
         }
     }

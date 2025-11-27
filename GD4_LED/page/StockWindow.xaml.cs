@@ -1,5 +1,6 @@
 ﻿using GD4_LED.cls;
 using MySql.Data.MySqlClient;
+using Mysqlx.Expr;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +30,8 @@ namespace GD4_LED.page
     {
         public ObservableCollection<DrugStockGroupModel> DrugStocks { get; set; }
         private ObservableCollection<DrugStockGroupModel> AllDrugStocks { get; set; }
+        private DataTable dt;              // DataTable เก็บข้อมูลทั้งหมด
+        private DataTable dtFiltered;      // DataTable ผลลัพธ์หลังกรอง
 
         private string _currentFilter = "ALL"; // เก็บสถานะ filter ปัจจุบัน
 
@@ -129,6 +133,7 @@ namespace GD4_LED.page
 
                     Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
                 }
+
             }
             else
             {
@@ -307,19 +312,29 @@ namespace GD4_LED.page
         // Event handler สำหรับ ComboBox เลือกแถว
         private void RowSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (RowSelector.SelectedItem == null) return;
+            DataTable dt = new DataTable();
+            dt = _query.GetAllLedStock(clsvariable.shelfzone);
+            if (dt == null) return;
 
-            var selectedItem = RowSelector.SelectedItem as ComboBoxItem;
-            string selectedRow = selectedItem.Content.ToString();
+            // ถ้าเลือก "All" แสดงทั้งหมด
+            if (_currentFilter == "All")
+            {
+                dtFiltered = dt.Copy();
+            }
+            else
+            {
+                DataRow[] rows = dt.Select($"shelfname = '{_currentFilter}'");
+                dtFiltered = rows.Any() ? rows.CopyToDataTable() : dt.Clone();
+            }
 
-            // เก็บสถานะ filter ปัจจุบัน
-            _currentFilter = selectedRow;
+            // เอาเฉพาะคอลัมน์ shelfname ไปแสดงใน ComboBox
+            var dtShelf = dtFiltered.DefaultView
+                .ToTable(true, "shelfname");  // distinct เฉพาะคอลัมน์นี้
 
-            // ล้างคำค้นหา
-            SearchTextBox.Text = "";
-            SearchPlaceholder.Text = "Med code/name";
-
-            ApplyCurrentFilter();
+            RowSelector.ItemsSource = dtShelf.DefaultView;
+            RowSelector.DisplayMemberPath = "shelfname";
+            RowSelector.SelectedValuePath = "shelfname";
+            //ApplyCurrentFilter();
         }
 
         // ใช้ filter ตามสถานะปัจจุบัน
@@ -370,26 +385,74 @@ namespace GD4_LED.page
 
             if (drugData != null)
             {
-                SelectedDrug = drugData;
-                DrugStockGroupModel drug = drugData as DrugStockGroupModel;
+                //SelectedDrug = drugData;
+                //DrugStockGroupModel drug = drugData as DrugStockGroupModel;
 
-                DataTable dt_stock = _query.GetLocation(drug.drugCode, clsvariable.shelfzone);
-                if (dt_stock.Rows.Count > 0)
+                //DataTable dt_stock = _query.GetLocation(drug.drugCode, clsvariable.shelfzone);
+                //if (dt_stock.Rows.Count > 0)
+                //{
+                //    if(dt_stock.Rows[0]["position_id"].ToString() !="" && dt_stock.Rows[0]["addr"].ToString() != "")
+                //    {
+                //        int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                //        int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                //        clsvariable.Instance.SerialCan.SetLED(addr, position_id, 255, 0, 0);
+                //    }
+                //    else
+                //    {
+
+                //    }
+
+                //}
+
+                //ShowPopup(SelectedDrug);
+
+                if (drugData != null)
                 {
-                    if(dt_stock.Rows[0]["position_id"].ToString() !="" && dt_stock.Rows[0]["addr"].ToString() != "")
+                    SelectedDrug = drugData;
+                    DrugStockGroupModel drug = drugData as DrugStockGroupModel;
+                    int position_id = 0;
+                    int addr = 0;
+                    string qty = "";
+                    string LotNo = "";
+                    string exp = "";
+                    string orderitemENname = "";
+                    string position = "";
+                    string HAD = "";
+
+                    DataTable dt_stock = _query.GetLedStockByZoneCode(drug.drugCode, clsvariable.shelfzone);
+                    if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
                     {
-                        int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                        int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
-                        clsvariable.Instance.SerialCan.SetLED(addr, position_id, 255, 0, 0);
+                        position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                        addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                        qty = dt_stock.Rows[0]["In_Qty"].ToString();
+                        LotNo = dt_stock.Rows[0]["LotNo"].ToString();
+                        exp = dt_stock.Rows[0]["Exp"].ToString();
+                        orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
+                        position = dt_stock.Rows[0]["shelfname"].ToString();
+
+                        if (dt_stock.Rows[0]["HAD"].ToString() != "")
+                        {
+                            HAD = dt_stock.Rows[0]["HAD"].ToString();
+                        }
+                        else
+                        {
+                            HAD = "0";
+                        }
+
+                        //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, "", "", "", "");
+                        clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
+                        Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                        clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, LotNo, exp, qty, 0, 150, 150);
+                        Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                        //return true;
                     }
                     else
                     {
-                        
+                        //return false;
                     }
-                   
-                }
 
-                ShowPopup(SelectedDrug);
+                    //clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, LotNo, exp, position, 0, 0, 0);
+                }
             }
 
             StartLoadingAnimation();
@@ -407,19 +470,85 @@ namespace GD4_LED.page
                 SelectedDrug = drugData;
                 DrugStockGroupModel drug = drugData as DrugStockGroupModel;
 
-                DataTable dt_stock = _query.GetLocation(drug.drugCode, clsvariable.comname);
+                DataTable dt_stock = _query.GetLocation(drug.drugCode, clsvariable.shelfzone);
                 if (dt_stock.Rows.Count > 0)
                 {
-                    _id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                    clsvariable.Instance.SerialCan.SetLED(1, _id, 255, 0, 0);
+                    if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
+                    {
+                        int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                        int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                        clsvariable.Instance.SerialCan.SetLED(addr, position_id, 255, 0, 0);
+                        Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                    }
+                    else
+                    {
+
+                    }
+
                 }
+
+                ShowPopup(SelectedDrug);
             }
 
-            ShowPopup(SelectedDrug);
-
             clsvariable.Instance.SerialCan.SetLED(1, _id, 0, 0, 0);
+            Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
         }
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var drugData = button?.DataContext;
+            int _id = 0;
+            if (drugData != null)
+            {
+                SelectedDrug = drugData;
+                DrugStockGroupModel drug = drugData as DrugStockGroupModel;
+                int position_id = 0;
+                int addr = 0;
+                string qty = "";
+                string LotNo = "";
+                string exp = "";
+                string orderitemENname = "";
+                string position = "";
+                string HAD = "";
 
+                DataTable dt_stock = _query.GetLedStockByZoneCode(drug.drugCode, clsvariable.shelfzone);
+                if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
+                {
+                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                    qty = dt_stock.Rows[0]["In_Qty"].ToString();
+                    LotNo = dt_stock.Rows[0]["LotNo"].ToString();
+                    exp = dt_stock.Rows[0]["Exp"].ToString();
+                    orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
+                    position = dt_stock.Rows[0]["shelfname"].ToString();
+
+                    if (dt_stock.Rows[0]["HAD"].ToString() != "")
+                    {
+                        HAD = dt_stock.Rows[0]["HAD"].ToString();
+                    }
+                    else
+                    {
+                        HAD = "0";
+                    }
+                    //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, "", "", "", "");
+
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                    clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, LotNo, exp, position, 0, 150, 150);
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                    //return true;
+                }
+                else
+                {
+                    //return false;
+                }
+
+                //clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, LotNo, exp, position, 0, 0, 0);
+            }
+        
+
+            //clsvariable.Instance.SerialCan.SetLED(1, _id, 0, 0, 0);
+        }
         // Event handlers สำหรับ Summary Cards
         private void LowStockCard_Click(object sender, MouseButtonEventArgs e)
         {

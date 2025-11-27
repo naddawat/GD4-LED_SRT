@@ -10,12 +10,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -40,8 +42,10 @@ namespace GD4_LED
     {
         private HashSet<PackageItem> selectedItems = new HashSet<PackageItem>();
         private PrescriptionData prescriptionData;
-        private DispatcherTimer timer;
+        private DispatcherTimer timerBtn;
         private DispatcherTimer scanTimer;
+        private DispatcherTimer resh;
+        bool Cradclick = false;
         clsvariable clsvariable = clsvariable.Instance;
         clsQuery _query = new clsQuery();
         int CountItem = 0;
@@ -59,10 +63,12 @@ namespace GD4_LED
             scanTimer.Interval = TimeSpan.FromMilliseconds(100);
             scanTimer.Tick += ScanTimer_Tick;
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-            this.Loaded += (s, e) => this.Focus();
+            timerBtn = new DispatcherTimer();
+            timerBtn.Interval = TimeSpan.FromSeconds(1);
+            timerBtn.Tick += Timer_Tick;
+            
+            //this.Loaded += (s, e) => this.Foccus();
+            //MainScrollViewer => this.Focus();
             this.KeyDown += Window_KeyDown;
             //timer.Start();
             
@@ -144,6 +150,8 @@ namespace GD4_LED
                     txtVerificationStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#10b981"));
                     txtVerificationStatus.Visibility = Visibility.Visible;
 
+                    timerBtn.Start();
+
                 }
                 else
                 {
@@ -170,7 +178,7 @@ namespace GD4_LED
             {
                 verificationOverlay.Visibility = Visibility.Collapsed;
                 // Start the main timer after verification
-                timer.Start();
+                //timer.Start();
             };
 
             verificationOverlay.BeginAnimation(UIElement.OpacityProperty, fadeOut);
@@ -195,7 +203,7 @@ namespace GD4_LED
         }
         private void PrintPrescriptionNoLed(object prescription)
         {
-            timer.Stop();
+            timerBtn.Stop();
             string orderitemcode = ((dynamic)prescription).OrderItemCode;
             int qty = ((dynamic)prescription).OrderQty;
             string addr = ((dynamic)prescription).Addr;
@@ -250,6 +258,7 @@ namespace GD4_LED
                     position = dt_stock.Rows[0]["shelfname"].ToString();
 
                     clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+
                     //return true;
                 }
                 else
@@ -271,12 +280,26 @@ namespace GD4_LED
             int order_qty = Convert.ToInt32(qty);
             if (dt_stock.Rows.Count > 0)
             {
+                int position_id =0;
+                int addr =0;
                 int R = Convert.ToInt32(clsvariable.RGD_dispense[0].ToString());
                 int G = Convert.ToInt32(clsvariable.RGD_dispense[1].ToString());
                 int B = Convert.ToInt32(clsvariable.RGD_dispense[2].ToString());
-                int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
-                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, "", "", "", "", R, G, B);
+                if(dt_stock.Rows[0]["position_id"].ToString() != "")
+                {
+                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                }
+                
+                if(dt_stock.Rows[0]["addr"].ToString() != "")
+                {
+                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                }
+                
+                string LotNo = dt_stock.Rows[0]["LotNo"].ToString();
+                string Exp = Convert.ToDateTime(dt_stock.Rows[0]["Exp"]).ToString("dd-MM-yyyy", CultureInfo.GetCultureInfo("en-US"));
+                string shelfname = dt_stock.Rows[0]["shelfname"].ToString();
+                string In_Qty = dt_stock.Rows[0]["In_Qty"].ToString();
+                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, shelfname, LotNo, Exp, In_Qty, R, G, B);
             }
             else
             {
@@ -286,8 +309,12 @@ namespace GD4_LED
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            timer?.Stop();
+            timerBtn?.Stop();
             scanTimer?.Stop();
+            //var page = new GD4_LED.page.DispensePage();
+            //await page.InitialqizePageAsync();
+
+            //((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
             this.Close();
         }
 
@@ -295,6 +322,7 @@ namespace GD4_LED
         {
             if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
             {
+                timerBtn.Stop();
                 if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
                 {
                     DataTable dt_stock = new DataTable();
@@ -303,7 +331,10 @@ namespace GD4_LED
                     {
                         InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
 
-                        this.Close();
+                        clsvariable.StrU = "";
+                        clsvariable.StrU_array = new string[3];
+
+                        
                     }
                     else
                     {
@@ -311,12 +342,23 @@ namespace GD4_LED
                     }
                 }
             }
+            if(txtTotalItems.Text == txtSelectedItems.Text)
+            {
+                timerBtn.Start();
+                CountItem = 0;
+                
+            }
+            else
+            {
+                timerBtn.Start();
+                //CountItem =+1;
+            }
 
             clsvariable.StrU = "";
             clsvariable.StrU_array = new string[3];
         }
 
-        public void InvenStock(string orderitem, string qty)
+        public async void InvenStock(string orderitem, string qty)
         {
             DataTable dt_stock = new DataTable();
             bool result = false;
@@ -336,8 +378,9 @@ namespace GD4_LED
             db_print.Columns.Add("ward", typeof(String));
             db_print.Columns.Add("orderitemnameTH", typeof(String));
             db_print.Columns.Add("QRcode", typeof(byte[]));
+            db_print.Columns.Add("location", typeof(String));
             db_print.TableName = "db_print";
-
+           
             if (clsvariable.dt_Prescr.Rows.Count > 0)
             {
                 DataTable dt_prescr = new DataTable();
@@ -364,7 +407,7 @@ namespace GD4_LED
                     {
                         int remaining_qty = order_qty; // จำนวนที่ต้องตัดออก
                         int index = 0;
-                        timer.Stop();
+                        timerBtn.Stop();
 
                         while (index < dt_stock.Rows.Count && remaining_qty > 0)
                         {
@@ -401,65 +444,73 @@ namespace GD4_LED
                         {
                             Debug.WriteLine($"Update stock {orderitem} error");
                         }
+
+                        foreach (DataRow row in dt_prescr.Rows)
+                        {
+                            DataRow r = db_print.Rows.Add();
+                            r["prescriptionno"] = row["prescriptionno"].ToString();
+                            r["orderitemname"] = row["orderitemname"].ToString();
+                            r["orderitemnameTH"] = row["orderitemnameTH"].ToString();
+                            r["orderqty"] = row["orderqty"].ToString().Split('.')[0];
+                            r["patientname"] = row["patientname"].ToString();
+                            r["hn"] = row["hn"].ToString();
+                            r["freetext1"] = row["freetext1"].ToString();
+                            r["freetext2"] = row["freetext2"].ToString();
+                            r["freetext3"] = row["freetext3"].ToString();
+                            r["freetext4"] = row["freetext4"].ToString();
+                            r["ward"] = row["wardcode"].ToString() + " " + row["wardname"].ToString();
+
+                            MemoryStream mss = new MemoryStream();
+                            byte[] bytess = mss.ToArray();
+                            genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
+                            bytess = mss.ToArray();
+                            if (bytess.Length > 0)
+                            {
+                                r["QRcode"] = bytess;
+                            }
+                            else
+                            {
+                                r["QRcode"] = "";
+                            }
+                            r["location"] = row["shelfzone"].ToString() + "-" + row["shelfname"].ToString();
+                        }
+
+                        if (clsvariable.print_isenable)
+                        {
+                            if (db_print.Rows.Count > 0)
+                            {
+                                LoadReport(db_print);
+                            }
+                        }
+                        //timer.Start();
+
+                        CountItem += 1;
+                        txtSelectedItems.Text = CountItem.ToString();
+                        clsvariable.StrU = "";
+                        clsvariable.StrU_array = new string[3];
                     }
 
-                    foreach (DataRow row in dt_prescr.Rows)
+                    if (CountItem == prescriptionData.Package.Count)
                     {
-                        DataRow r = db_print.Rows.Add();
-                        r["prescriptionno"] = row["prescriptionno"].ToString();
-                        r["orderitemname"] = row["orderitemname"].ToString();
-                        //["orderitemnameTH"] = row["orderitemnameTH"].ToString();
-                        r["orderqty"] = row["orderqty"].ToString();
-                        r["patientname"] = row["patientname"].ToString();
-                        r["hn"] = row["hn"].ToString();
-                        r["freetext1"] = row["freetext1"].ToString();
-                        r["freetext2"] = row["freetext2"].ToString();
-                        r["freetext3"] = row["freetext3"].ToString();
-                        r["freetext4"] = row["freetext4"].ToString();
-                        r["ward"] = "วอร์ด " + row["wardcode"].ToString() + " ห้อง " + row["wardname"].ToString();
+                        timerBtn.Stop();
+                        txtSelectedItems.Text = CountItem.ToString();
+                        clsvariable.StrU = "";
+                        clsvariable.StrU_array = new string[3];
+                        CountItem = 0;
+                        //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
 
-                        MemoryStream mss = new MemoryStream();
-                        byte[] bytess = mss.ToArray();
-                        genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        bytess = mss.ToArray();
-                        if (bytess.Length > 0)
-                        {
-                            r["QRcode"] = bytess;
-                        }
-                        else
-                        {
-                            r["QRcode"] = "";
-                        }
+                        var page = new GD4_LED.page.DispensePage();
+                        await page.InitializePageAsync();
+                        ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
+
+                        this.Close();
+                 
                     }
 
-                    if (clsvariable.print_isenable)
-                    {
-                        if (db_print.Rows.Count > 0)
-                        {
-                            LoadReport(db_print);
-                        }
-                    }
-                    timer.Start();
-
-                    CountItem += 1;
-                    txtSelectedItems.Text = CountItem.ToString();
-                    clsvariable.StrU = "";
-                    clsvariable.StrU_array = new string[3];
-
-                }
-
-                if (CountItem >= prescriptionData.Package.Count)
-                {
-                    timer.Stop();
-
-                    //PackageItemsControl.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AFE1AF"));
-                    txtSelectedItems.Text = CountItem.ToString();
-                    clsvariable.StrU = "";
-                    clsvariable.StrU_array = new string[3];
                 }
             }
         }
-        public System.Drawing.Image genQr(string txt)
+        public static System.Drawing.Image genQr(string txt)
         {
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             var QRCodeData = qrGenerator.CreateQrCode(txt, QRCodeGenerator.ECCLevel.M);
@@ -479,6 +530,15 @@ namespace GD4_LED
                 {
                     conn.Open();
 
+
+                    string sql = $@" DELETE FROM ms_stock where shelfzone = '{clsvariable.shelfzone}' and orderitemcode = '{code}'; ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+
+
                     var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
 
                     string insertCols = string.Join(", ", columns);
@@ -488,7 +548,7 @@ namespace GD4_LED
                                                     .Where(c => c != "orderitemcode")
                                                     .Select(c => $"{c} = VALUES({c})"));
 
-                    string sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+                    sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
 
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
@@ -545,6 +605,7 @@ namespace GD4_LED
 
         public void LoadData(string jsonData)
         {
+            
             prescriptionData = JsonConvert.DeserializeObject<PrescriptionData>(jsonData);
 
             txtPrescriptionNo.Text = $"เลขที่ใบสั่ง: {prescriptionData.PrescriptionNo}";
@@ -595,6 +656,7 @@ namespace GD4_LED
             
             if (PackageItemsControl != null) 
             {
+                Cradclick = true;
                 var border = sender as System.Windows.Controls.Border;
                 if (border == null) return;
 
@@ -623,7 +685,10 @@ namespace GD4_LED
 
                 PrintPrescriptionNoLed(item);
             }
-          
+
+            Cradclick= false;
+
+
         }
 
         private void AnimateCheckMark(Border checkMark, Border cardBorder, bool show)
@@ -703,7 +768,7 @@ namespace GD4_LED
             return null;
         }
 
-        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
             if (selectedItems.Count == 0)
             {
@@ -721,8 +786,16 @@ namespace GD4_LED
             //    MessageBox.Show("บันทึกข้อมูลสำเร็จ!", "สำเร็จ", MessageBoxButton.OK, MessageBoxImage.Information);
             //    this.Close();
             //}
+            //SetActiveTab(DispenseButton);
+            //MainFrame.Navigate(new DispensePage());
+
+            var page = new GD4_LED.page.DispensePage();
+            await page.InitializePageAsync();
+            ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
 
             this.Close();
+
+
         }
 
         public List<PackageItem> GetSelectedItems()
@@ -765,6 +838,7 @@ namespace GD4_LED
         public string OrderItemCode { get; set; }
         public string OrderItemName { get; set; }
         public int OrderQty { get; set; }
+        public string Location { get; set; } 
         public string Addr { get; set; }
         public string id { get; set; }
 

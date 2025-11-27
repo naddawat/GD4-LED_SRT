@@ -352,6 +352,10 @@
                                                      FontSize="13" 
                                                      Foreground="#94a3b8" 
                                                      Margin="0,4,0,0"/>
+                                                <TextBlock Text="{Binding Location}" 
+                                                     FontSize="13" 
+                                                     Foreground="#94a3b8" 
+                                                     Margin="0,4,0,0"/>             
                                                 <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                                                     <Border Background="#eff6ff" 
                                                         CornerRadius="6" 
