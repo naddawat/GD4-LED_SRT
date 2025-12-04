@@ -78,6 +78,17 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
+        public DataTable GetRegist_flag(string hn)
+        {
+
+            SQL = $@" SELECT *
+                    FROM
+                      ms_patient
+                    where
+                      TRIM(hn) = '{hn.Trim()}';";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
+        }
         public DataTable GetUser(string username,string password)
         {
 

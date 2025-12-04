@@ -597,7 +597,9 @@ namespace GD4_LED.page
         public void InvenStock(string orderitem)
         {
             DataTable dt_stock = new DataTable();
+            DataTable dt_regist_flag = new DataTable();
             bool result = false;
+            string regist_flag = "";           
             dt_stock = _query.GetStockByCode(orderitem);
             //int order_qty = Convert.ToInt32(qty);
 
@@ -635,7 +637,11 @@ namespace GD4_LED.page
                 {
                     string prescriptionno = dt_prescr.Rows[0]["prescriptionno"].ToString();
                     string seq = dt_prescr.Rows[0]["seq"].ToString();
-
+                    dt_regist_flag = _query.GetRegist_flag(dt_prescr.Rows[0]["hn"].ToString());
+                    if (dt_regist_flag.Rows.Count > 0)
+                    {
+                        regist_flag = dt_regist_flag.Rows[0]["regist_flag"].ToString();
+                    }
                     foreach (DataRow row in dt_prescr.Rows)
                     {
                         DataRow r = db_print.Rows.Add();
@@ -644,7 +650,7 @@ namespace GD4_LED.page
                         r["orderitemnameTH"] = row["orderitemnameTH"].ToString();
                         r["orderqty"] = row["orderqty"].ToString().Split('.')[0];
                         r["patientname"] = row["patientname"].ToString();
-                        r["hn"] = row["hn"].ToString();
+                        r["hn"] = row["hn"].ToString() + "-" + regist_flag;
                         r["freetext1"] = row["freetext1"].ToString();
                         r["freetext2"] = row["freetext2"].ToString();
                         r["freetext3"] = row["freetext3"].ToString();

@@ -33,7 +33,7 @@ namespace GD4_LED
             clsvariable.comname = Environment.MachineName;
             if(clsvariable.comname == "DEV-MIM")
             {
-                clsvariable.comname = "GD4-LED-2";
+                clsvariable.comname = "GD4-LED-13";
             }
             
             v = _STK.CheckConnection(GD4_LED.Properties.Settings.Default.connectstring);
