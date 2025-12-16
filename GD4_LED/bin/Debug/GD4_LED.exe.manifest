@@ -314,7 +314,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ApXZqOWX1d0fF4/pvCNXQ/RJSegj4FtCuy6+mF1M9wg=</dsig:DigestValue>
+        <dsig:DigestValue>nVKCxai0636IllBlzOm3Gg+5H50NNOPtO7NOgngcn7s=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -954,13 +954,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="GD4_LED.exe.config" size="6813">
+  <file name="GD4_LED.exe.config" size="6827">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>KsnVW4OjX4Vlg8967tLAkz6lsUbqnSxG8p8RCMycYL8=</dsig:DigestValue>
+      <dsig:DigestValue>CbXocXSywZbv2teoSqQZ3q6LUO+8BURmSYKICleRUGY=</dsig:DigestValue>
     </hash>
   </file>
   <file name="เพิ่มคำว่า+LED.ico" size="26659">
