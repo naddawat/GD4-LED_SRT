@@ -65,8 +65,8 @@ namespace GD4_LED
 
             timerBtn = new DispatcherTimer();
             timerBtn.Interval = TimeSpan.FromSeconds(1);
-            //timerBtn.Tick += Timer_Tick;
-            
+            timerBtn.Tick += Timer_Tick;
+
             //this.Loaded += (s, e) => this.Foccus();
             //MainScrollViewer => this.Focus();
             this.KeyDown += Window_KeyDown;
@@ -505,7 +505,7 @@ namespace GD4_LED
                         clsvariable.StrU_array = new string[3];
                         CountItem = 0;
                         //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
-
+                        MessageBox.Show(CountItem.ToString());
                         var page = new GD4_LED.page.DispensePage();
                         await page.InitializePageAsync();
                         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
