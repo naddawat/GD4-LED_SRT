@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectView>ProjectFiles</ProjectView>
-    <PublishUrlHistory>\\192.168.209.2\install\GD4_LED\|D:\GitHub\publist\LED\|\\192.168.209.2\install\LED\|\192.168.209.2\install\LED\|D:\GitHub\publist\Checkout_IPD\</PublishUrlHistory>
+    <PublishUrlHistory>D:\GitHub\publist\LED\|\\192.168.209.2\install\GD4_LED\|\\192.168.209.2\install\LED\|\192.168.209.2\install\LED\|D:\GitHub\publist\Checkout_IPD\</PublishUrlHistory>
     <InstallUrlHistory>http://192.168.209.2/install/GD4_LED/index.html/|http://192.168.209.2/install/GD4_LED/|http://127.0.0.0/d%24/GD4_LED/|http://10.35.222.66/d%24/GD4_LED/|http://10.35.222.66/d%24/</InstallUrlHistory>
     <SupportUrlHistory />
     <UpdateUrlHistory />

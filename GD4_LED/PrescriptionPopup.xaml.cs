@@ -65,7 +65,7 @@ namespace GD4_LED
 
             timerBtn = new DispatcherTimer();
             timerBtn.Interval = TimeSpan.FromSeconds(1);
-            timerBtn.Tick += Timer_Tick;
+            //timerBtn.Tick += Timer_Tick;
             
             //this.Loaded += (s, e) => this.Foccus();
             //MainScrollViewer => this.Focus();
@@ -121,7 +121,7 @@ namespace GD4_LED
             }
         }
 
-        private void VerifyDispenser(string code,string password)
+        public void VerifyDispenser(string code,string password)
         {            
             if (string.IsNullOrEmpty(code))
             {                

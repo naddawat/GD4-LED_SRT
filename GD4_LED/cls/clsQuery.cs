@@ -69,7 +69,7 @@ namespace GD4_LED.cls
                       ms.addr,
                       ms.position_id
                     FROM
-                      packagemaster_ipd  p INNER JOIN ms_location ms on p.orderitemcode = ms.orderitemcode
+                      packagemaster_ipd  p INNER JOIN ms_location ms on p.orderitemcode = ms.orderitemcode and p.shelfname = ms.shelfname
                     WHERE
                       p.shelfzone = '{shelfzone}' 
                       AND p.leddatetime IS NULL
