@@ -329,7 +329,7 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
-        public DataTable GetLedStockByAddr(string Addr, string _id,string shelfzone)
+        public DataTable GetLedStockByAddr(string Addr, string _id, string shelfzone)
         {
 
             SQL = $@"  SELECT
@@ -352,6 +352,33 @@ namespace GD4_LED.cls
               ms_stock ms
               RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
             where ml.addr = '{Addr}' and ml.position_id = '{_id}' and ml.shelfzone = '{shelfzone}'
+              ORDER BY Percent";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLedStockByCode_NoLED(string orderitemcode, string shelfzone)
+        {
+
+            SQL = $@"  SELECT
+              ml.shelfzone AS location,
+              ml.shelfname AS drugPosition,
+              ms.LotNo AS lot,
+              ml.orderitemcode AS drugCode,
+              ml.orderitemENname AS drugName,
+              ms.In_Qty AS Quantity,
+              ms.Exp AS exp,
+              ml.max AS max,
+              ml.min AS min,
+              '' AS firmname ,
+              CASE 
+                WHEN (ms.In_Qty / ml.max) * 100 < 0 
+                    THEN 0
+                ELSE ROUND((ms.In_Qty / ml.max) * 100 ,0)
+            END AS Percent
+            FROM
+              ms_stock ms
+              RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+            where ml.orderitemcode = '{orderitemcode}' and ml.shelfzone = '{shelfzone}'
               ORDER BY Percent";
 
             return clsFillMyDB.GetDataSet(connectst, SQL);

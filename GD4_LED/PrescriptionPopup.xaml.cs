@@ -210,7 +210,7 @@ namespace GD4_LED
             string id = ((dynamic)prescription).id;
 
             DataTable dt_stock = new DataTable();
-            dt_stock = _query.GetLedStockByAddr(addr, id, clsvariable.shelfzone);
+            dt_stock = _query.GetLedStockByCode_NoLED(orderitemcode, clsvariable.shelfzone);
             if (dt_stock.Rows.Count != 0)
             {
                 InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), qty.ToString());
@@ -318,35 +318,39 @@ namespace GD4_LED
             this.Close();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private async void Timer_Tick(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
-            {
-                timerBtn.Stop();
-                if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
-                {
-                    DataTable dt_stock = new DataTable();
-                    dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
-                    if (dt_stock.Rows.Count != 0)
-                    {
-                        InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
+            //if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
+            //{
+            //    timerBtn.Stop();
+            //    if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
+            //    {
+            //        DataTable dt_stock = new DataTable();
+            //        dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
+            //        if (dt_stock.Rows.Count != 0)
+            //        {
+            //            InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
 
-                        clsvariable.StrU = "";
-                        clsvariable.StrU_array = new string[3];
+            //            clsvariable.StrU = "";
+            //            clsvariable.StrU_array = new string[3];
 
                         
-                    }
-                    else
-                    {
-                        clsvariable.StrU = "";
-                    }
-                }
-            }
+            //        }
+            //        else
+            //        {
+            //            clsvariable.StrU = "";
+            //        }
+            //    }
+            //}
             if(txtTotalItems.Text == txtSelectedItems.Text)
             {
                 timerBtn.Start();
                 CountItem = 0;
-                
+                var page = new GD4_LED.page.DispensePage();
+                await page.InitializePageAsync();
+                ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
+
+                this.Close();
             }
             else
             {
@@ -496,7 +500,7 @@ namespace GD4_LED
                         clsvariable.StrU = "";
                         clsvariable.StrU_array = new string[3];
                     }
-
+                    
                     if (CountItem == prescriptionData.Package.Count)
                     {
                         timerBtn.Stop();
@@ -505,7 +509,7 @@ namespace GD4_LED
                         clsvariable.StrU_array = new string[3];
                         CountItem = 0;
                         //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
-                        MessageBox.Show(CountItem.ToString());
+                        
                         var page = new GD4_LED.page.DispensePage();
                         await page.InitializePageAsync();
                         ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
