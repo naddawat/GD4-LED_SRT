@@ -1067,29 +1067,60 @@ namespace GD4_LED.page
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("KeyDown called");
-            if (isVerified) return;
+            //if (isVerified) return;
 
-            if (e.Key == Key.Enter)
+            //if (e.Key == Key.Enter)
+            //{
+            //    if (!string.IsNullOrEmpty(scannedBarcode))
+            //    {
+            //        VerifyDispenser(scannedBarcode, "");
+            //        scannedBarcode = "";
+
+            //        //LoadSampleData(jsonString);
+            //    }
+            //}
+            //else if (e.Key >= Key.D0 && e.Key <= Key.Z || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
+            //{
+
+            //    string key = e.Key.ToString().Replace("D", "").Replace("NumPad", "");
+            //    scannedBarcode += key;
+            //    SearchTextBox.Text = scannedBarcode;
+            //    SearchTextBox.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#3b82f6"));
+
+
+            //    scanTimer.Stop();
+            //    scanTimer.Start();
+            //}
+
+            try
             {
-                if (!string.IsNullOrEmpty(scannedBarcode))
+
+                string prescrip = "";
+                prescrip = SearchTextBox.Text.Trim();
+                clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
+                if (clsvariable.dt_Prescr.Rows.Count > 0)
                 {
-                    VerifyDispenser(scannedBarcode, "");
-                    scannedBarcode = "";
-                    
-                    //LoadSampleData(jsonString);
+                    if (!string.IsNullOrEmpty(SearchTextBox.Text))
+                    {
+                        //MessageBox.Show("คุณกด Enter แล้ว!");
+                        Prescription presc = new Prescription();
+
+                        presc = DisplayPrescriptionsScanbarCode();
+                        Print(presc);
+                    }
+                    return;
                 }
+                else
+                {
+                    //MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescrip}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+
+                }
+
             }
-            else if (e.Key >= Key.D0 && e.Key <= Key.Z || e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
+            catch (Exception ex)
             {
-
-                string key = e.Key.ToString().Replace("D", "").Replace("NumPad", "");
-                scannedBarcode += key;
-                SearchTextBox.Text = scannedBarcode;
-                SearchTextBox.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#3b82f6"));
-
-
-                scanTimer.Stop();
-                scanTimer.Start();
+                MessageBox.Show(" Search TextBox : " + ex.Message);
             }
         }
         private void ScanTimer_Tick(object sender, EventArgs e)
@@ -1098,7 +1129,7 @@ namespace GD4_LED.page
             scanTimer.Stop();
             if (!string.IsNullOrEmpty(scannedBarcode))
             {
-                //VerifyDispenser(scannedBarcode, "");
+                VerifyDispenser(scannedBarcode, "");
                 scannedBarcode = "";
                 //LoadSampleData(jsonString);
 

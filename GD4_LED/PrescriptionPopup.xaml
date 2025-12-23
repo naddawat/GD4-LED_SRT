@@ -88,9 +88,9 @@
                 <Border x:Name="verificationOverlay"
                     Grid.RowSpan="3"
                     Background="#F0FFFFFF"
-                    Visibility="Visible"
+                    Visibility="Hidden"
                     Panel.ZIndex="1000" av:IsHidden="True">
-                    <Grid>
+                    <Grid Visibility="Hidden">
 
                         <Button Content="✕" 
                                 HorizontalAlignment="Right"

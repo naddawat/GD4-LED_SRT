@@ -69,9 +69,14 @@ namespace GD4_LED
 
             //this.Loaded += (s, e) => this.Foccus();
             //MainScrollViewer => this.Focus();
-            this.KeyDown += Window_KeyDown;
+            //this.KeyDown += Window_KeyDown;
             //timer.Start();
-            
+
+            if(jsonString != "")
+            {
+                LoadSampleData(jsonString);
+            }            
+
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -83,7 +88,7 @@ namespace GD4_LED
             {
                 if (!string.IsNullOrEmpty(scannedBarcode))
                 {
-                    VerifyDispenser(scannedBarcode,"");
+                    VerifyDispenser(scannedBarcode, "");
                     scannedBarcode = "";
 
 
@@ -104,6 +109,7 @@ namespace GD4_LED
                 scanTimer.Stop();
                 scanTimer.Start();
             }
+
         }
 
         private void ScanTimer_Tick(object sender, EventArgs e)
