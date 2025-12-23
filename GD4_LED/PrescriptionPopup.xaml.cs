@@ -219,7 +219,10 @@ namespace GD4_LED
             dt_stock = _query.GetLedStockByCode_NoLED(orderitemcode, clsvariable.shelfzone);
             if (dt_stock.Rows.Count != 0)
             {
-                InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), qty.ToString());
+                //InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), qty.ToString());
+                DataTable dt_stock_ = new DataTable();
+                dt_stock_ = _query.GetLedStockByAddr(dt_stock.Rows[0]["addr"].ToString(), dt_stock.Rows[0]["position_id"].ToString(), clsvariable.shelfzone);
+                InvenStock_Addr(dt_stock.Rows[0]["addr"].ToString(), dt_stock.Rows[0]["position_id"].ToString(),qty.ToString());
             }
             else
             {
@@ -314,7 +317,7 @@ namespace GD4_LED
                 string shelfname = dt_stock.Rows[0]["shelfname"].ToString();
                 string In_Qty = dt_stock.Rows[0]["In_Qty"].ToString();
                 int stock = Convert.ToInt32(dt_stock.Rows[0]["In_Qty"].ToString()) - order_qty;
-
+                //MessageBox.Show(addr + "|" + position_id + " " + qty + " " + " " + " " + LotNo + " " + Exp + " " + stock.ToString() + "|" + R + "|" + G + "|" + B);
                 clsvariable.Instance.SerialCan.Order(addr, position_id, qty, " ", LotNo, Exp, stock.ToString(), R, G, B);
             }
             else
@@ -451,7 +454,10 @@ namespace GD4_LED
                             if (new_qty >= 0) // ใช้ lot นี้พอหรือเหลือ
                             {
                                 result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                                if (result) Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+                                if (result) Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");                              
+
+                                result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {remaining_qty}","",clsvariable.shelfzone);
+
                                 remaining_qty = 0; // ตัดครบแล้ว
                             }
                             else // ไม่พอ ต้องใช้ lot ถัดไป
@@ -459,6 +465,8 @@ namespace GD4_LED
                                 result = _query.UpdateDisStock("0", orderitem, lot, exp);
                                 if (result) Debug.WriteLine($"Update stock {orderitem} new qty: 0");
                                 remaining_qty = Math.Abs(new_qty); // ยังเหลือให้ตัดแถวถัดไป
+
+                                result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {stock_qty}", "", clsvariable.shelfzone);
                             }
 
                             index++;
@@ -519,10 +527,12 @@ namespace GD4_LED
                         //clsvariable.StrU = "";
                         //clsvariable.StrU_array = new string[3];
                     }
-                    
+
+                    MessageBox.Show($@"{clsvariable.CountItem} = {prescriptionData.Package.Count}");
+
                     if (clsvariable.CountItem == prescriptionData.Package.Count)
                     {
-                        timerBtn.Stop();                        
+                        //timerBtn.Stop();                        
                         clsvariable.StrU = "";
                         clsvariable.StrU_array = new string[3];
                         clsvariable.CountItem = 0;
@@ -538,6 +548,185 @@ namespace GD4_LED
 
                 }
             }
+        }
+        public async void InvenStock_Addr(string Row,string Addr, string qty)
+        {
+            DataTable dt_stockAddr = new DataTable();
+            DataTable dt_stock = new DataTable();
+            DataTable dt_regist_flag = new DataTable();
+            string orderitem = "";
+            bool result = false;
+            string regist_flag = "";
+            dt_stockAddr = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
+            if (dt_stockAddr.Rows.Count > 0)
+            {
+                orderitem = dt_stockAddr.Rows[0]["drugCode"].ToString();
+
+                dt_stock = _query.GetStockByCode(orderitem);
+                int order_qty = Convert.ToInt32(qty);
+
+                DataTable db_print = new DataTable();
+                db_print.Columns.Add("prescriptionno", typeof(String));
+                db_print.Columns.Add("orderitemname", typeof(String));
+                db_print.Columns.Add("orderqty", typeof(String));
+                db_print.Columns.Add("patientname", typeof(String));
+                db_print.Columns.Add("hn", typeof(String));
+                db_print.Columns.Add("freetext1", typeof(String));
+                db_print.Columns.Add("freetext2", typeof(String));
+                db_print.Columns.Add("freetext3", typeof(String));
+                db_print.Columns.Add("freetext4", typeof(String));
+                db_print.Columns.Add("ward", typeof(String));
+                db_print.Columns.Add("orderitemnameTH", typeof(String));
+                db_print.Columns.Add("QRcode", typeof(byte[]));
+                db_print.Columns.Add("location", typeof(String));
+                db_print.TableName = "db_print";
+
+                if (clsvariable.dt_Prescr.Rows.Count > 0)
+                {
+                    DataTable dt_prescr = new DataTable();
+                    DataRow[] rows = clsvariable.dt_Prescr.Select("orderitemcode = '" + orderitem.Replace("'", "''") + "'");
+
+                    if (rows.Length > 0)
+                    {
+                        dt_prescr = rows.CopyToDataTable();
+                    }
+                    else
+                    {
+                        dt_prescr = clsvariable.dt_Prescr.Clone(); // คืน DataTable โครงสร้างเดิมแต่ไม่มีข้อมูล
+                    }
+
+                    if (dt_prescr.Rows.Count > 0)
+                    {
+                        dt_regist_flag = _query.GetRegist_flag(dt_prescr.Rows[0]["hn"].ToString());
+                        if (dt_regist_flag.Rows.Count > 0)
+                        {
+                            regist_flag = dt_regist_flag.Rows[0]["regist_flag"].ToString();
+                        }
+                        string prescriptionno = dt_prescr.Rows[0]["prescriptionno"].ToString();
+                        string seq = dt_prescr.Rows[0]["seq"].ToString();
+                        if (dt_stock.Rows.Count == 0)
+                        {
+                            MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else
+                        {
+                            int remaining_qty = order_qty; // จำนวนที่ต้องตัดออก
+                            int index = 0;
+                            timerBtn.Stop();
+
+                            while (index < dt_stock.Rows.Count && remaining_qty > 0)
+                            {
+                                DataRow row = dt_stock.Rows[index];
+                                int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                                string lot = row["LotNo"].ToString();
+                                string exp = row["Exp"].ToString();
+
+                                int new_qty = stock_qty - remaining_qty;
+
+                                if (new_qty >= 0) // ใช้ lot นี้พอหรือเหลือ
+                                {
+                                    result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                                    if (result) Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+
+                                    result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {remaining_qty}", "", clsvariable.shelfzone);
+
+                                    remaining_qty = 0; // ตัดครบแล้ว
+                                }
+                                else // ไม่พอ ต้องใช้ lot ถัดไป
+                                {
+                                    result = _query.UpdateDisStock("0", orderitem, lot, exp);
+                                    if (result) Debug.WriteLine($"Update stock {orderitem} new qty: 0");
+                                    remaining_qty = Math.Abs(new_qty); // ยังเหลือให้ตัดแถวถัดไป
+
+                                    result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {stock_qty}", "", clsvariable.shelfzone);
+                                }
+
+                                index++;
+                            }
+
+                            if (result)
+                            {
+                                result = _query.UpdateJob(txtStatus.Text, prescriptionno, seq, orderitem);
+                                //SyncDrug(orderitem);
+                                LoadStockByCode(orderitem);
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"Update stock {orderitem} error");
+                            }
+
+                            foreach (DataRow row in dt_prescr.Rows)
+                            {
+                                DataRow r = db_print.Rows.Add();
+                                r["prescriptionno"] = row["prescriptionno"].ToString();
+                                r["orderitemname"] = row["orderitemname"].ToString();
+                                r["orderitemnameTH"] = row["orderitemnameTH"].ToString();
+                                r["orderqty"] = row["orderqty"].ToString().Split('.')[0];
+                                r["patientname"] = row["patientname"].ToString();
+                                r["hn"] = row["hn"].ToString() + "-" + regist_flag;
+                                r["freetext1"] = row["freetext1"].ToString();
+                                r["freetext2"] = row["freetext2"].ToString();
+                                r["freetext3"] = row["freetext3"].ToString();
+                                r["freetext4"] = row["freetext4"].ToString();
+                                r["ward"] = row["wardcode"].ToString() + " " + row["wardname"].ToString();
+
+                                MemoryStream mss = new MemoryStream();
+                                byte[] bytess = mss.ToArray();
+                                genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                bytess = mss.ToArray();
+                                if (bytess.Length > 0)
+                                {
+                                    r["QRcode"] = bytess;
+                                }
+                                else
+                                {
+                                    r["QRcode"] = "";
+                                }
+                                r["location"] = row["shelfzone"].ToString() + "-" + row["shelfname"].ToString();
+                            }
+
+                            if (clsvariable.print_isenable)
+                            {
+                                if (db_print.Rows.Count > 0)
+                                {
+                                    LoadReport(db_print);
+                                }
+                            }
+                            //timer.Start();
+
+                            //CountItem += 1;
+                            //txtSelectedItems.Text = CountItem.ToString();
+                            //clsvariable.StrU = "";
+                            //clsvariable.StrU_array = new string[3];
+                        }
+
+                        MessageBox.Show($@"{clsvariable.CountItem} = {prescriptionData.Package.Count}");
+
+                        if (clsvariable.CountItem == prescriptionData.Package.Count)
+                        {
+                            //timerBtn.Stop();                        
+                            clsvariable.StrU = "";
+                            clsvariable.StrU_array = new string[3];
+                            clsvariable.CountItem = 0;
+                            //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+
+                            var page = new GD4_LED.page.DispensePage();
+                            await page.InitializePageAsync();
+                            ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
+
+                            this.Close();
+
+                        }
+
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($@" ไม่พบข้อมูลยา");
+            }
+
+            
         }
         public static System.Drawing.Image genQr(string txt)
         {
@@ -647,14 +836,16 @@ namespace GD4_LED
 
             SetStatusColor(prescriptionData.Status);
             PackageItemsControl.ItemsSource = prescriptionData.Package;
-     
+            clsvariable.PackItem = prescriptionData.Package.Count;
             UpdateFooter();
 
-            // Don't print until verified
-            if (isVerified)
-            {
-                PrintPrescription(prescriptionData);
-            }
+            //// Don't print until verified
+            //if (isVerified)
+            //{
+            //    PrintPrescription(prescriptionData);
+            //}
+
+            PrintPrescription(prescriptionData);
         }
 
         private void SetStatusColor(string status)

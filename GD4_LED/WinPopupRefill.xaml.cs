@@ -174,10 +174,11 @@ namespace GD4_LED
                     {
                         HAD = "0";
                     }
-
-                    //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ",HAD, position);
-                    //return true;
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ", HAD, position);
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                    clsvariable.Instance.SerialCan.Order(addr, position_id, " ", " ", LotNo, exp, qty, 0, 0, 0);
+                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+                  
                 }
                 else
                 {

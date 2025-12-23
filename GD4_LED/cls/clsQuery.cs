@@ -353,7 +353,22 @@ namespace GD4_LED.cls
               RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
             where ml.addr = '{Addr}' and ml.position_id = '{_id}' and ml.shelfzone = '{shelfzone}'
               ORDER BY Percent";
+            //MessageBox.Show(SQL);
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
+        public DataTable GetLedStockByAddr_(string Addr, string _id, string shelfzone)
+        {
 
+            SQL = $@"  SELECT
+                    st.*,
+                      STR_TO_DATE( st.Exp, '%Y-%m-%d' ) AS ExpDate ,
+                      ml.position_id,
+                      ml.addr
+                    FROM
+                      ms_stock st LEFT JOIN ms_location ml on st.orderitemcode = ml.orderitemcode
+                    where ml.addr = '{Addr}' and ml.position_id = '{_id}' and ml.shelfzone = '{shelfzone}'
+                    ORDER BY Percent";
+            MessageBox.Show(SQL);
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
         public DataTable GetLedStockByCode_NoLED(string orderitemcode, string shelfzone)
@@ -369,6 +384,8 @@ namespace GD4_LED.cls
               ms.Exp AS exp,
               ml.max AS max,
               ml.min AS min,
+               ml.position_id,
+               ml.addr,
               '' AS firmname ,
               CASE 
                 WHEN (ms.In_Qty / ml.max) * 100 < 0 
@@ -446,7 +463,7 @@ namespace GD4_LED.cls
 
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
-                return Execute.dataExecuteNonQuery(connectst, cmd);
+                return Execute.dataExecuteNonQuery(connectst_main, cmd);
             }
         }
         public bool UpdateStockWhere(string DrugCode, int In_Qty, string LotNo, string Exp, string UserId)

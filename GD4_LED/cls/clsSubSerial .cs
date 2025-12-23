@@ -28,26 +28,27 @@ namespace GD4_LED.cls
                 _Variable.StrU_array[1] = Addr;
                 _Variable.StrU_array[2] = QTY;
                 clsvariable.CountItem += 1;
-                if (!string.IsNullOrEmpty(_Variable.StrU_array[2]))
+                //MessageBox.Show(Row+"|"+Addr+"|"+QTY);
+                if (Convert.ToInt32(QTY) > 0)
                 {
-                    if (Convert.ToInt32(_Variable.StrU_array[2]) > 0)
-                    {
-                        DataTable dt_stock = new DataTable();
-                        dt_stock = _query.GetLedStockByAddr(_Variable.StrU_array[0], _Variable.StrU_array[1], clsvariable.shelfzone);
-                        if (dt_stock.Rows.Count != 0)
-                        {
-                            prescpopup.InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), _Variable.StrU_array[2]);
+                    //MessageBox.Show(Row + "|" + Addr + "|" + QTY);
+                    DataTable dt_stock = new DataTable();
+                    dt_stock = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
+                    MessageBox.Show(dt_stock.Rows.Count.ToString());
 
-                            _Variable.StrU = "";
-                            _Variable.StrU_array = new string[3];
+                    //if (dt_stock.Rows.Count > 0)
+                    //{
+                    //    MessageBox.Show(dt_stock.Rows[0]["drugCode"].ToString() + "|" + QTY);
+                    //    prescpopup.InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), QTY);                       
+                    //    MessageBox.Show(clsvariable.CountItem.ToString());
+                    //}
+                    //else
+                    //{
+                    //    _Variable.StrU = "";
+                    //}
 
-
-                        }
-                        else
-                        {
-                            _Variable.StrU = "";
-                        }
-                    }
+                    prescpopup.InvenStock_Addr(Row, Addr, QTY);
+                    //MessageBox.Show(clsvariable.CountItem.ToString());
                 }
                 _Variable.StrU = "";
                 _Variable.StrU_array = new string[3];
@@ -59,6 +60,7 @@ namespace GD4_LED.cls
             }
 
         }
+
 
         public override void RFID_event(string RFID_Code)
         {
