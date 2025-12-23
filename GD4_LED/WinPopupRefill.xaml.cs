@@ -305,7 +305,15 @@ namespace GD4_LED
         {
             var errors = new List<string>();
             RefillLot = RefillLotTextBox.Text;
-            RefillQuantity = Convert.ToInt32(RefillQuantityTextBox.Text);
+            if(RefillQuantityTextBox.Text != "")
+            {
+                RefillQuantity = Convert.ToInt32(RefillQuantityTextBox.Text);
+            }
+            else
+            {
+                RefillQuantity = 0;
+            }
+           
             RefillExpiryDate = RefillExpiryDatePicker.SelectedDate;
             //DrugCodeText = DrugCodeText.Text;
             Drugname = DrugNameText.Text;
@@ -315,11 +323,12 @@ namespace GD4_LED
                 DrugCode = DrugCodeText.Text,
                 Quantity = RefillQuantity,
                 LotNumber = RefillLot,
-                ExpiryDate = RefillExpiryDate.Value,
+                ExpiryDate = RefillExpiryDate ?? DateTime.Now,
                 Notes = RefillNotes,
                 RefillDate = DateTime.Now,
-                UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
+                UserId = "CurrentUser"
             };
+
 
             // ตรวจสอบจำนวน
             if (RefillQuantity <= 0)

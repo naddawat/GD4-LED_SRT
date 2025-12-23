@@ -1,5 +1,6 @@
 ﻿using GD4_LED.cls;
 using MySql.Data.MySqlClient;
+using Mysqlx.Expr;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -133,7 +134,7 @@ namespace GD4_LED.page
                 finally
                 {
                     // รีเฟรชข้อมูล
-                    RefreshDrugStocks();
+                    //RefreshDrugStocks();
                 }
             }
         }
@@ -169,7 +170,7 @@ namespace GD4_LED.page
                 {
                     //return false;
                 }
-                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
+                //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
                 //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
             }
 
@@ -339,6 +340,9 @@ namespace GD4_LED.page
                 string shelfname = "";
                 string max = "";
                 string min = "";
+                int position_id =0 ;
+                int addr =0;
+                string orderitemENname = "";
                 var refillRecord = new
                 {
                     DrugCode = DrugCodeText.Text,
@@ -352,6 +356,9 @@ namespace GD4_LED.page
 
                 if (dt_stock.Rows.Count > 0)
                 {
+                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+                    orderitemENname = dt_stock.Rows[0]["drugName"].ToString();
                     foreach (DataRow rw in dt_stock.Rows)
                     {
                         if (rw["drugcode"].ToString() == DrugCodeText.Text && rw["lot"].ToString() == RefillLotTextBox.Text)
@@ -379,16 +386,20 @@ namespace GD4_LED.page
                 {
                     RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
                     result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
+                    //clsvariable.Instance.SerialCan.Order(addr, position_id,"" , orderitemENname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);
                 }
                 else
                 {
                     result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
+                    //clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);
                 }
+
+                clsvariable.Instance.SerialCan.Order(1, 1, "", orderitemENname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);
 
                 //LoadStockByCode(refillRecord.DrugCode);
 
                 return result;
-                //RefreshDrugStocks();
+                RefreshDrugStocks();
                
             }
             else

@@ -490,7 +490,7 @@ namespace GD4_LED.page
                 ShowPopup(SelectedDrug);
             }
 
-            clsvariable.Instance.SerialCan.SetLED(1, _id, 0, 0, 0);
+            //clsvariable.Instance.SerialCan.SetLED(1, _id, 0, 0, 0);
             Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
         }
         private void Refresh_Click(object sender, RoutedEventArgs e)

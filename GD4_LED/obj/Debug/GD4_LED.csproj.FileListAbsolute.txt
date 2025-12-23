@@ -256,6 +256,7 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Encodings.Web.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Json.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Threading.Tasks.Extensions.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.ValueTuple.xml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\ModernCalendarApp.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePageHistory.baml
@@ -287,7 +288,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.GenerateResource.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CoreCompileInputs.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.manifest
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.application
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.Up2Date
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
