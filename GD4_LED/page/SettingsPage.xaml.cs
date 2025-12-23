@@ -1264,14 +1264,14 @@ namespace GD4_LED.page
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
 
-            for (int i = 1; i < 9; i++) // วนรอบแรก 8 ครั้ง
-            {
-                for (int j = 0; j < 7; j++) // วนรอบใน 12 ครั้ง
-                {
-                    clsvariable.Instance.SerialCan.SetEEprom(i, i, j, " ", " ", " ", " ");
-                    Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
-                }
-            }
+            //for (int i = 1; i < 9; i++) // วนรอบแรก 8 ครั้ง
+            //{
+            //    for (int j = 0; j < 7; j++) // วนรอบใน 12 ครั้ง
+            //    {
+            //        clsvariable.Instance.SerialCan.SetEEprom(i, i, j, " ", " ", " ", " ");
+            //        Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+            //    }
+            //}
 
         }
     }

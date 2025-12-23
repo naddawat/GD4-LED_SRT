@@ -10,3 +10,5 @@
 [ 68-12-19 ][ 11:13:59 ]Q_SetEEprom->8 #|E|1|1|1|CefTRIaxone 2GM|||M13|$
 [ 68-12-19 ][ 11:13:59 ]Q_SetEEprom->9 #|E|1|1|1|CefTRIaxone 2GM|||M13|$
 [ 68-12-19 ][ 11:13:59 ]Q_SetEEprom->10 #|E|1|1|1|CefTRIaxone 2GM|||M13|$
+[ 68-12-19 ][ 13:41:36 ]Serial Port : COM3
+[ 68-12-19 ][ 13:41:36 ]BaudRate : 57600

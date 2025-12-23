@@ -265,7 +265,7 @@ namespace GD4_LED
                 {
                     //return false;
                 }
-                clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
             }
 
             return true;
@@ -320,43 +320,43 @@ namespace GD4_LED
 
         private async void Timer_Tick(object sender, EventArgs e)
         {
-            //if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
+            if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
+            {
+                timerBtn.Stop();
+                if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
+                {
+                    DataTable dt_stock = new DataTable();
+                    dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
+                    if (dt_stock.Rows.Count != 0)
+                    {
+                        InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
+
+                        clsvariable.StrU = "";
+                        clsvariable.StrU_array = new string[3];
+
+
+                    }
+                    else
+                    {
+                        clsvariable.StrU = "";
+                    }
+                }
+            }
+            //if(txtTotalItems.Text == txtSelectedItems.Text)
             //{
-            //    timerBtn.Stop();
-            //    if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
-            //    {
-            //        DataTable dt_stock = new DataTable();
-            //        dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
-            //        if (dt_stock.Rows.Count != 0)
-            //        {
-            //            InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
+            //    timerBtn.Start();
+            //    CountItem = 0;
+            //    var page = new GD4_LED.page.DispensePage();
+            //    await page.InitializePageAsync();
+            //    ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
 
-            //            clsvariable.StrU = "";
-            //            clsvariable.StrU_array = new string[3];
-
-                        
-            //        }
-            //        else
-            //        {
-            //            clsvariable.StrU = "";
-            //        }
-            //    }
+            //    this.Close();
             //}
-            if(txtTotalItems.Text == txtSelectedItems.Text)
-            {
-                timerBtn.Start();
-                CountItem = 0;
-                var page = new GD4_LED.page.DispensePage();
-                await page.InitializePageAsync();
-                ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
-
-                this.Close();
-            }
-            else
-            {
-                timerBtn.Start();
-                //CountItem =+1;
-            }
+            //else
+            //{
+            //    timerBtn.Start();
+            //    //CountItem =+1;
+            //}
 
             clsvariable.StrU = "";
             clsvariable.StrU_array = new string[3];

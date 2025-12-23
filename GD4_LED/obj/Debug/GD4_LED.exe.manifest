@@ -307,14 +307,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GD4_LED.exe" size="394672">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GD4_LED.exe" size="396208">
       <assemblyIdentity name="GD4_LED" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>pfFOyoBgWRBOp12FNhUd3IglE7oWIjAHkSv1onB7/mg=</dsig:DigestValue>
+        <dsig:DigestValue>JacOMYnvHxM1Wur+EsLkdAXy/Z78UixyzMEvpK7PXHA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -954,13 +954,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="GD4_LED.exe.config" size="6818">
+  <file name="GD4_LED.exe.config" size="6827">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>Trh8PPw9AF54CtudXekB1lAup/+IAz7bIrfC1Dz2y7k=</dsig:DigestValue>
+      <dsig:DigestValue>CbXocXSywZbv2teoSqQZ3q6LUO+8BURmSYKICleRUGY=</dsig:DigestValue>
     </hash>
   </file>
   <file name="เพิ่มคำว่า+LED.ico" size="26659">

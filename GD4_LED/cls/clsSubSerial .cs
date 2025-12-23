@@ -29,29 +29,29 @@ namespace GD4_LED.cls
                 _Variable.StrU_array[2] = QTY;
                 //MessageBox.Show(_Variable.StrU);
                 // Auto-verify after brief pause in scanning
-                if (!string.IsNullOrEmpty(_Variable.StrU_array[2]))
-                {
-                    if (Convert.ToInt32(_Variable.StrU_array[2]) > 0)
-                    {
-                        DataTable dt_stock = new DataTable();
-                        dt_stock = _query.GetLedStockByAddr(_Variable.StrU_array[0], _Variable.StrU_array[1], clsvariable.shelfzone);
-                        if (dt_stock.Rows.Count != 0)
-                        {
-                            prescpopup.InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), _Variable.StrU_array[2]);
+                //if (!string.IsNullOrEmpty(_Variable.StrU_array[2]))
+                //{
+                //    if (Convert.ToInt32(_Variable.StrU_array[2]) > 0)
+                //    {
+                //        DataTable dt_stock = new DataTable();
+                //        dt_stock = _query.GetLedStockByAddr(_Variable.StrU_array[0], _Variable.StrU_array[1], clsvariable.shelfzone);
+                //        if (dt_stock.Rows.Count != 0)
+                //        {
+                //            prescpopup.InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), _Variable.StrU_array[2]);
 
-                            _Variable.StrU = "";
-                            _Variable.StrU_array = new string[3];
+                //            _Variable.StrU = "";
+                //            _Variable.StrU_array = new string[3];
 
 
-                        }
-                        else
-                        {
-                            _Variable.StrU = "";
-                        }
-                    }
-                }
-                _Variable.StrU = "";
-                _Variable.StrU_array = new string[3];
+                //        }
+                //        else
+                //        {
+                //            _Variable.StrU = "";
+                //        }
+                //    }
+                //}
+                //_Variable.StrU = "";
+                //_Variable.StrU_array = new string[3];
             }
             else
             {
