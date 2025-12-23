@@ -149,7 +149,7 @@ namespace GD4_LED.page
             string exp = "";
             string orderitemENname = "";
             string position = "";
-
+            string HAD = "";
             foreach (DataRow dr in dt_stock.Rows)
             {
                 if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
@@ -161,9 +161,16 @@ namespace GD4_LED.page
                     exp = dt_stock.Rows[0]["Exp"].ToString();
                     orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
                     position = dt_stock.Rows[0]["shelfname"].ToString();
-
+                    if (dt_stock.Rows[0]["HAD"].ToString() != "")
+                    {
+                        HAD = dt_stock.Rows[0]["HAD"].ToString();
+                    }
+                    else
+                    {
+                        HAD = "0";
+                    }
                     //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
                     //return true;
                 }
                 else

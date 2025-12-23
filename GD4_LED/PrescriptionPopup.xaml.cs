@@ -48,7 +48,7 @@ namespace GD4_LED
         bool Cradclick = false;
         clsvariable clsvariable = clsvariable.Instance;
         clsQuery _query = new clsQuery();
-        int CountItem = 0;
+  
         private string scannedBarcode = "";
         private bool isVerified = false;
 
@@ -72,7 +72,7 @@ namespace GD4_LED
             //this.KeyDown += Window_KeyDown;
             //timer.Start();
 
-            if(jsonString != "")
+            if (jsonString != "")
             {
                 LoadSampleData(jsonString);
             }            
@@ -250,7 +250,7 @@ namespace GD4_LED
             string exp = "";
             string orderitemENname = "";
             string position = "";
-
+            string HAD = "";
             foreach (DataRow dr in dt_stock.Rows)
             {
                 if (dt_stock.Rows[0]["position_id"].ToString() != "" && dt_stock.Rows[0]["addr"].ToString() != "")
@@ -262,8 +262,16 @@ namespace GD4_LED
                     exp = dt_stock.Rows[0]["Exp"].ToString();
                     orderitemENname = dt_stock.Rows[0]["orderitemENname"].ToString();
                     position = dt_stock.Rows[0]["shelfname"].ToString();
+                    if (dt_stock.Rows[0]["HAD"].ToString() != "")
+                    {
+                        HAD = dt_stock.Rows[0]["HAD"].ToString();
+                    }
+                    else
+                    {
+                        HAD = "0";
+                    }
 
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", "", position);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
 
                     //return true;
                 }
@@ -305,7 +313,9 @@ namespace GD4_LED
                 string Exp = Convert.ToDateTime(dt_stock.Rows[0]["Exp"]).ToString("dd-MM-yyyy", CultureInfo.GetCultureInfo("en-US"));
                 string shelfname = dt_stock.Rows[0]["shelfname"].ToString();
                 string In_Qty = dt_stock.Rows[0]["In_Qty"].ToString();
-                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, shelfname, LotNo, Exp, In_Qty, R, G, B);
+                int stock = Convert.ToInt32(dt_stock.Rows[0]["In_Qty"].ToString()) - order_qty;
+
+                clsvariable.Instance.SerialCan.Order(addr, position_id, qty, " ", LotNo, Exp, stock.ToString(), R, G, B);
             }
             else
             {
@@ -326,28 +336,29 @@ namespace GD4_LED
 
         private async void Timer_Tick(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
-            {
-                timerBtn.Stop();
-                if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
-                {
-                    DataTable dt_stock = new DataTable();
-                    dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
-                    if (dt_stock.Rows.Count != 0)
-                    {
-                        InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
+            //if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
+            //{
+            //    timerBtn.Stop();
+            //    if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
+            //    {
+            //        DataTable dt_stock = new DataTable();
+            //        dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
+            //        if (dt_stock.Rows.Count != 0)
+            //        {
+            //            InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
 
-                        clsvariable.StrU = "";
-                        clsvariable.StrU_array = new string[3];
+            //            clsvariable.StrU = "";
+            //            clsvariable.StrU_array = new string[3];
 
 
-                    }
-                    else
-                    {
-                        clsvariable.StrU = "";
-                    }
-                }
-            }
+            //        }
+            //        else
+            //        {
+            //            clsvariable.StrU = "";
+            //        }
+            //    }
+            //}
+
             //if(txtTotalItems.Text == txtSelectedItems.Text)
             //{
             //    timerBtn.Start();
@@ -364,8 +375,10 @@ namespace GD4_LED
             //    //CountItem =+1;
             //}
 
-            clsvariable.StrU = "";
-            clsvariable.StrU_array = new string[3];
+            //clsvariable.StrU = "";
+            //clsvariable.StrU_array = new string[3];
+
+            txtSelectedItems.Text = clsvariable.CountItem.ToString();
         }
 
         public async void InvenStock(string orderitem, string qty)
@@ -501,19 +514,18 @@ namespace GD4_LED
                         }
                         //timer.Start();
 
-                        CountItem += 1;
-                        txtSelectedItems.Text = CountItem.ToString();
-                        clsvariable.StrU = "";
-                        clsvariable.StrU_array = new string[3];
+                        //CountItem += 1;
+                        //txtSelectedItems.Text = CountItem.ToString();
+                        //clsvariable.StrU = "";
+                        //clsvariable.StrU_array = new string[3];
                     }
                     
-                    if (CountItem == prescriptionData.Package.Count)
+                    if (clsvariable.CountItem == prescriptionData.Package.Count)
                     {
-                        timerBtn.Stop();
-                        txtSelectedItems.Text = CountItem.ToString();
+                        timerBtn.Stop();                        
                         clsvariable.StrU = "";
                         clsvariable.StrU_array = new string[3];
-                        CountItem = 0;
+                        clsvariable.CountItem = 0;
                         //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                         
                         var page = new GD4_LED.page.DispensePage();

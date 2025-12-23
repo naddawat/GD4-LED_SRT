@@ -440,9 +440,9 @@ namespace GD4_LED.page
                         }
 
                         //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, "", "", "", "");
-                        clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
+                        clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ", HAD, position);
                         Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
-                        clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, LotNo, exp, qty, 0, 150, 150);
+                        clsvariable.Instance.SerialCan.Order(addr, position_id, " ", " ", LotNo, exp, qty, 0, 0, 0);
                         Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                         //return true;
                     }
@@ -532,9 +532,9 @@ namespace GD4_LED.page
                     }
                     //clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, "", "", "", "");
 
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ", HAD, position);
                     Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
-                    clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, LotNo, exp, position, 0, 150, 150);
+                    clsvariable.Instance.SerialCan.Order(addr, position_id," ", " ", LotNo, exp, qty, 0, 0, 0);
                     Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                     //return true;
                 }

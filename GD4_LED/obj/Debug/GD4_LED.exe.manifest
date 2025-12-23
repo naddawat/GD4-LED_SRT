@@ -307,14 +307,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GD4_LED.exe" size="395184">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GD4_LED.exe" size="396208">
       <assemblyIdentity name="GD4_LED" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>vr9M+Gpc9JD63BamrJRyw5YXmLNvWHNDfswYjTQtots=</dsig:DigestValue>
+        <dsig:DigestValue>7kvdaXOW/dwegvRKplXAv4usrdiluhK0t5F3LLHAp6o=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

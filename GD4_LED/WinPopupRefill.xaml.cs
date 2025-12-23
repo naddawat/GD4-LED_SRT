@@ -176,7 +176,7 @@ namespace GD4_LED
                     }
 
                     //clsvariable.Instance.SerialCan.Order(addr, position_id, qty, orderitemENname, LotNo, exp, position, 0, 0, 0);
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD, position);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ",HAD, position);
                     //return true;
                 }
                 else
@@ -436,7 +436,7 @@ namespace GD4_LED
                     RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
                     result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
                     
-                    clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);                  
+                    clsvariable.Instance.SerialCan.Order(addr, position_id, " ", orderitemname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);                  
                     Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
 
                 }
@@ -447,7 +447,7 @@ namespace GD4_LED
                         
                         result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
                         //LoadStockByCode(refillRecord.DrugCode);
-                        clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);                       
+                        clsvariable.Instance.SerialCan.Order(addr, position_id, " ", orderitemname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);                       
                         Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                     }
                     else

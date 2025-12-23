@@ -1132,7 +1132,7 @@ namespace GD4_LED.page
 
 
                     //clsvariable.Instance.SerialCan.Order(addr, position_id, "", "", LotNo, exp, "", 0, 0, 0);
-                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, "", HAD.ToString(), position);
+                    clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ", HAD.ToString(), position);
                     Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                 }
                 else
