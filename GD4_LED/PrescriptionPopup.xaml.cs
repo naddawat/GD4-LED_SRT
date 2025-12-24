@@ -48,7 +48,7 @@ namespace GD4_LED
         bool Cradclick = false;
         clsvariable clsvariable = clsvariable.Instance;
         clsQuery _query = new clsQuery();
-  
+        DataTable db_print = new DataTable();
         private string scannedBarcode = "";
         private bool isVerified = false;
 
@@ -75,6 +75,7 @@ namespace GD4_LED
             if (jsonString != "")
             {
                 LoadSampleData(jsonString);
+                timerBtn.Start();
             }            
 
         }
@@ -156,7 +157,7 @@ namespace GD4_LED
                     txtVerificationStatus.Foreground = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#10b981"));
                     txtVerificationStatus.Visibility = Visibility.Visible;
 
-                    timerBtn.Start();
+                    //timerBtn.Start();
 
                 }
                 else
@@ -209,7 +210,7 @@ namespace GD4_LED
         }
         private void PrintPrescriptionNoLed(object prescription)
         {
-            timerBtn.Stop();
+            //timerBtn.Stop();
             string orderitemcode = ((dynamic)prescription).OrderItemCode;
             int qty = ((dynamic)prescription).OrderQty;
             string addr = ((dynamic)prescription).Addr;
@@ -313,7 +314,17 @@ namespace GD4_LED
                 }
                 
                 string LotNo = dt_stock.Rows[0]["LotNo"].ToString();
-                string Exp = Convert.ToDateTime(dt_stock.Rows[0]["Exp"]).ToString("dd-MM-yyyy", CultureInfo.GetCultureInfo("en-US"));
+                //string Exp = Convert.ToDateTime(dt_stock.Rows[0]["Exp"]).ToString("dd-MM-yyyy", CultureInfo.GetCultureInfo("en-US"));
+                string Exp = "";
+
+                var expValue = dt_stock.Rows[0]["Exp"];
+
+                if (expValue != DBNull.Value &&
+                    DateTime.TryParse(expValue.ToString(), out DateTime expDate))
+                {
+                    Exp = expDate.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+                }
+
                 string shelfname = dt_stock.Rows[0]["shelfname"].ToString();
                 string In_Qty = dt_stock.Rows[0]["In_Qty"].ToString();
                 int stock = Convert.ToInt32(dt_stock.Rows[0]["In_Qty"].ToString()) - order_qty;
@@ -328,8 +339,8 @@ namespace GD4_LED
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            timerBtn?.Stop();
-            scanTimer?.Stop();
+            //timerBtn?.Stop();
+            //scanTimer?.Stop();
             //var page = new GD4_LED.page.DispensePage();
             //await page.InitialqizePageAsync();
 
@@ -339,52 +350,59 @@ namespace GD4_LED
 
         private async void Timer_Tick(object sender, EventArgs e)
         {
-            //if (!string.IsNullOrEmpty(clsvariable.StrU_array[2]))
-            //{
-            //    timerBtn.Stop();
-            //    if (Convert.ToInt32(clsvariable.StrU_array[2]) > 0)
-            //    {
-            //        DataTable dt_stock = new DataTable();
-            //        dt_stock = _query.GetLedStockByAddr(clsvariable.StrU_array[0], clsvariable.StrU_array[1], clsvariable.shelfzone);
-            //        if (dt_stock.Rows.Count != 0)
-            //        {
-            //            InvenStock(dt_stock.Rows[0]["drugCode"].ToString(), clsvariable.StrU_array[2]);
-
-            //            clsvariable.StrU = "";
-            //            clsvariable.StrU_array = new string[3];
-
-
-            //        }
-            //        else
-            //        {
-            //            clsvariable.StrU = "";
-            //        }
-            //    }
-            //}
-
-            if (txtTotalItems.Text == txtSelectedItems.Text)
+            txtSelectedItems.Text = clsvariable.CountItem.ToString();
+            if (clsvariable.CountItem == clsvariable.PackItem)
             {
-                //timerBtn.Start();
-                //CountItem = 0;
+                //MessageBox.Show("if 1 : " + clsvariable.CountItem.ToString());
+                timerBtn.Stop();
+
+                var page = new GD4_LED.page.DispensePage();
                 //var page = new GD4_LED.page.DispensePage();
                 //await page.InitializePageAsync();
                 //((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
 
                 //this.Close();
+                await page.InitializePageAsync();
+                ((MainWindow)Application.Current.MainWindow)
+                    .MainFrame.Navigate(page);
 
+                clsvariable.CountItem = 0;
+
+                //MessageBox.Show("if 2 : " + clsvariable.CountItem.ToString());
+                this.Dispatcher.Invoke(() => this.Close());
+                this.Close(); // ปิดหน้าต่างก่อน
+
+                //MessageBox.Show("if 3 : " + clsvariable.CountItem.ToString());
+                CloseButton_Click(null, null); // เรียกใช้งาน CloseButton_Click หลังจากปิดหน้าต่างแล้ว
 
             }
             else
             {
-                timerBtn.Start();
-                //CountItem =+1;
+                //MessageBox.Show("else : "+clsvariable.CountItem.ToString());
+                //this.Close();   
+
             }
-
-            //clsvariable.StrU = "";
-            //clsvariable.StrU_array = new string[3];
-
-            //txtSelectedItems.Text = clsvariable.CountItem.ToString();
         }
+
+        //private async void Timer_Tick(object sender, EventArgs e)
+        //{
+        //    txtSelectedItems.Text = clsvariable.CountItem.ToString();
+
+        //    if (clsvariable.CountItem == clsvariable.PackItem)
+        //    {
+        //        timerBtn.Stop();
+
+        //        var page = new GD4_LED.page.DispensePage();
+        //        await page.InitializePageAsync();
+
+        //        ((MainWindow)Application.Current.MainWindow)
+        //            .MainFrame.Navigate(page);
+
+        //        clsvariable.CountItem = 0;
+
+        //        this.Close(); 
+        //    }
+        //}
 
         public async void InvenStock(string orderitem, string qty)
         {
@@ -442,7 +460,7 @@ namespace GD4_LED
                     {
                         int remaining_qty = order_qty; // จำนวนที่ต้องตัดออก
                         int index = 0;
-                        timerBtn.Stop();
+                        //timerBtn.Stop();
 
                         while (index < dt_stock.Rows.Count && remaining_qty > 0)
                         {
@@ -551,7 +569,7 @@ namespace GD4_LED
                 }
             }
         }
-        public async void InvenStock_Addr(string Row,string Addr, string qty)
+        public void InvenStock_Addr(string Row,string Addr, string qty)
         {
             try
             {
@@ -691,14 +709,15 @@ namespace GD4_LED
                                     r["location"] = row["shelfzone"].ToString() + "-" + row["shelfname"].ToString();
                                 }
 
-                                //if (clsvariable.print_isenable)
-                                //{
-                                //    if (db_print.Rows.Count > 0)
-                                //    {
-                                //        LoadReport(db_print);
-                                //    }
-                                //}
-                                //timer.Start();
+                                if (clsvariable.print_isenable)
+                                {
+                                    if (db_print.Rows.Count > 0)
+                                    {
+                                        //LoadReport(db_print);
+                                    }
+                                }
+
+                                timerBtn.Start();
 
                                 //CountItem += 1;
                                 //txtSelectedItems.Text = CountItem.ToString();
@@ -711,16 +730,16 @@ namespace GD4_LED
                             if (clsvariable.CountItem == clsvariable.PackItem)
                             {
                                 //timerBtn.Stop();
-                                clsvariable.StrU = "";
-                                clsvariable.StrU_array = new string[3];
-                                clsvariable.CountItem = 0;
+                                //clsvariable.StrU = "";
+                                //clsvariable.StrU_array = new string[3];
+                                //clsvariable.CountItem = 0;
                                 //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
 
-                                var page = new GD4_LED.page.DispensePage();
-                                await page.InitializePageAsync();
-                                ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
+                                //var page = new GD4_LED.page.DispensePage();
+                                //await page.InitializePageAsync();
+                                //((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
 
-                                this.Close();
+                                //this.Close();
 
                             }
                             else
@@ -1013,24 +1032,12 @@ namespace GD4_LED
 
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedItems.Count == 0)
-            {
-                MessageBox.Show("กรุณาเลือกรายการยาอย่างน้อย 1 รายการ", "แจ้งเตือน",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            //string selectedList = string.Join("\n", selectedItems.Select(x => $"- {x.OrderItemName} (จำนวน: {x.OrderQty})"));
-            //var result = MessageBox.Show($"ยืนยันการเลือกรายการยา {selectedItems.Count} รายการ?\n\n{selectedList}",
-            //    "ยืนยัน", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            //if (result == MessageBoxResult.Yes)
+            //if (selectedItems.Count == 0)
             //{
-            //    MessageBox.Show("บันทึกข้อมูลสำเร็จ!", "สำเร็จ", MessageBoxButton.OK, MessageBoxImage.Information);
-            //    this.Close();
+            //    MessageBox.Show("กรุณาเลือกรายการยาอย่างน้อย 1 รายการ", "แจ้งเตือน",
+            //        MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    return;
             //}
-            //SetActiveTab(DispenseButton);
-            //MainFrame.Navigate(new DispensePage());
 
             var page = new GD4_LED.page.DispensePage();
             await page.InitializePageAsync();
