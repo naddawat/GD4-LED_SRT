@@ -24,7 +24,7 @@ namespace GD4_LED.cls
         string connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
         public DataTable GetLedStock(string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@" SELECT
                       ml.shelfzone AS location,
                       ml.shelfname AS drugPosition,
@@ -53,7 +53,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetPrescription(string shelfzone)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       p.prescriptionno,
                       p.hn,
@@ -80,7 +80,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetRegist_flag(string hn)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT *
                     FROM
                       ms_patient
@@ -91,7 +91,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetUser(string username,string password)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       *
                     FROM
@@ -103,7 +103,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetPrescriptionByCode(string prescriptionno)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       *
                     FROM
@@ -118,7 +118,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetStrickerByCode(string prescriptionno)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@"WITH ranked AS (
                         SELECT
                             ps.prescriptionno,
@@ -163,7 +163,7 @@ namespace GD4_LED.cls
 
         public DataTable GetPrescriptionByCodeHis(string prescriptionno)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       *
                     FROM
@@ -178,7 +178,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetPrescrfinished(string shelfzone)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       prescriptionno,
                       hn,
@@ -201,7 +201,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetStockByCode(string orderitemcode)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@" SELECT
                     st.*,
                       STR_TO_DATE( st.Exp, '%Y-%m-%d' ) AS ExpDate ,
@@ -218,7 +218,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLedInfo(string comname)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT *
             FROM
               ms_shelf ms
@@ -229,6 +229,7 @@ namespace GD4_LED.cls
         }        
         public DataTable GetLocation(string code,string device)
         {
+            connectst = clsvariable.connectionST;
 
             SQL = $@"  SELECT *
             FROM
@@ -241,7 +242,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLocation_main(string device)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@"  SELECT *
             FROM
               ms_location ml
@@ -252,7 +253,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLocationBycode_main(string device, string code)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@"  SELECT *
             FROM
               ms_location ml
@@ -263,7 +264,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLocationBycode_ocal(string device, string code)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@"  SELECT *
             FROM
               ms_location ml
@@ -274,7 +275,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLedStockByCode(string orderitemcode,string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
               ml.shelfzone AS location,
               ml.shelfname AS drugPosition,
@@ -309,7 +310,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetAllLedStockByCode(string orderitemcode, string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
               *
             FROM
@@ -320,7 +321,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetAllLedStock(string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
               *
             FROM
@@ -329,9 +330,9 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
-        public DataTable GetLedStockByAddr(string Addr, string _id, string shelfzone)
+        public DataTable GetLedStockByAddr(string Row, string Addr, string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
               ml.shelfzone AS location,
               ml.shelfname AS drugPosition,
@@ -351,14 +352,15 @@ namespace GD4_LED.cls
             FROM
               ms_stock ms
               RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
-            where ml.addr = '{Addr}' and ml.position_id = '{_id}' and ml.shelfzone = '{shelfzone}'
+            where ml.addr = '{Row}' and ml.position_id = '{Addr}' and ml.shelfzone = '{shelfzone}'
               ORDER BY Percent";
-            //MessageBox.Show(SQL);
+            //MessageBox.Show(connectst);
+
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
         public DataTable GetLedStockByAddr_(string Addr, string _id, string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
                     st.*,
                       STR_TO_DATE( st.Exp, '%Y-%m-%d' ) AS ExpDate ,
@@ -373,7 +375,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLedStockByCode_NoLED(string orderitemcode, string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
               ml.shelfzone AS location,
               ml.shelfname AS drugPosition,
@@ -402,7 +404,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLedStockByZone(string shelfzone)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       ml.*,
                     ms.In_Qty,
@@ -418,7 +420,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLedStockByZoneSync(string shelfzone)
         {
-
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" SELECT
                       ml.*,
                     ms.In_Qty,
@@ -433,7 +435,7 @@ namespace GD4_LED.cls
         }
         public DataTable GetLedStockByZoneCode(string orderitemcode, string shelfzone)
         {
-
+            connectst = clsvariable.connectionST;
             SQL = $@"  SELECT
               *
             FROM
@@ -446,6 +448,7 @@ namespace GD4_LED.cls
 
         public bool InsertStock(string DrugCode,int In_Qty,string LotNo,string Exp, string shelfzone, string shelfname,string max,string min)
         {
+            connectst = clsvariable.connectionST;
             SQL = $@" INSERT INTO ms_stock (orderitemcode,In_Qty, LotNo, Exp, lastmodify,shelfzone,shelfname,max,min,log_refill,type_refill) 
                         VALUES ('{DrugCode}',{In_Qty}, '{LotNo}','{Exp}',CURRENT_TIMESTAMP(),'{shelfzone}','{shelfname}',{max},{min},NULL,1) ; ";
 
@@ -458,6 +461,7 @@ namespace GD4_LED.cls
         }
         public bool InsertLog(string eventstr, string user, string location)
         {
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" INSERT INTO logevent (event,createdate, user, location) 
                         VALUES ('{eventstr}',CURRENT_TIMESTAMP(), '{user}','{location}') ; ";
 
@@ -468,6 +472,7 @@ namespace GD4_LED.cls
         }
         public bool UpdateStockWhere(string DrugCode, int In_Qty, string LotNo, string Exp, string UserId)
         {
+            connectst = clsvariable.connectionST;
             SQL = $@" update ms_stock set 
                     In_Qty = {In_Qty},
                     lastmodify = CURRENT_TIMESTAMP()
@@ -480,6 +485,7 @@ namespace GD4_LED.cls
         }
         public bool UpdatePrintStatus(string status,string comname)
         {
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" update ms_ledconfig set 
                     print_isenable = '{status}'
                     where comname = '{comname}'; ";
@@ -491,6 +497,7 @@ namespace GD4_LED.cls
         }
         public bool UpdateTrigger(string status, string comname)
         {
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
             SQL = $@" update ms_ledconfig set 
                     trigger_isenable = '{status}'
                     where comname = '{comname}'; ";
@@ -502,6 +509,8 @@ namespace GD4_LED.cls
         }
         public bool UpdateJob(string leduserid, string prescriptionno,string seq,string orderitemcode)
         {
+            //connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
+           
             SQL = $@" UPDATE packagemaster_ipd 
                         SET leddatetime = CURRENT_TIMESTAMP(),
                         leduserid = '{leduserid}' 
@@ -510,6 +519,8 @@ namespace GD4_LED.cls
                         AND seq = '{seq}'
                         AND orderitemcode = '{orderitemcode}' ";
 
+            //MessageBox.Show(SQL);
+            //MessageBox.Show(connectst_main);
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
                 return Execute.dataExecuteNonQuery(connectst_main, cmd);
@@ -517,6 +528,7 @@ namespace GD4_LED.cls
         }
         public bool UpdateDisStock(string new_qty, string orderitem,string lot,string exp)
         {
+            connectst = clsvariable.connectionST;
             SQL = $@" UPDATE ms_stock SET
                                     In_Qty = '{new_qty}',
                                     lastmodify = NOW()

@@ -34,7 +34,8 @@ namespace GD4_LED.cls
                     //MessageBox.Show(Row + "|" + Addr + "|" + QTY);
                     DataTable dt_stock = new DataTable();
                     dt_stock = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
-                    MessageBox.Show(dt_stock.Rows.Count.ToString());
+
+                    //MessageBox.Show(dt_stock.Rows.Count.ToString());
 
                     //if (dt_stock.Rows.Count > 0)
                     //{
@@ -49,6 +50,8 @@ namespace GD4_LED.cls
 
                     prescpopup.InvenStock_Addr(Row, Addr, QTY);
                     //MessageBox.Show(clsvariable.CountItem.ToString());
+
+
                 }
                 _Variable.StrU = "";
                 _Variable.StrU_array = new string[3];

@@ -362,26 +362,28 @@ namespace GD4_LED
             //    }
             //}
 
-            //if(txtTotalItems.Text == txtSelectedItems.Text)
-            //{
-            //    timerBtn.Start();
-            //    CountItem = 0;
-            //    var page = new GD4_LED.page.DispensePage();
-            //    await page.InitializePageAsync();
-            //    ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
+            if (txtTotalItems.Text == txtSelectedItems.Text)
+            {
+                //timerBtn.Start();
+                //CountItem = 0;
+                //var page = new GD4_LED.page.DispensePage();
+                //await page.InitializePageAsync();
+                //((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
 
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    timerBtn.Start();
-            //    //CountItem =+1;
-            //}
+                //this.Close();
+
+
+            }
+            else
+            {
+                timerBtn.Start();
+                //CountItem =+1;
+            }
 
             //clsvariable.StrU = "";
             //clsvariable.StrU_array = new string[3];
 
-            txtSelectedItems.Text = clsvariable.CountItem.ToString();
+            //txtSelectedItems.Text = clsvariable.CountItem.ToString();
         }
 
         public async void InvenStock(string orderitem, string qty)
@@ -528,7 +530,7 @@ namespace GD4_LED
                         //clsvariable.StrU_array = new string[3];
                     }
 
-                    MessageBox.Show($@"{clsvariable.CountItem} = {prescriptionData.Package.Count}");
+                    //MessageBox.Show($@"{clsvariable.CountItem} = {prescriptionData.Package.Count}");
 
                     if (clsvariable.CountItem == prescriptionData.Package.Count)
                     {
@@ -551,182 +553,195 @@ namespace GD4_LED
         }
         public async void InvenStock_Addr(string Row,string Addr, string qty)
         {
-            DataTable dt_stockAddr = new DataTable();
-            DataTable dt_stock = new DataTable();
-            DataTable dt_regist_flag = new DataTable();
-            string orderitem = "";
-            bool result = false;
-            string regist_flag = "";
-            dt_stockAddr = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
-            if (dt_stockAddr.Rows.Count > 0)
+            try
             {
-                orderitem = dt_stockAddr.Rows[0]["drugCode"].ToString();
-
-                dt_stock = _query.GetStockByCode(orderitem);
-                int order_qty = Convert.ToInt32(qty);
-
-                DataTable db_print = new DataTable();
-                db_print.Columns.Add("prescriptionno", typeof(String));
-                db_print.Columns.Add("orderitemname", typeof(String));
-                db_print.Columns.Add("orderqty", typeof(String));
-                db_print.Columns.Add("patientname", typeof(String));
-                db_print.Columns.Add("hn", typeof(String));
-                db_print.Columns.Add("freetext1", typeof(String));
-                db_print.Columns.Add("freetext2", typeof(String));
-                db_print.Columns.Add("freetext3", typeof(String));
-                db_print.Columns.Add("freetext4", typeof(String));
-                db_print.Columns.Add("ward", typeof(String));
-                db_print.Columns.Add("orderitemnameTH", typeof(String));
-                db_print.Columns.Add("QRcode", typeof(byte[]));
-                db_print.Columns.Add("location", typeof(String));
-                db_print.TableName = "db_print";
-
-                if (clsvariable.dt_Prescr.Rows.Count > 0)
+                DataTable dt_stockAddr = new DataTable();
+                DataTable dt_stock = new DataTable();
+                DataTable dt_regist_flag = new DataTable();
+                string orderitem = "";
+                bool result = false;
+                string regist_flag = "";
+                //MessageBox.Show(Row + "|" + Addr + "|" + clsvariable.shelfzone);
+                dt_stockAddr = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
+                if (dt_stockAddr.Rows.Count > 0)
                 {
-                    DataTable dt_prescr = new DataTable();
-                    DataRow[] rows = clsvariable.dt_Prescr.Select("orderitemcode = '" + orderitem.Replace("'", "''") + "'");
+                    orderitem = dt_stockAddr.Rows[0]["drugCode"].ToString();
 
-                    if (rows.Length > 0)
-                    {
-                        dt_prescr = rows.CopyToDataTable();
-                    }
-                    else
-                    {
-                        dt_prescr = clsvariable.dt_Prescr.Clone(); // คืน DataTable โครงสร้างเดิมแต่ไม่มีข้อมูล
-                    }
+                    dt_stock = _query.GetStockByCode(orderitem);
+                    int order_qty = Convert.ToInt32(qty);
 
-                    if (dt_prescr.Rows.Count > 0)
+                    DataTable db_print = new DataTable();
+                    db_print.Columns.Add("prescriptionno", typeof(String));
+                    db_print.Columns.Add("orderitemname", typeof(String));
+                    db_print.Columns.Add("orderqty", typeof(String));
+                    db_print.Columns.Add("patientname", typeof(String));
+                    db_print.Columns.Add("hn", typeof(String));
+                    db_print.Columns.Add("freetext1", typeof(String));
+                    db_print.Columns.Add("freetext2", typeof(String));
+                    db_print.Columns.Add("freetext3", typeof(String));
+                    db_print.Columns.Add("freetext4", typeof(String));
+                    db_print.Columns.Add("ward", typeof(String));
+                    db_print.Columns.Add("orderitemnameTH", typeof(String));
+                    db_print.Columns.Add("QRcode", typeof(byte[]));
+                    db_print.Columns.Add("location", typeof(String));
+                    db_print.TableName = "db_print";
+
+                    if (clsvariable.dt_Prescr.Rows.Count > 0)
                     {
-                        dt_regist_flag = _query.GetRegist_flag(dt_prescr.Rows[0]["hn"].ToString());
-                        if (dt_regist_flag.Rows.Count > 0)
+                        DataTable dt_prescr = new DataTable();
+                        DataRow[] rows = clsvariable.dt_Prescr.Select("orderitemcode = '" + orderitem.Replace("'", "''") + "'");
+
+                        if (rows.Length > 0)
                         {
-                            regist_flag = dt_regist_flag.Rows[0]["regist_flag"].ToString();
-                        }
-                        string prescriptionno = dt_prescr.Rows[0]["prescriptionno"].ToString();
-                        string seq = dt_prescr.Rows[0]["seq"].ToString();
-                        if (dt_stock.Rows.Count == 0)
-                        {
-                            MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            dt_prescr = rows.CopyToDataTable();
                         }
                         else
                         {
-                            int remaining_qty = order_qty; // จำนวนที่ต้องตัดออก
-                            int index = 0;
-                            timerBtn.Stop();
+                            dt_prescr = clsvariable.dt_Prescr.Clone(); // คืน DataTable โครงสร้างเดิมแต่ไม่มีข้อมูล
+                        }
 
-                            while (index < dt_stock.Rows.Count && remaining_qty > 0)
+                        if (dt_prescr.Rows.Count > 0)
+                        {
+                            dt_regist_flag = _query.GetRegist_flag(dt_prescr.Rows[0]["hn"].ToString());
+                            if (dt_regist_flag.Rows.Count > 0)
                             {
-                                DataRow row = dt_stock.Rows[index];
-                                int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
-                                string lot = row["LotNo"].ToString();
-                                string exp = row["Exp"].ToString();
-
-                                int new_qty = stock_qty - remaining_qty;
-
-                                if (new_qty >= 0) // ใช้ lot นี้พอหรือเหลือ
-                                {
-                                    result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
-                                    if (result) Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
-
-                                    result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {remaining_qty}", "", clsvariable.shelfzone);
-
-                                    remaining_qty = 0; // ตัดครบแล้ว
-                                }
-                                else // ไม่พอ ต้องใช้ lot ถัดไป
-                                {
-                                    result = _query.UpdateDisStock("0", orderitem, lot, exp);
-                                    if (result) Debug.WriteLine($"Update stock {orderitem} new qty: 0");
-                                    remaining_qty = Math.Abs(new_qty); // ยังเหลือให้ตัดแถวถัดไป
-
-                                    result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {stock_qty}", "", clsvariable.shelfzone);
-                                }
-
-                                index++;
+                                regist_flag = dt_regist_flag.Rows[0]["regist_flag"].ToString();
                             }
-
-                            if (result)
+                            string prescriptionno = dt_prescr.Rows[0]["prescriptionno"].ToString();
+                            string seq = dt_prescr.Rows[0]["seq"].ToString();
+                            if (dt_stock.Rows.Count == 0)
                             {
-                                result = _query.UpdateJob(txtStatus.Text, prescriptionno, seq, orderitem);
-                                //SyncDrug(orderitem);
-                                LoadStockByCode(orderitem);
+                                MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
                             else
                             {
-                                Debug.WriteLine($"Update stock {orderitem} error");
-                            }
+                                int remaining_qty = order_qty; // จำนวนที่ต้องตัดออก
+                                int index = 0;
+                                //timerBtn.Stop();
 
-                            foreach (DataRow row in dt_prescr.Rows)
-                            {
-                                DataRow r = db_print.Rows.Add();
-                                r["prescriptionno"] = row["prescriptionno"].ToString();
-                                r["orderitemname"] = row["orderitemname"].ToString();
-                                r["orderitemnameTH"] = row["orderitemnameTH"].ToString();
-                                r["orderqty"] = row["orderqty"].ToString().Split('.')[0];
-                                r["patientname"] = row["patientname"].ToString();
-                                r["hn"] = row["hn"].ToString() + "-" + regist_flag;
-                                r["freetext1"] = row["freetext1"].ToString();
-                                r["freetext2"] = row["freetext2"].ToString();
-                                r["freetext3"] = row["freetext3"].ToString();
-                                r["freetext4"] = row["freetext4"].ToString();
-                                r["ward"] = row["wardcode"].ToString() + " " + row["wardname"].ToString();
-
-                                MemoryStream mss = new MemoryStream();
-                                byte[] bytess = mss.ToArray();
-                                genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
-                                bytess = mss.ToArray();
-                                if (bytess.Length > 0)
+                                while (index < dt_stock.Rows.Count && remaining_qty > 0)
                                 {
-                                    r["QRcode"] = bytess;
+                                    DataRow row = dt_stock.Rows[index];
+                                    int stock_qty = Convert.ToInt32(row["In_Qty"].ToString());
+                                    string lot = row["LotNo"].ToString();
+                                    string exp = row["Exp"].ToString();
+
+                                    int new_qty = stock_qty - remaining_qty;
+
+                                    if (new_qty >= 0) // ใช้ lot นี้พอหรือเหลือ
+                                    {
+                                        result = _query.UpdateDisStock(new_qty.ToString(), orderitem, lot, exp);
+                                        if (result) Debug.WriteLine($"Update stock {orderitem} new qty: {new_qty}");
+
+                                        result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {remaining_qty}", "", clsvariable.shelfzone);
+
+                                        remaining_qty = 0; // ตัดครบแล้ว
+                                    }
+                                    else // ไม่พอ ต้องใช้ lot ถัดไป
+                                    {
+                                        result = _query.UpdateDisStock("0", orderitem, lot, exp);
+                                        if (result) Debug.WriteLine($"Update stock {orderitem} new qty: 0");
+                                        remaining_qty = Math.Abs(new_qty); // ยังเหลือให้ตัดแถวถัดไป
+
+                                        result = _query.InsertLog($"Update stock {orderitem} ตัดสต๊อก : {stock_qty}", "", clsvariable.shelfzone);
+                                    }
+
+                                    index++;
+                                }
+                                //MessageBox.Show(result.ToString());
+                                if (result)
+                                {
+                                    result = _query.UpdateJob(cls.clsvariable.user, prescriptionno, seq, orderitem);
+                                    //SyncDrug(orderitem);
+                                    LoadStockByCode(orderitem);
                                 }
                                 else
                                 {
-                                    r["QRcode"] = "";
+                                    //Debug.WriteLine($"Update stock {orderitem} error");
+                                    MessageBox.Show($"Update stock {orderitem} error");
                                 }
-                                r["location"] = row["shelfzone"].ToString() + "-" + row["shelfname"].ToString();
-                            }
 
-                            if (clsvariable.print_isenable)
-                            {
-                                if (db_print.Rows.Count > 0)
+                                foreach (DataRow row in dt_prescr.Rows)
                                 {
-                                    LoadReport(db_print);
+                                    DataRow r = db_print.Rows.Add();
+                                    r["prescriptionno"] = row["prescriptionno"].ToString();
+                                    r["orderitemname"] = row["orderitemname"].ToString();
+                                    r["orderitemnameTH"] = row["orderitemnameTH"].ToString();
+                                    r["orderqty"] = row["orderqty"].ToString().Split('.')[0];
+                                    r["patientname"] = row["patientname"].ToString();
+                                    r["hn"] = row["hn"].ToString() + "-" + regist_flag;
+                                    r["freetext1"] = row["freetext1"].ToString();
+                                    r["freetext2"] = row["freetext2"].ToString();
+                                    r["freetext3"] = row["freetext3"].ToString();
+                                    r["freetext4"] = row["freetext4"].ToString();
+                                    r["ward"] = row["wardcode"].ToString() + " " + row["wardname"].ToString();
+
+                                    MemoryStream mss = new MemoryStream();
+                                    byte[] bytess = mss.ToArray();
+                                    genQr(row["prescriptionno"].ToString()).Save(mss, System.Drawing.Imaging.ImageFormat.Jpeg);
+                                    bytess = mss.ToArray();
+                                    if (bytess.Length > 0)
+                                    {
+                                        r["QRcode"] = bytess;
+                                    }
+                                    else
+                                    {
+                                        r["QRcode"] = "";
+                                    }
+                                    r["location"] = row["shelfzone"].ToString() + "-" + row["shelfname"].ToString();
                                 }
+
+                                //if (clsvariable.print_isenable)
+                                //{
+                                //    if (db_print.Rows.Count > 0)
+                                //    {
+                                //        LoadReport(db_print);
+                                //    }
+                                //}
+                                //timer.Start();
+
+                                //CountItem += 1;
+                                //txtSelectedItems.Text = CountItem.ToString();
+                                //clsvariable.StrU = "";
+                                //clsvariable.StrU_array = new string[3];
                             }
-                            //timer.Start();
 
-                            //CountItem += 1;
-                            //txtSelectedItems.Text = CountItem.ToString();
-                            //clsvariable.StrU = "";
-                            //clsvariable.StrU_array = new string[3];
+                            //MessageBox.Show($@"{clsvariable.CountItem} = {prescriptionData.Package.Count}");
+
+                            if (clsvariable.CountItem == clsvariable.PackItem)
+                            {
+                                //timerBtn.Stop();
+                                clsvariable.StrU = "";
+                                clsvariable.StrU_array = new string[3];
+                                clsvariable.CountItem = 0;
+                                //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
+
+                                var page = new GD4_LED.page.DispensePage();
+                                await page.InitializePageAsync();
+                                ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
+
+                                this.Close();
+
+                            }
+                            else
+                            {
+                                timerBtn.Start();
+                            }
+
                         }
-
-                        MessageBox.Show($@"{clsvariable.CountItem} = {prescriptionData.Package.Count}");
-
-                        if (clsvariable.CountItem == prescriptionData.Package.Count)
-                        {
-                            //timerBtn.Stop();                        
-                            clsvariable.StrU = "";
-                            clsvariable.StrU_array = new string[3];
-                            clsvariable.CountItem = 0;
-                            //Thread.Sleep(3000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
-
-                            var page = new GD4_LED.page.DispensePage();
-                            await page.InitializePageAsync();
-                            ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
-
-                            this.Close();
-
-                        }
-
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show($@" ไม่พบข้อมูลยา");
-            }
+                else
+                {
+                    MessageBox.Show($@" ไม่พบข้อมูลยา");
+                }
 
-            
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);    
+            }
+           
         }
         public static System.Drawing.Image genQr(string txt)
         {
@@ -739,60 +754,68 @@ namespace GD4_LED
         }
         public void LoadStockByCode(string code)
         {
-            DataTable dt = new DataTable();
-            dt = _query.GetAllLedStockByCode(code, clsvariable.shelfzone);
-            string connStr = GD4_LED.Properties.Settings.Default.connectstring;
-            if (dt.Rows.Count > 0)
+            try
             {
-                using (MySqlConnection conn = new MySqlConnection(connStr))
+                DataTable dt = new DataTable();
+                dt = _query.GetAllLedStockByCode(code, clsvariable.shelfzone);
+                string connStr = GD4_LED.Properties.Settings.Default.connectstring;
+                if (dt.Rows.Count > 0)
                 {
-                    conn.Open();
-
-
-                    string sql = $@" DELETE FROM ms_stock where shelfzone = '{clsvariable.shelfzone}' and orderitemcode = '{code}'; ";
-
-                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    using (MySqlConnection conn = new MySqlConnection(connStr))
                     {
-                        cmd.ExecuteNonQuery();
-                    }
+                        conn.Open();
 
 
-                    var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+                        string sql = $@" DELETE FROM ms_stock where shelfzone = '{clsvariable.shelfzone}' and orderitemcode = '{code}'; ";
 
-                    string insertCols = string.Join(", ", columns);
-                    string insertParams = string.Join(", ", columns.Select(c => "@" + c));
-
-                    string updateCols = string.Join(", ", columns
-                                                    .Where(c => c != "orderitemcode")
-                                                    .Select(c => $"{c} = VALUES({c})"));
-
-                    sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
-
-                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
-                    {
-                        foreach (DataRow row in dt.Rows)
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
-                            cmd.Parameters.Clear();
-
-                            foreach (DataColumn col in dt.Columns)
-                            {
-                                object value = row[col.ColumnName] ?? DBNull.Value;
-                                cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
-                            }
                             cmd.ExecuteNonQuery();
                         }
+
+
+                        var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+                        string insertCols = string.Join(", ", columns);
+                        string insertParams = string.Join(", ", columns.Select(c => "@" + c));
+
+                        string updateCols = string.Join(", ", columns
+                                                        .Where(c => c != "orderitemcode")
+                                                        .Select(c => $"{c} = VALUES({c})"));
+
+                        sql = $@" INSERT INTO ms_stock ({insertCols}) VALUES ({insertParams}) ON DUPLICATE KEY UPDATE {updateCols}; ";
+
+                        using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                cmd.Parameters.Clear();
+
+                                foreach (DataColumn col in dt.Columns)
+                                {
+                                    object value = row[col.ColumnName] ?? DBNull.Value;
+                                    cmd.Parameters.AddWithValue("@" + col.ColumnName, value);
+                                }
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
                     }
 
-                    Console.WriteLine("✅ Insert/Update สำเร็จทุกแถว!");
+                    //SyncDrug(code);
                 }
-
-                SyncDrug(code);
+                else
+                {
+                    MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                MessageBox.Show("ไม่มีข้อมูลตำแหน่งยาในตู้ LED นี้", "ข้อมูลว่าง",
-                              MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("LoadStockByCode : " + ex.ToString());
             }
+            
         }
 
         private void LoadReport(DataTable dt)

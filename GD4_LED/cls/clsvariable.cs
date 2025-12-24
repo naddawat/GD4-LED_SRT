@@ -22,6 +22,7 @@ namespace GD4_LED.cls
         public static string database = "";
         public static string port = "";
         public static string username = "";
+        public static string user = "";
         public static string password = "";
         public static string connectionST = "";
         private static clsvariable _instance;
