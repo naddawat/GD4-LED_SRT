@@ -31,7 +31,7 @@ namespace GD4_LED
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
-            if(clsvariable.comname == "DEV-MIM")
+            if(clsvariable.comname == "HP")
             {
                 clsvariable.comname = "GD4-LED-1";
             }

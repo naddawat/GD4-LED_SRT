@@ -130,7 +130,7 @@ namespace GD4_LED.page
             var fadeInStoryboard = (Storyboard)this.Resources["FadeInLoading"];
             fadeInStoryboard.Begin();
         }
-        
+
         public async Task InitializePageAsync()
         {
             try
@@ -359,7 +359,7 @@ namespace GD4_LED.page
         {
             PrescriptionPanel.Children.Clear();
 
-            string Searchtxt = SearchTextBox.Text?.Trim()?? "";
+            string Searchtxt = SearchTextBox.Text?.Trim() ?? "";
 
             if (filteredPrescriptions.Count == 0)
             {
@@ -367,7 +367,7 @@ namespace GD4_LED.page
             }
             else
             {
-                
+
             }
 
             foreach (var prescription in filteredPrescriptions)
@@ -394,7 +394,7 @@ namespace GD4_LED.page
             foreach (var prescription in filteredPrescriptions)
             {
                 prescrip = prescription;
-                CreatePrescriptionCard(prescription);                
+                CreatePrescriptionCard(prescription);
             }
 
             return prescrip;
@@ -584,14 +584,16 @@ namespace GD4_LED.page
             };
 
             // Add button click events
-            printButton.Click += (sender, e) => {
+            printButton.Click += (sender, e) =>
+            {
                 e.Handled = true; // Prevent card toggle
                 Print(prescription);
 
 
             };
 
-            cancelButton.Click += (sender, e) => {
+            cancelButton.Click += (sender, e) =>
+            {
                 e.Handled = true; // Prevent card toggle
                 CancelPrescription(prescription);
             };
@@ -654,11 +656,13 @@ namespace GD4_LED.page
             }
 
             // Add click event to toggle details (only on package summary area)
-            packageSummary.MouseLeftButtonUp += (sender, e) => {
+            packageSummary.MouseLeftButtonUp += (sender, e) =>
+            {
                 e.Handled = true;
                 ToggleCardDetails(medicinePanel, expandIcon);
             };
-            packageSummary.TouchUp += (sender, e) => {
+            packageSummary.TouchUp += (sender, e) =>
+            {
                 e.Handled = true;
                 ToggleCardDetails(medicinePanel, expandIcon);
             };
@@ -874,12 +878,14 @@ namespace GD4_LED.page
             };
 
             // Add button click events
-            printButton.Click += (sender, e) => {
+            printButton.Click += (sender, e) =>
+            {
                 e.Handled = true; // Prevent card toggle
                 Print(prescription);
             };
 
-            cancelButton.Click += (sender, e) => {
+            cancelButton.Click += (sender, e) =>
+            {
                 e.Handled = true; // Prevent card toggle
                 CancelPrescription(prescription);
             };
@@ -932,11 +938,13 @@ namespace GD4_LED.page
             }
 
             // Add click event to toggle details (only on package summary area)
-            packageSummary.MouseLeftButtonUp += (sender, e) => {
+            packageSummary.MouseLeftButtonUp += (sender, e) =>
+            {
                 e.Handled = true;
                 ToggleCardDetails(medicinePanel, expandIcon);
             };
-            packageSummary.TouchUp += (sender, e) => {
+            packageSummary.TouchUp += (sender, e) =>
+            {
                 e.Handled = true;
                 ToggleCardDetails(medicinePanel, expandIcon);
             };
@@ -994,8 +1002,12 @@ namespace GD4_LED.page
             var dataLoadingTask = LoadDataAsync();
             SearchTextBox.Clear();
 
+            // แก้ไข: เปลี่ยนชื่อ parameter จาก 'e' เป็น 'args' เพื่อไม่ให้ชนกับ 'e' ด้านบน
+            this.Loaded += (s, args) =>
+            {
+                PrescriptionPanel.Focus();
+            };
         }
-        
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             PerformSearch();
@@ -1024,7 +1036,7 @@ namespace GD4_LED.page
         }
 
         private void PrintPrescription(Prescription prescription)
-        {           
+        {
 
             clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
             if (clsvariable.dt_Prescr.Rows.Count > 0)
@@ -1036,9 +1048,9 @@ namespace GD4_LED.page
                 //popup.ShowDialog();
                 //popup.Topmost = true;
             }
-            else 
+            else
             {
-                MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}","Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescription.PrescriptionNo}\nผู้ป่วย: {prescription.PatientName}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
 
 
             }
@@ -1145,12 +1157,12 @@ namespace GD4_LED.page
             _ = InitializePageAsync();
             string datetimeNow = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             var main = Application.Current.MainWindow as MainWindow;
-            main.txtdatetime.Text = datetimeNow;
+            //main.txtdatetime.Text = datetimeNow;
 
             return;
         }
 
-        private void VerifyDispenser(string code, string password)        
+        private void VerifyDispenser(string code, string password)
         {
             try
             {
@@ -1203,7 +1215,7 @@ namespace GD4_LED.page
             }
         }
         private void LoadReport(DataTable dt)
-        {            
+        {
             ReportDocument report = new ReportDocument();
             report.Load(clsvariable.crp_report);
             report.SetDataSource(dt);
@@ -1225,9 +1237,9 @@ namespace GD4_LED.page
                 int B = Convert.ToInt32(clsvariable.RGD_dispense[2].ToString());
                 int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
                 //clsvariable.Instance.SerialCan.SetLED(1, position_id,R, G, B);
-                clsvariable.Instance.SerialCan.Order(1, position_id,qty,"","","","", R, G, B);
-               
-            }           
+                clsvariable.Instance.SerialCan.Order(1, position_id, qty, "", "", "", "", R, G, B);
+
+            }
             else
             {
                 MessageBox.Show($"ไม่พบข้อมูลสต๊อกของ {orderitem} กรุณาตรวจสอบ stock ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1329,13 +1341,13 @@ namespace GD4_LED.page
                     r["freetext4"] = row["freetext4"].ToString();
                 }
 
-                if(db_print.Rows.Count > 0)
+                if (db_print.Rows.Count > 0)
                 {
                     MessageBox.Show(clsvariable.crp_report.ToString() + "  " + cls.clsvariable.printname.ToString());
                     LoadReport(db_print);
                 }
             }
-            
+
         }
 
 
@@ -1475,7 +1487,7 @@ namespace GD4_LED.page
                 {
                     MessageBox.Show(" Search TextBox : " + ex.Message);
                 }
-                
+
             }
         }
     }
@@ -1504,6 +1516,6 @@ namespace GD4_LED.page
             {
                 scrollViewer.ScrollToVerticalOffset((double)e.NewValue);
             }
-        }       
+        }
     }
 }

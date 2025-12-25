@@ -87,7 +87,7 @@
       <HintPath>..\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
     <Reference Include="ClsSerialLED">
-      <HintPath>..\..\Release\Release\ClsSerialLED.dll</HintPath>
+      <HintPath>C:\Users\noteb\Downloads\ClsSerialLED(1)\ClsSerialLED.dll</HintPath>
     </Reference>
     <Reference Include="CrystalDecisions.CrystalReports.Design, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
@@ -303,6 +303,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DataSet1.xsd</DependentUpon>
     </Compile>
+    <Compile Include="LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ModernCalendarApp.xaml.cs">
       <DependentUpon>ModernCalendarApp.xaml</DependentUpon>
     </Compile>
@@ -319,6 +322,10 @@
       <SubType>Component</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Page Include="LoginWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -451,9 +458,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="เพิ่มคำว่า+LED.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\DLL LED\DLL LED\Release\ClsSerialLED.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
