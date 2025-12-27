@@ -17,6 +17,7 @@ namespace GD4_LED.cls
         public static string crp_report = "";
         public static string printname = "";
         public static bool print_isenable = false;
+        public static bool press_btn = false;
         public static bool trigger_isenable = false;
         public static string sever = "";
         public static string database = "";

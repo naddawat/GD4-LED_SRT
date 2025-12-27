@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace GD4_LED.cls
 {
@@ -17,63 +18,73 @@ namespace GD4_LED.cls
     {
         clsvariable _Variable = clsvariable.Instance;
         PrescriptionPopup prescpopup = new PrescriptionPopup("");
+        //private page.DispensePage disPage = new page.DispensePage();
         clsQuery _query = new clsQuery();
+        public event EventHandler<ButtonEventArgs> OnButtonReceived;
         public ClsSubSerial()
         {
 
         }
+        //public void setUC(ref page.DispensePage c)
+        //{
+        //    disPage = c;
+        //}
+        public class ButtonEventArgs : EventArgs
+        {
+            public string Row { get; set; }
+            public string Addr { get; set; }
+            public int Qty { get; set; }
+        }
         public override void Button_event(string Row, string Addr, string QTY)
         {
+            //Dipen timer = new MyTimerService();
+            //timer.Start();
             base.Button_event(Row, Addr, QTY);
-            if(QTY != "" && Convert.ToInt32(QTY) > 0)
-            {             
-                _Variable.StrU = "ID:" + Row + "   Addr: " + Addr + "    QTY : " + QTY + "\r\n";
-                _Variable.StrU_array[0] = Row;
-                _Variable.StrU_array[1] = Addr;
-                _Variable.StrU_array[2] = QTY;
-                clsvariable.CountItem += 1;
-                
-                if (Convert.ToInt32(QTY) > 0)
-                {
-                    DataTable dt_stock = new DataTable();
-                    dt_stock = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
-                    prescpopup.InvenStock_Addr(Row, Addr, QTY);
-                }
-                _Variable.StrU = "";
-                _Variable.StrU_array = new string[3];
-            }
-            else
+
+            //if(QTY != "" && Convert.ToInt32(QTY) > 0)
+            //{
+            //    disPage.timerBtn.Stop();
+            //    _Variable.StrU = "ID:" + Row + "   Addr: " + Addr + "    QTY : " + QTY + "\r\n";
+            //    _Variable.StrU_array[0] = Row;
+            //    _Variable.StrU_array[1] = Addr;
+            //    _Variable.StrU_array[2] = QTY;
+
+            //    disPage.Dispatcher.Invoke(() =>
+            //    {
+            //        disPage.PressBtn = true;
+            //    });
+
+            //    clsvariable.CountItem += 1;
+            //    clsvariable.press_btn = true;
+
+            //    //MessageBox.Show("ID:" + Row + "   Addr: " + Addr + "    QTY : " + QTY + clsvariable.press_btn);
+            //    DataTable dt_stock = new DataTable();
+            //    dt_stock = _query.GetLedStockByAddr(Row, Addr, clsvariable.shelfzone);
+            //    disPage.InvenStock_Addr(Row, Addr, QTY);
+            //    _Variable.StrU = "";
+            //    _Variable.StrU_array = new string[3];
+            //}
+            //else
+            //{
+
+            //}
+            //_Variable.StrU = "";
+            //_Variable.StrU_array = new string[3];
+
+
+            if (!int.TryParse(QTY, out int qty) || qty <= 0)
+                return;
+
+            _Variable.StrU = $"ID:{Row} Addr:{Addr} QTY:{QTY}";
+            _Variable.StrU_array = new[] { Row, Addr, QTY };
+
+            OnButtonReceived?.Invoke(this, new ButtonEventArgs
             {
-                _Variable.StrU = "";
-                _Variable.StrU_array[0] = "";   
-            }
-
-            if (clsvariable.CountItem == clsvariable.PackItem)
-            {
-                //MessageBox.Show("if 1 : " + clsvariable.CountItem.ToString());
-                ////timerBtn.Stop();
-
-                //var page = new GD4_LED.page.DispensePage();
-                ////var page = new GD4_LED.page.DispensePage();
-                ////await page.InitializePageAsync();
-                ////((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
-
-                ////this.Close();
-                //await page.InitializePageAsync();
-                //((MainWindow)Application.Current.MainWindow)
-                //    .MainFrame.Navigate(page);
-
-                //clsvariable.CountItem = 0;
-
-                //MessageBox.Show("if 2 : " + clsvariable.CountItem.ToString());
-                //this.Dispatcher.Invoke(() => this.Close());
-                //prescpopup.Close(); // ปิดหน้าต่างก่อน
-
-                //MessageBox.Show("if 3 : " + clsvariable.CountItem.ToString());
-                //CloseButton_Click(null, null); // เรียกใช้งาน CloseButton_Click หลังจากปิดหน้าต่างแล้ว
-
-            }
-
+                Row = Row,
+                Addr = Addr,
+                Qty = qty
+            });
+            
         }
        
         public override void RFID_event(string RFID_Code)
@@ -83,4 +94,5 @@ namespace GD4_LED.cls
             _Variable.StrU = RFID_Code;
         }
     }
+
 }

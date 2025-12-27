@@ -21,85 +21,106 @@
             <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
-        <!-- Header Section -->
-        <Border Grid.Row="0"  Background="{StaticResource PrimaryBlue}"  CornerRadius="0,0,24,24" MouseLeftButtonDown="Header_MouseLeftButtonDown" MouseLeftButtonUp="Border_MouseLeftButtonUp">
-            <Grid Margin="32,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+<!-- Header Section -->
+<Border Grid.Row="0"  Background="{StaticResource PrimaryBlue}"  CornerRadius="0,0,24,24" MouseLeftButtonDown="Header_MouseLeftButtonDown" MouseLeftButtonUp="Border_MouseLeftButtonUp">
+    <Grid Margin="32,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock x:Name="txtdevice" 
-                             Foreground="White" 
-                             FontSize="18" 
-                             FontWeight="Bold"/>
-                    <TextBlock x:Name="txtversion" Text="Medicine Management System | ver 1.0.1" 
-                             Foreground="White" 
-                             Opacity="0.8" 
-                             FontSize="12"/>
-                </StackPanel>
+        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+            <TextBlock x:Name="txtdevice" 
+                     Foreground="White" 
+                     FontSize="18" 
+                     FontWeight="Bold"/>
+            <TextBlock x:Name="txtversion" Text="Medicine Management System | ver 1.0.1" 
+                     Foreground="White" 
+                     Opacity="0.8" 
+                     FontSize="12"/>
+        </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock x:Name="txtdatetime" Text="10/09/2025 14:30" 
-                             Foreground="White" 
-                             FontSize="14"
-                             VerticalAlignment="Center"
-                             Margin="0,0,20,0"/>
-                    <Ellipse x:Name="myEllipse" Width="18" Height="18" 
-         Margin="0,0,20,0"
-         ToolTip="สถานะ Database">
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="{StaticResource Success}" />
-                                <!-- สีเขียว -->
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDatabaseConnected}" Value="False">
-                                        <Setter Property="Fill" Value="Red" />
-                                        <Setter Property="ToolTip" Value="เชื่อมต่อ Database ไม่ได้" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <!-- CPU Usage -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,15,0">
+                <TextBlock Text="CPU: " 
+                         Foreground="White" 
+                         FontSize="12"
+                         VerticalAlignment="Center"/>
+                <TextBlock x:Name="txtCpuUsage" Text="0%" 
+                         Foreground="White" 
+                         FontSize="12"
+                         FontWeight="Bold"
+                         VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <!-- RAM Usage -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                <TextBlock Text="RAM: " 
+                         Foreground="White" 
+                         FontSize="12"
+                         VerticalAlignment="Center"/>
+                <TextBlock x:Name="txtRamUsage" Text="0%" 
+                         Foreground="White" 
+                         FontSize="12"
+                         FontWeight="Bold"
+                         VerticalAlignment="Center"/>
+            </StackPanel>
 
+            <TextBlock x:Name="txtdatetime" Text="10/09/2025 14:30" 
+                     Foreground="White" 
+                     FontSize="14"
+                     VerticalAlignment="Center"
+                     Margin="0,0,20,0"/>
+            <Ellipse x:Name="myEllipse" Width="18" Height="18" 
+ Margin="0,0,20,0"
+ ToolTip="สถานะ Database">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Setter Property="Fill" Value="{StaticResource Success}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDatabaseConnected}" Value="False">
+                                <Setter Property="Fill" Value="Red" />
+                                <Setter Property="ToolTip" Value="เชื่อมต่อ Database ไม่ได้" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
 
-                    <!-- Close Button -->
-                    <Button Background="Transparent" 
-                            BorderThickness="0" 
-                            Width="58"
-                            Height="51"
-                            Click="CloseButton_Click"
-                            ToolTip="ออกจากโปรแกรม">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" 
-                                        CornerRadius="4">
-                                    <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" 
-                                          Fill="White" 
-                                          Stretch="Uniform" 
-                                          Width="16" 
-                                          Height="16"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#EF4444"/>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#DC2626"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-
-
+            <!-- Close Button -->
+            <Button Background="Transparent" 
+                    BorderThickness="0" 
+                    Width="58"
+                    Height="51"
+                    Click="CloseButton_Click"
+                    ToolTip="ออกจากโปรแกรม">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="4">
+                            <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" 
+                                  Fill="White" 
+                                  Stretch="Uniform" 
+                                  Width="16" 
+                                  Height="16"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#EF4444"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#DC2626"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Border>
         <!-- Content Section -->
         <Frame x:Name="MainFrame" Grid.Row="1" Margin="10,10,10,10" NavigationUIVisibility="Hidden"/>
 

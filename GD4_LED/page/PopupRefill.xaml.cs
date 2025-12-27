@@ -102,29 +102,22 @@ namespace GD4_LED.page
 
         }
 
-        private void ConfirmRefill_Click(object sender, RoutedEventArgs e)
+        private async void ConfirmRefill_Click(object sender, RoutedEventArgs e)
         {
-            bool result = false;
-            // ตรวจสอบข้อมูลที่กรอก
             if (ValidateRefillData())
             {
                 try
-                {                    
-                    // บันทึกข้อมูลการเติมยา
-                    if(SaveRefillData())
-                    {
+                {
+                    // แสดง loading
+                    IsEnabled = false;
+                    
+                    bool result = await Task.Run(() => SaveRefillData());
 
-                        // แสดงข้อความสำเร็จ
+                    if (result)
+                    {
                         ShowSuccessMessage();
-                       
                         Window.GetWindow(this).Close();
-
                     }
-                    else
-                    {
-
-                    }
-                   
                 }
                 catch (Exception ex)
                 {
@@ -133,8 +126,7 @@ namespace GD4_LED.page
                 }
                 finally
                 {
-                    // รีเฟรชข้อมูล
-                    //RefreshDrugStocks();
+                    IsEnabled = true;
                 }
             }
         }
@@ -334,86 +326,76 @@ namespace GD4_LED.page
 
         private bool SaveRefillData()
         {
-            bool v = false;
-            v = _query.CheckConnection(clsvariable.connectionST);
-            if (v)
+            bool v = _query.CheckConnection(clsvariable.connectionST);
+            if (!v) return false;
+
+            DataTable dt_stock = _query.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
+            
+            if (dt_stock.Rows.Count == 0) return false;
+
+            int position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
+            int addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
+            string orderitemENname = dt_stock.Rows[0]["drugName"].ToString();
+            
+            bool sameLot = false;
+            bool result = false;
+            int qty_old = 0;
+            string shelfzone = "";
+            string shelfname = "";
+            string max = "";
+            string min = "";
+
+            var refillRecord = new
             {
-                DataTable dt_stock = new DataTable();
-                dt_stock = _query.GetLedStockByCode(DrugCodeText.Text, clsvariable.shelfzone);
-                bool sameLot = false;
-                bool result = false;
-                int qty_old = 0;
-                string shelfzone = "";
-                string shelfname = "";
-                string max = "";
-                string min = "";
-                int position_id =0 ;
-                int addr =0;
-                string orderitemENname = "";
-                var refillRecord = new
-                {
-                    DrugCode = DrugCodeText.Text,
-                    Quantity = RefillQuantity,
-                    LotNumber = RefillLot,
-                    ExpiryDate = RefillExpiryDate.Value,
-                    Notes = RefillNotes,
-                    RefillDate = DateTime.Now,
-                    UserId = "CurrentUser" // ใส่ ID ของผู้ใช้ปัจจุบัน
-                };
+                DrugCode = DrugCodeText.Text,
+                Quantity = RefillQuantity,
+                LotNumber = RefillLot,
+                ExpiryDate = RefillExpiryDate.Value,
+                Notes = RefillNotes,
+                RefillDate = DateTime.Now,
+                UserId = "CurrentUser"
+            };
 
-                if (dt_stock.Rows.Count > 0)
+            foreach (DataRow rw in dt_stock.Rows)
+            {
+                if (rw["drugcode"].ToString() == DrugCodeText.Text && 
+                    rw["lot"].ToString() == RefillLotTextBox.Text)
                 {
-                    position_id = Convert.ToInt32(dt_stock.Rows[0]["position_id"].ToString());
-                    addr = Convert.ToInt32(dt_stock.Rows[0]["addr"].ToString());
-                    orderitemENname = dt_stock.Rows[0]["drugName"].ToString();
-                    foreach (DataRow rw in dt_stock.Rows)
-                    {
-                        if (rw["drugcode"].ToString() == DrugCodeText.Text && rw["lot"].ToString() == RefillLotTextBox.Text)
-                        {
-                            sameLot = true;
-                            qty_old = Convert.ToInt32(rw["Quantity"].ToString());
-                            break;
-                        }
-                        else
-                        {
-                            shelfzone = rw["location"].ToString();
-                            shelfname = rw["drugPosition"].ToString();
-                            max = rw["max"].ToString();
-                            min = rw["min"].ToString();
-                            sameLot = false;
-                        }
-                    }
+                    sameLot = true;
+                    qty_old = Convert.ToInt32(rw["Quantity"].ToString());
+                    break;
                 }
                 else
                 {
-
+                    shelfzone = rw["location"].ToString();
+                    shelfname = rw["drugPosition"].ToString();
+                    max = rw["max"].ToString();
+                    min = rw["min"].ToString();
                 }
+            }
 
-                if (sameLot) // มี Lot เดิม
-                {
-                    RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
-                    result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
-                    //clsvariable.Instance.SerialCan.Order(addr, position_id,"" , orderitemENname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);
-                }
-                else
-                {
-                    result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), shelfzone, shelfname, max, min);
-                    //clsvariable.Instance.SerialCan.Order(addr, position_id, "", orderitemENname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);
-                }
-
-                clsvariable.Instance.SerialCan.Order(1, 1, "", orderitemENname, refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), RefillQuantity.ToString(), 0, 0, 0);
-
-                //LoadStockByCode(refillRecord.DrugCode);
-
-                return result;
-                RefreshDrugStocks();
-               
+            if (sameLot)
+            {
+                RefillQuantity = qty_old + Convert.ToInt32(RefillQuantityTextBox.Text);
+                result = _query.UpdateStockWhere(refillRecord.DrugCode, RefillQuantity, 
+                    refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), refillRecord.UserId);
             }
             else
             {
-                return false;
+                result = _query.InsertStock(refillRecord.DrugCode, RefillQuantity, 
+                    refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), 
+                    shelfzone, shelfname, max, min);
             }
 
+            // ส่งคำสั่งไปยังอุปกรณ์
+            Task.Run(() =>
+            {
+                clsvariable.Instance.SerialCan.Order(1, 1, "", orderitemENname, 
+                    refillRecord.LotNumber, refillRecord.ExpiryDate.ToString(), 
+                    RefillQuantity.ToString(), 0, 0, 0);
+            });
+
+            return result;
         }
 
         private void ShowSuccessMessage()

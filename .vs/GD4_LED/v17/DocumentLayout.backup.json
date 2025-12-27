@@ -3,14 +3,6 @@
   "WorkspaceRootPath": "D:\\GitHub\\GD4-LED_SRT\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\prescriptionpopup.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\prescriptionpopup.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\cls\\clssubserial .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\cls\\clssubserial .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|GD4_LED||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
@@ -18,8 +10,28 @@
       "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\page\\dispensepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\cls\\clssubserial .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\cls\\clssubserial .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\page\\stockwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\page\\stockwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\cls\\clsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\cls\\clsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\prescriptionpopup.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\prescriptionpopup.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\page\\dispensepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\page\\dispensepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\prescriptionpopup.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -28,14 +40,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\cls\\clsvariable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\cls\\clsvariable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\cls\\clsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|solutionrelative:gd4_led\\cls\\clsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{79B3D761-98A7-4EC4-B1C4-FE4AA074F789}|GD4_LED\\GD4_LED.csproj|D:\\GitHub\\GD4-LED_SRT\\gd4_led\\winpopuprefill.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -64,11 +68,11 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "GD4_LED",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\GD4_LED.csproj",
               "RelativeDocumentMoniker": "GD4_LED\\GD4_LED.csproj",
@@ -81,13 +85,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 5,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\MainWindow.xaml.cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\MainWindow.xaml.cs",
               "RelativeToolTip": "GD4_LED\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAFQAAAAAAAAAAAA0wHcAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAAwIwAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T11:59:54.579Z",
               "IsPinned": true,
@@ -96,14 +100,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Bookmark",
@@ -119,57 +115,68 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
+              "Title": "DispensePage.xaml",
+              "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\DispensePage.xaml",
+              "RelativeDocumentMoniker": "GD4_LED\\page\\DispensePage.xaml",
+              "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\DispensePage.xaml",
+              "RelativeToolTip": "GD4_LED\\page\\DispensePage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-12-26T15:31:02.625Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "PrescriptionPopup.xaml",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\PrescriptionPopup.xaml",
               "RelativeDocumentMoniker": "GD4_LED\\PrescriptionPopup.xaml",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\PrescriptionPopup.xaml",
               "RelativeToolTip": "GD4_LED\\PrescriptionPopup.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-12-23T11:07:53.594Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T11:07:53.594Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "PrescriptionPopup.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\PrescriptionPopup.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\PrescriptionPopup.xaml.cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\PrescriptionPopup.xaml.cs",
               "RelativeToolTip": "GD4_LED\\PrescriptionPopup.xaml.cs",
-              "ViewState": "AgIAAFoBAAAAAAAAAIA2wHsBAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAOYCAAAAAAAAAAAQwEQDAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T05:10:41.529Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "clsSubSerial .cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\cls\\clsSubSerial .cs",
               "RelativeDocumentMoniker": "GD4_LED\\cls\\clsSubSerial .cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\cls\\clsSubSerial .cs",
               "RelativeToolTip": "GD4_LED\\cls\\clsSubSerial .cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAiwDAAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAMwCUAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-23T07:31:37.052Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 4,
               "Title": "clsQuery.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\cls\\clsQuery.cs",
               "RelativeDocumentMoniker": "GD4_LED\\cls\\clsQuery.cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\cls\\clsQuery.cs",
               "RelativeToolTip": "GD4_LED\\cls\\clsQuery.cs",
-              "ViewState": "AgIAAOYBAAAAAAAAAIA1wP0BAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAALkAAAAAAAAAAAAAwNkAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T09:48:03.371Z"
+              "WhenOpened": "2025-12-23T09:48:03.371Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "StockWindow.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\StockWindow.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\page\\StockWindow.xaml.cs",
@@ -182,20 +189,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "DispensePage.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\DispensePage.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\page\\DispensePage.xaml.cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\DispensePage.xaml.cs",
               "RelativeToolTip": "GD4_LED\\page\\DispensePage.xaml.cs",
-              "ViewState": "AgIAADAFAAAAAAAAAAAmwKwFAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAALsFAAAAAAAAAAAhwMoFAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T05:02:49.316Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "clsvariable.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\cls\\clsvariable.cs",
               "RelativeDocumentMoniker": "GD4_LED\\cls\\clsvariable.cs",
@@ -203,12 +210,11 @@
               "RelativeToolTip": "GD4_LED\\cls\\clsvariable.cs",
               "ViewState": "AgIAAAgAAAAAAAAAAAAhwB8AAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T07:34:35.898Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T07:34:35.898Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "SettingsPage.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\SettingsPage.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\page\\SettingsPage.xaml.cs",
@@ -220,7 +226,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "WinPopupRefill.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\WinPopupRefill.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\WinPopupRefill.xaml.cs",
@@ -232,28 +238,27 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "PopupRefill.xaml.cs",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\PopupRefill.xaml.cs",
               "RelativeDocumentMoniker": "GD4_LED\\page\\PopupRefill.xaml.cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\PopupRefill.xaml.cs",
               "RelativeToolTip": "GD4_LED\\page\\PopupRefill.xaml.cs",
-              "ViewState": "AgIAAJQAAAAAAAAAAAAhwLMAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAJQAAAAAAAAAAAAhwLMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-23T05:03:25.369Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "PopupRefill.xaml",
               "DocumentMoniker": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\PopupRefill.xaml",
               "RelativeDocumentMoniker": "GD4_LED\\page\\PopupRefill.xaml",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\PopupRefill.xaml",
               "RelativeToolTip": "GD4_LED\\page\\PopupRefill.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-12-23T05:03:20.182Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T05:03:20.182Z"
             }
           ]
         }

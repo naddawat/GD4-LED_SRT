@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace GD4_LED
@@ -19,31 +20,37 @@ namespace GD4_LED
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {        
+    {
         clsMain _Man = new clsMain();
         clsQuery _STK = new clsQuery();
         clsutilDB _con = new clsutilDB();
         clsConfig _config = new clsConfig();
         bool v = false;
         bool local = false;
+
+        private PerformanceCounter cpuCounter;
+        private DispatcherTimer performanceTimer;
+        private Process currentProcess;
+        private DateTime lastCpuTime;
+        private TimeSpan lastTotalProcessorTime;
         public MainWindow()
         {
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
-            if(clsvariable.comname == "HP")
+            if (clsvariable.comname == "DEV-MIM")
             {
                 clsvariable.comname = "GD4-LED-1";
             }
-            
+
             v = _STK.CheckConnection(GD4_LED.Properties.Settings.Default.connectstring);
-            if(!v)
+            if (!v)
             {
                 MessageBox.Show(" ไม่สามารถเชื่อมฐานข้อมูล : " + GD4_LED.Properties.Settings.Default.connectstring);
             }
 
-           
-            string version = "";          
+
+            string version = "";
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -54,7 +61,7 @@ namespace GD4_LED
                 // ถ้ายังไม่ publish ให้ใช้ assembly version แทน
                 version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
-            txtversion.Text = "Medicine Management System | ver : " + version + " comname : "+ clsvariable.comname;
+            txtversion.Text = "Medicine Management System | ver : " + version + " comname : " + clsvariable.comname;
 
             // สร้าง SerialCan แค่ครั้งเดียว
             if (clsvariable.Instance.SerialCan == null)
@@ -64,19 +71,86 @@ namespace GD4_LED
             }
             //_var.SerialCan = new ClsSubSerial();
             //_var.SerialCan.init("COM3");
+            InitializePerformanceMonitoring();
+        }
+
+        private void InitializePerformanceMonitoring()
+        {
+            try
+            {
+                // Get current process
+                currentProcess = Process.GetCurrentProcess();
+                lastCpuTime = DateTime.UtcNow;
+                lastTotalProcessorTime = currentProcess.TotalProcessorTime;
+
+                // Timer to update every 2 seconds
+                performanceTimer = new DispatcherTimer();
+                performanceTimer.Interval = TimeSpan.FromSeconds(2);
+                performanceTimer.Tick += PerformanceTimer_Tick;
+                performanceTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error initializing performance monitoring: {ex.Message}");
+            }
+        }
+
+        private void PerformanceTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                // Calculate CPU usage for current process
+                DateTime currentTime = DateTime.UtcNow;
+                TimeSpan currentTotalProcessorTime = currentProcess.TotalProcessorTime;
+
+                double cpuUsedMs = (currentTotalProcessorTime - lastTotalProcessorTime).TotalMilliseconds;
+                double totalMsPassed = (currentTime - lastCpuTime).TotalMilliseconds;
+                double cpuUsageTotal = cpuUsedMs / (Environment.ProcessorCount * totalMsPassed);
+                double cpuUsage = cpuUsageTotal * 100;
+
+                lastCpuTime = currentTime;
+                lastTotalProcessorTime = currentTotalProcessorTime;
+
+                txtCpuUsage.Text = $"{cpuUsage:F1}%";
+
+                // Get RAM usage for current process (in MB)
+                currentProcess.Refresh();
+                double ramUsageMB = currentProcess.WorkingSet64 / 1024.0 / 1024.0;
+                txtRamUsage.Text = $"{ramUsageMB:F0} MB";
+
+                // Change color based on CPU usage
+                if (cpuUsage > 80)
+                    txtCpuUsage.Foreground = Brushes.Red;
+                else if (cpuUsage > 60)
+                    txtCpuUsage.Foreground = Brushes.Yellow;
+                else
+                    txtCpuUsage.Foreground = Brushes.White;
+
+                // Change color based on RAM usage (>500MB = Yellow, >1GB = Red)
+                if (ramUsageMB > 1024)
+                    txtRamUsage.Foreground = Brushes.Red;
+                else if (ramUsageMB > 512)
+                    txtRamUsage.Foreground = Brushes.Yellow;
+                else
+                    txtRamUsage.Foreground = Brushes.White;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error updating performance metrics: {ex.Message}");
+            }
         }
 
         private void bnt_open_Click(object sender, RoutedEventArgs e)
         {
             //_var.SerialCan.SetLED(1, Convert.ToInt32(txtAddr.Text), 255, 0, 0);
         }
-      
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //_var.SerialCan.SetLED(1, Convert.ToInt32(1), 255, 0, 0);
-            
+
             string datetimeNow = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            
+
             SetWindowToSecondaryScreen();
             SetActiveTab(DispenseButton);
             MainFrame.Navigate(new DispensePage());
@@ -115,7 +189,7 @@ namespace GD4_LED
                 clsvariable.username = clsvariable.dt_LedConfig.Rows[0]["username"].ToString();
                 clsvariable.password = clsvariable.dt_LedConfig.Rows[0]["password"].ToString();
 
-                if(clsvariable.sever != "" && clsvariable.database != "" && clsvariable.username != "" && clsvariable.password != "")
+                if (clsvariable.sever != "" && clsvariable.database != "" && clsvariable.username != "" && clsvariable.password != "")
                 {
                     clsvariable.connectionST = $@"Data Source={clsvariable.sever};Initial Catalog={clsvariable.database};Persist Security Info=True;User ID={clsvariable.username};Password={clsvariable.password}; charset=utf8mb4;";
                 }
@@ -133,7 +207,7 @@ namespace GD4_LED
                 clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
             }
 
-            if (v&& local) // method ที่คุณเขียนไว้เช็คการต่อ
+            if (v && local) // method ที่คุณเขียนไว้เช็คการต่อ
             {
                 myEllipse.Fill = (Brush)FindResource("Success"); // สีเขียว
                 myEllipse.ToolTip = "ระบบออนไลน์";
@@ -170,10 +244,10 @@ namespace GD4_LED
                     this.WindowState = WindowState.Normal;
 
                     // ตั้งตำแหน่งไปทางขวาของจอหลัก (จอที่ 2)
-                    this.Left = SystemParameters.PrimaryScreenWidth;
-                    this.Top = 0;
-                    this.Width = SystemParameters.PrimaryScreenWidth;
-                    this.Height = SystemParameters.PrimaryScreenHeight;
+                    //this.Left = SystemParameters.PrimaryScreenWidth;
+                    //this.Top = 0;
+                    //this.Width = SystemParameters.PrimaryScreenWidth;
+                    //this.Height = SystemParameters.PrimaryScreenHeight;
 
                     this.WindowState = WindowState.Maximized;
                 }
@@ -210,9 +284,9 @@ namespace GD4_LED
                         this.WindowState = WindowState.Normal;
 
                         // ปรับตำแหน่งให้อยู่ตรงกลาง title bar
-                        var mousePos = PointToScreen(Mouse.GetPosition(this));
-                        this.Left = mousePos.X - (this.Width / 2);
-                        this.Top = mousePos.Y - 40;
+                        //var mousePos = PointToScreen(Mouse.GetPosition(this));
+                        //this.Left = mousePos.X - (this.Width / 2);
+                        //this.Top = mousePos.Y - 40;
                     }
                     else
                     {
@@ -281,6 +355,10 @@ namespace GD4_LED
 
             if (result == MessageBoxResult.Yes)
             {
+                // Cleanup
+                performanceTimer?.Stop();
+                currentProcess?.Dispose();
+
                 Application.Current.Shutdown();
             }
         }
@@ -314,7 +392,7 @@ namespace GD4_LED
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {   
+        {
             SetActiveTab(SettingsButton);
             MainFrame.Navigate(new SettingsPage());
         }

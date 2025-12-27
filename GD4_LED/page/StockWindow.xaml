@@ -115,7 +115,7 @@
                                 BorderThickness="1"
                                 Height="48">
                             <Grid>
-                                <TextBlock Text="เลือกแถว" 
+                                <TextBlock Text="" 
                                            Foreground="{StaticResource TextSecondary}"
                                            Margin="16,0,0,0"
                                            VerticalAlignment="Center"/>
@@ -128,9 +128,16 @@
                                           ItemContainerStyle="{StaticResource ModernComboBoxItemStyle}"
                                           HorizontalContentAlignment="Left"
                                           VerticalContentAlignment="Center"
-                                          SelectionChanged="RowSelector_SelectionChanged"
-                                          >
-                                   
+                                          SelectionChanged="RowSelector_SelectionChanged">
+                                    <ComboBoxItem Content="ทั้งหมด" IsSelected="True"/>
+                                    <ComboBoxItem Content="แถวที่ 1"/>
+                                    <ComboBoxItem Content="แถวที่ 2"/>
+                                    <ComboBoxItem Content="แถวที่ 3"/>
+                                    <ComboBoxItem Content="แถวที่ 4"/>
+                                    <ComboBoxItem Content="แถวที่ 5"/>
+                                    <ComboBoxItem Content="แถวที่ 6"/>
+                                    <ComboBoxItem Content="แถวที่ 7"/>
+                                    <ComboBoxItem Content="แถวที่ 8"/>
                                 </ComboBox>
                             </Grid>
                         </Border>
@@ -196,6 +203,12 @@
                           IsManipulationEnabled="True"
                           x:Name="StockScrollViewer">
                 <ItemsControl ItemsSource="{Binding DrugStocks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel VirtualizationMode="Recycling" 
+                                                   IsVirtualizing="True"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,12" 
@@ -223,6 +236,12 @@
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <!-- แสดงข้อมูล Lot และ Exp ทุก Lot -->
                                         <ItemsControl ItemsSource="{Binding LotDetails}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel VirtualizationMode="Recycling" 
+                                                                           IsVirtualizing="True"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Margin="0,0,0,8">
