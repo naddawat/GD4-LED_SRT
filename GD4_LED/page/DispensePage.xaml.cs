@@ -1228,6 +1228,7 @@ namespace GD4_LED.page
                 }
 
                 clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+
             }
             else
             {
@@ -1673,6 +1674,8 @@ namespace GD4_LED.page
                     //        //MessageBox.Show($"Package: {code} - {name} x{qty}");
                     //    }
                     //}
+
+
                 }
                 catch (Exception ex)
                 {
@@ -1731,7 +1734,7 @@ namespace GD4_LED.page
             }
         }
         
-        private void ClosePrescriptionDetail()
+        public void ClosePrescriptionDetail()
         {
             if (PrescriptionDetailOverlay != null)
             {
@@ -1977,6 +1980,7 @@ namespace GD4_LED.page
                                     result = _query.UpdateJob(cls.clsvariable.user, prescriptionno, seq, orderitem);
                                     //SyncDrug(orderitem);
                                     LoadStockByCode(orderitem);
+                                    clsvariable.CountItem += 1;
                                 }
                                 else
                                 {
@@ -2217,6 +2221,7 @@ namespace GD4_LED.page
                 {
                     string prescrip = "";
                     prescrip = SearchTextBox.Text.Trim();
+                    MessageBox.Show(prescrip);
                     clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
                     if (clsvariable.dt_Prescr.Rows.Count > 0)
                     {

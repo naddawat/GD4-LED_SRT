@@ -76,7 +76,7 @@ namespace GD4_LED.cls
                 return;
 
 
-            System.Windows.MessageBox.Show("ID:" + Row + "   Addr: " + Addr + "    QTY : " + QTY + clsvariable.press_btn);
+            
             _Variable.StrU = $"ID:{Row} Addr:{Addr} QTY:{QTY}";
             _Variable.StrU_array = new[] { Row, Addr, QTY };
 
@@ -85,8 +85,10 @@ namespace GD4_LED.cls
                 Row = Row,
                 Addr = Addr,
                 Qty = qty
+
+
             });
-            
+            clsvariable.CountItem += 1;
         }
        
         public override void RFID_event(string RFID_Code)
