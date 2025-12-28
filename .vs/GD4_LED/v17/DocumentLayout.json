@@ -94,8 +94,7 @@
               "ViewState": "AgIAAHUAAAAAAAAAAAAAwIwAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T11:59:54.579Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -145,8 +144,7 @@
               "RelativeToolTip": "GD4_LED\\PrescriptionPopup.xaml.cs",
               "ViewState": "AgIAAOYCAAAAAAAAAAAQwEQDAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-19T05:10:41.529Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-19T05:10:41.529Z"
             },
             {
               "$type": "Document",
@@ -156,7 +154,7 @@
               "RelativeDocumentMoniker": "GD4_LED\\cls\\clsSubSerial .cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\cls\\clsSubSerial .cs",
               "RelativeToolTip": "GD4_LED\\cls\\clsSubSerial .cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAMwCUAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFMAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-23T07:31:37.052Z",
               "EditorCaption": ""
@@ -171,8 +169,7 @@
               "RelativeToolTip": "GD4_LED\\cls\\clsQuery.cs",
               "ViewState": "AgIAALkAAAAAAAAAAAAAwNkAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T09:48:03.371Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T09:48:03.371Z"
             },
             {
               "$type": "Document",
@@ -184,8 +181,7 @@
               "RelativeToolTip": "GD4_LED\\page\\StockWindow.xaml.cs",
               "ViewState": "AgIAAA8AAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T09:56:22.24Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T09:56:22.24Z"
             },
             {
               "$type": "Document",
@@ -195,7 +191,7 @@
               "RelativeDocumentMoniker": "GD4_LED\\page\\DispensePage.xaml.cs",
               "ToolTip": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED\\page\\DispensePage.xaml.cs",
               "RelativeToolTip": "GD4_LED\\page\\DispensePage.xaml.cs",
-              "ViewState": "AgIAALsFAAAAAAAAAAAhwMoFAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAYwJUAAABvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T05:02:49.316Z",
               "EditorCaption": ""

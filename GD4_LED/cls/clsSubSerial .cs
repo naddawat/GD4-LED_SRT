@@ -75,6 +75,8 @@ namespace GD4_LED.cls
             if (!int.TryParse(QTY, out int qty) || qty <= 0)
                 return;
 
+
+            System.Windows.MessageBox.Show("ID:" + Row + "   Addr: " + Addr + "    QTY : " + QTY + clsvariable.press_btn);
             _Variable.StrU = $"ID:{Row} Addr:{Addr} QTY:{QTY}";
             _Variable.StrU_array = new[] { Row, Addr, QTY };
 

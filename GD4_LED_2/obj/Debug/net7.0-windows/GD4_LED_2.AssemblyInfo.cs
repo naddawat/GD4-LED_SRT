@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GD4_LED_2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a89b97dc022be2ae53d608fe08281b98e2727bc7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ea2cb7bd5feaf93f6fa2b3888cd34019ac98dec")]
 [assembly: System.Reflection.AssemblyProductAttribute("GD4_LED_2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GD4_LED_2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

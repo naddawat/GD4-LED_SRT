@@ -134,45 +134,31 @@ namespace GD4_LED.page
         private void Serial_OnButtonReceived(object sender, ButtonEventArgs e)
         {
             Dispatcher.Invoke(() =>
-            {                
+            {
                 PressBtn = true;
                 clsvariable.CountItem++;
-
-                //MessageBox.Show($"Serial_OnButtonReceived  ID:{e.Row}  Addr:{e.Addr}  QTY:{e.Qty}");
+                MessageBox.Show($"Serial_OnButtonReceived ID:{e.Row} Addr:{e.Addr} QTY:{e.Qty}");
                 InvenStock_Addr(e.Row, e.Addr, e.Qty.ToString());
-                // ทำงานต่อใน Page ได้เต็มที่
                 UpdateUI(e);
             });
         }
+
         private void UpdateUI(ButtonEventArgs e)
         {
-            //MessageBox.Show($"UpdateUI  CountItem:{clsvariable.CountItem}  PackItem:{clsvariable.PackItem}");
             if (clsvariable.CountItem == clsvariable.PackItem)
             {
+                MessageBox.Show($"UpdateUI CountItem:{clsvariable.CountItem} PackItem:{clsvariable.PackItem}");
                 ClosePrescriptionDetail();
                 clsvariable.CountItem = 0;
                 _ = InitializePageAsync();
             }
-            else if (txtSelectedItems != null)
+            else
             {
                 txtSelectedItems.Text = clsvariable.CountItem.ToString();
-                //timerBtn.Start();
                 PressBtn = false;
             }
         }
-        private void Serial_OnDispense(object sender, ButtonEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                timerBtn.Stop();
 
-                PressBtn = true;
-                clsvariable.CountItem++;
-
-                DataTable dt_stock = new clsQuery()
-                    .GetLedStockByAddr(e.Row, e.Addr, clsvariable.shelfzone);
-            });
-        }
         private void TimerBtn_Tick(object sender, EventArgs e)
         {
             timerBtn.Stop();
@@ -1253,36 +1239,40 @@ namespace GD4_LED.page
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("KeyDown called");
-            try
+            if(e.Key == Key.Enter)
             {
-                string prescrip = "";                
-                prescrip = SearchTextBox.Text.Trim();
-                if(prescrip != "")
+                try
                 {
-                    clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
-                    if (clsvariable.dt_Prescr.Rows.Count > 0)
+                    string prescrip = "";
+                    prescrip = SearchTextBox.Text.Trim();
+                    if (prescrip != "")
                     {
-                        if (!string.IsNullOrEmpty(SearchTextBox.Text))
+                        clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
+                        if (clsvariable.dt_Prescr.Rows.Count > 0)
                         {
-                            Prescription presc = new Prescription();
-                            presc = DisplayPrescriptionsScanbarCode();
-                            Print(presc);
-                            // SearchTextBox จะถูกล้างใน Print() method แล้ว
+                            if (!string.IsNullOrEmpty(SearchTextBox.Text))
+                            {
+                                Prescription presc = new Prescription();
+                                presc = DisplayPrescriptionsScanbarCode();
+                                Print(presc);
+                                // SearchTextBox จะถูกล้างใน Print() method แล้ว
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescrip}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
+                            // ล้างค่าถ้าไม่พบข้อมูล
+                            SearchTextBox.Clear();
                         }
                     }
-                    else
-                    {
-                        MessageBox.Show($" ไม่พบใบสั่งยาหมายเลข: {prescrip}", "Print Prescription", MessageBoxButton.OK, MessageBoxImage.Error);
-                        // ล้างค่าถ้าไม่พบข้อมูล
-                        SearchTextBox.Clear();
-                    }
-                }                
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(" Search TextBox : " + ex.Message);
+                    SearchTextBox.Clear();
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(" Search TextBox : " + ex.Message);
-                SearchTextBox.Clear();
-            }
+           
         }
         //private void ScanTimer_Tick(object sender, EventArgs e)
         //{
