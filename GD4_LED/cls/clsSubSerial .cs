@@ -21,6 +21,7 @@ namespace GD4_LED.cls
         //private page.DispensePage disPage = new page.DispensePage();
         clsQuery _query = new clsQuery();
         public event EventHandler<ButtonEventArgs> OnButtonReceived;
+
         public ClsSubSerial()
         {
 
@@ -39,7 +40,7 @@ namespace GD4_LED.cls
         {
             //Dipen timer = new MyTimerService();
             //timer.Start();
-            base.Button_event(Row, Addr, QTY);
+            //base.Button_event(Row, Addr, QTY);
 
             //if(QTY != "" && Convert.ToInt32(QTY) > 0)
             //{

@@ -72,6 +72,7 @@ namespace GD4_LED.page
         private bool _allowFocusReturn = true;
         public bool PressBtn = false;
         private ClsSubSerial _serial;
+        
         public DispensePage()
         {
             InitializeComponent();
@@ -135,8 +136,7 @@ namespace GD4_LED.page
         {
             Dispatcher.Invoke(() =>
             {
-                PressBtn = true;
-                clsvariable.CountItem++;
+                PressBtn = true;                
                 MessageBox.Show($"Serial_OnButtonReceived ID:{e.Row} Addr:{e.Addr} QTY:{e.Qty}");
                 InvenStock_Addr(e.Row, e.Addr, e.Qty.ToString());
                 UpdateUI(e);
@@ -151,6 +151,7 @@ namespace GD4_LED.page
                 ClosePrescriptionDetail();
                 clsvariable.CountItem = 0;
                 _ = InitializePageAsync();
+                SearchTextBox.Clear();
             }
             else
             {
@@ -504,7 +505,7 @@ namespace GD4_LED.page
         {
             PrescriptionPanel.Children.Clear();
             Prescription prescrip = new Prescription();
-            string Searchtxt = SearchTextBox.Text?.Trim() ?? "";
+            string Searchtxt = prescrip.PrescriptionNo;
 
             if (filteredPrescriptions.Count == 0)
             {
@@ -1249,6 +1250,7 @@ namespace GD4_LED.page
                     prescrip = SearchTextBox.Text.Trim();
                     if (prescrip != "")
                     {
+                        MessageBox.Show(prescrip);
                         clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
                         if (clsvariable.dt_Prescr.Rows.Count > 0)
                         {
@@ -1258,6 +1260,7 @@ namespace GD4_LED.page
                                 presc = DisplayPrescriptionsScanbarCode();
                                 Print(presc);
                                 // SearchTextBox จะถูกล้างใน Print() method แล้ว
+                                
                             }
                         }
                         else
@@ -1395,7 +1398,7 @@ namespace GD4_LED.page
 
                 string prescrip = "";
                 prescrip = SearchTextBox.Text.Trim();
-                clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
+                //clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
                 if (clsvariable.dt_Prescr.Rows.Count > 0)
                 {
                     if (!string.IsNullOrEmpty(SearchTextBox.Text))
@@ -2223,7 +2226,7 @@ namespace GD4_LED.page
                     string prescrip = "";
                     prescrip = SearchTextBox.Text.Trim();
                     MessageBox.Show(prescrip);
-                    clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
+                    //clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescrip);
                     if (clsvariable.dt_Prescr.Rows.Count > 0)
                     {
                         if (!string.IsNullOrEmpty(SearchTextBox.Text))

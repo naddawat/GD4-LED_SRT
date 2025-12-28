@@ -54,7 +54,7 @@ namespace GD4_LED_2.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/GD4_LED_2;V1.0.0.0;component/views/dispenseview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/GD4_LED_2;component/views/dispenseview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\DispenseView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
