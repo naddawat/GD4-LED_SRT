@@ -25,8 +25,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Initial Catalog=meddispense;Persist Security Info=True;User" +
-            " ID=root;Password=root; charset=utf8mb4;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=192.168.209.2;Initial Catalog=meddispense;Persist Security Info=True;" +
+            "User ID=root;Password=Admin@gd4;Charset=utf8mb4;")]
         public string connectstring {
             get {
                 return ((string)(this["connectstring"]));
