@@ -1049,17 +1049,6 @@ namespace GD4_LED.page
         {
             DataTable dt_stock = new DataTable();
             dt_stock = _query.GetLedStockByZone(clsvariable.shelfzone);
-
-            var grouped = dt_stock.AsEnumerable()
-                                .GroupBy(r => new
-                                {
-                                    shelfname = r.Field<string>("shelfname")
-                                })
-                                .Select(g => g.First())
-                                .CopyToDataTable();
-
-            dt_stock = grouped;
-
             string connStr = clsvariable.connectionST;
             int position_id =0;
             int addr=0;
@@ -1142,7 +1131,7 @@ namespace GD4_LED.page
                     }
 
 
-                    //clsvariable.Instance.SerialCan.Order(addr, position_id, "", "", LotNo, exp, "", 0, 0, 0);               
+                    //clsvariable.Instance.SerialCan.Order(addr, position_id, "", "", LotNo, exp, "", 0, 0, 0);
                     clsvariable.Instance.SerialCan.SetEEprom(addr, addr, position_id, orderitemENname, " ", HAD.ToString(), position);
                     Thread.Sleep(2000); // หน่วงเวลา 100 มิลลิวินาที (0.1 วินาที)
                 }
@@ -1168,12 +1157,16 @@ namespace GD4_LED.page
                     using (MySqlConnection conn = new MySqlConnection(connStr))
                     {
                         conn.Open();
+
+
                         string sql = $@" DELETE FROM ms_location; ";
 
                         using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                         {
                            cmd.ExecuteNonQuery();
                         }
+
+
 
                         var columns = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
 

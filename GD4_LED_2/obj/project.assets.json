@@ -638,35 +638,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\hp-po\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
-    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\noteb\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED_2\\GD4_LED_2.csproj",
+      "projectUniqueName": "D:\\Projects\\สุราช\\GD4-LED-V10\\GD4-LED_SRT\\GD4_LED_2\\GD4_LED_2.csproj",
       "projectName": "GD4_LED_2",
-      "projectPath": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED_2\\GD4_LED_2.csproj",
-      "packagesPath": "C:\\Users\\hp-po\\.nuget\\packages\\",
-      "outputPath": "D:\\GitHub\\GD4-LED_SRT\\GD4_LED_2\\obj\\",
+      "projectPath": "D:\\Projects\\สุราช\\GD4-LED-V10\\GD4-LED_SRT\\GD4_LED_2\\GD4_LED_2.csproj",
+      "packagesPath": "C:\\Users\\noteb\\.nuget\\packages\\",
+      "outputPath": "D:\\Projects\\สุราช\\GD4-LED-V10\\GD4-LED_SRT\\GD4_LED_2\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
-      ],
       "configFilePaths": [
-        "C:\\Users\\hp-po\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\noteb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0-windows"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -679,13 +670,7 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net7.0-windows7.0": {
@@ -719,7 +704,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }

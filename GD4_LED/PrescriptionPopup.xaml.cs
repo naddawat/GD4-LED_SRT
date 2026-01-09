@@ -1032,18 +1032,20 @@ namespace GD4_LED
 
         private async void ConfirmButton_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedItems.Count == 0)
-            {
-                MessageBox.Show("กรุณาเลือกรายการยาอย่างน้อย 1 รายการ", "แจ้งเตือน",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            //if (selectedItems.Count == 0)
+            //{
+            //    MessageBox.Show("กรุณาเลือกรายการยาอย่างน้อย 1 รายการ", "แจ้งเตือน",
+            //        MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    return;
+            //}
 
             var page = new GD4_LED.page.DispensePage();
             await page.InitializePageAsync();
             ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(page);
 
             this.Close();
+
+
         }
 
         public List<PackageItem> GetSelectedItems()
@@ -1057,7 +1059,7 @@ namespace GD4_LED
             {
                 if (!string.IsNullOrEmpty(txtScannedCode.Text))
                 {
-                    //VerifyDispenser(txtScannedCode.Text,"");
+                    VerifyDispenser(txtScannedCode.Text,"");
                     scannedBarcode = "";
 
                     LoadSampleData(jsonString);

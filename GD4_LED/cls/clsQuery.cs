@@ -531,7 +531,7 @@ namespace GD4_LED.cls
             connectst = clsvariable.connectionST;
             SQL = $@" UPDATE ms_stock SET
                                     In_Qty = '{new_qty}',
-                                    lastmodify = CURRENT_TIMESTAMP()
+                                    lastmodify = NOW()
                                     WHERE
                                     orderitemcode = '{orderitem}'
                                     AND LotNo = '{lot}'

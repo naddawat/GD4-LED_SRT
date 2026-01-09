@@ -38,7 +38,7 @@ namespace GD4_LED
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
-            if (clsvariable.comname == "DEV-MIM")
+            if (clsvariable.comname == "HP")
             {
                 clsvariable.comname = "GD4-LED-1";
             }
@@ -157,7 +157,7 @@ namespace GD4_LED
             txtdevice.Text = _Man.getDeviceDetail(clsvariable.comname);
             txtdatetime.Text = datetimeNow;
 
-            clsvariable.dt_LedConfig = _config.GetLedConfig(clsvariable.comname);
+            clsvariable.dt_LedConfig = _config.GetLedConfig("HP2");
             if (clsvariable.dt_LedConfig.Rows.Count > 0)
             {
                 clsvariable.RGD_dispense = clsvariable.dt_LedConfig.Rows[0]["RGB_dispense"].ToString().Split('|');

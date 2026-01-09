@@ -1,6 +1,4 @@
-using GD4_LED.cls;
 using System;
-using System.Data;
 using System.Windows;
 using System.Windows.Input;
 
@@ -8,8 +6,6 @@ namespace GD4_LED
 {
     public partial class LoginWindow : Window
     {
-        clsQuery _query = new clsQuery();
-
         public LoginWindow()
         {
             InitializeComponent();
@@ -66,26 +62,15 @@ namespace GD4_LED
 
         private bool ValidateScannedCode(string scannedCode)
         {
-            if (!string.IsNullOrEmpty(scannedCode) && scannedCode != "รอการสแกน...")
-            {
-                DataTable dt_user = new DataTable();
-                dt_user = _query.GetUser(scannedCode, "");
-                if (dt_user.Rows.Count > 0)
-                {
-                    txtname.Text = dt_user.Rows[0]["fullname"].ToString();
-                    clsvariable.user = dt_user.Rows[0]["fullname"].ToString();
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
+            // TODO: Implement actual authentication
+            // This is a placeholder - connect to your database or authentication service
+            // Validate the scanned code against user database
+            
+            // Example: Simple check (replace with actual database check)
+            // return scannedCode == "USER001" || scannedCode == "ADMIN123";
+            
+            // For now, accept any non-empty scanned code
+            return !string.IsNullOrEmpty(scannedCode) && scannedCode != "รอการสแกน...";
         }
 
         private void ShowError(string message)
