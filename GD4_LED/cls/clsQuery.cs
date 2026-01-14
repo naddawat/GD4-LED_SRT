@@ -402,6 +402,37 @@ namespace GD4_LED.cls
 
             return clsFillMyDB.GetDataSet(connectst, SQL);
         }
+        public DataTable GetRefill()
+        {
+            connectst = clsvariable.connectionST;
+            SQL = $@"  SELECT *
+                        FROM (
+                          SELECT
+                            ml.shelfname AS ตำแหน่ง,
+                            ml.orderitemcode AS DrugCode,
+                            ml.orderitemENname AS DrugName,
+                            ms.In_Qty AS Quantity,
+                            ms.LotNo AS Lot,
+                            ms.Exp AS EXP,
+                            ml.max AS Max,
+                            ml.min AS Min,
+                            LEAST(
+                              ROUND((ms.In_Qty * 100.0) / NULLIF(ml.max, 0), 0),
+                              100
+                            ) AS Percent
+                          FROM
+                            ms_stock ms
+                            RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
+                        ) t
+                        WHERE
+                          t.percent <= 10
+                        ORDER BY
+                          t.percent;
+
+                        ";
+
+            return clsFillMyDB.GetDataSet(connectst, SQL);
+        }
         public DataTable GetLedStockByZone(string shelfzone)
         {
             connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
@@ -470,6 +501,7 @@ namespace GD4_LED.cls
                 return Execute.dataExecuteNonQuery(connectst_main, cmd);
             }
         }
+
         public bool UpdateStockWhere(string DrugCode, int In_Qty, string LotNo, string Exp, string UserId)
         {
             connectst = clsvariable.connectionST;
@@ -481,6 +513,22 @@ namespace GD4_LED.cls
             using (MySqlCommand cmd = new MySqlCommand(SQL))
             {
                 return Execute.dataExecuteNonQuery(connectst, cmd);
+            }
+        }
+        public bool UpdateDispensTime(string prescriptionno, int seq, string orderitemcode)
+        {
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
+            SQL = $@" UPDATE packagemaster_ipd 
+                        SET printdatetime = CURRENT_TIMESTAMP()                        
+                        WHERE
+                        prescriptionno = '{prescriptionno}'
+                        AND seq = '{seq}'
+                        AND orderitemcode = '{orderitemcode}' ";
+
+
+            using (MySqlCommand cmd = new MySqlCommand(SQL))
+            {
+                return Execute.dataExecuteNonQuery(connectst_main, cmd);
             }
         }
         public bool UpdatePrintStatus(string status,string comname)

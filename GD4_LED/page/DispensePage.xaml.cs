@@ -1117,11 +1117,22 @@ namespace GD4_LED.page
         private void Print(Prescription prescription)
         {
             timerRefresh.Stop();
-            
+            bool result = false;
             // Use cached data if available
             if (clsvariable.dt_Prescr == null || clsvariable.dt_Prescr.Rows.Count == 0)
             {
                 clsvariable.dt_Prescr = _query.GetPrescriptionByCode(prescription.PrescriptionNo.ToString());
+                if(clsvariable.dt_Prescr.Rows.Count > 0)
+                {
+                    foreach (DataRow row in clsvariable.dt_Prescr.Rows)
+                    {
+                        int seq = Convert.ToInt32(row["seq"] ?? 0);
+                        string orderitemcode = row["orderitemcode"].ToString();
+                        result = _query.UpdateDispensTime(prescription.PrescriptionNo.ToString(), seq, orderitemcode);
+                    }
+                    
+                }
+                
             }
             
             if (clsvariable.dt_Prescr.Rows.Count > 0)

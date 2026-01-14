@@ -139,7 +139,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.application
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\GD4_LED.pdb
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\BouncyCastle.Cryptography.dll
-D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\CrystalDecisions.CrystalReports.Design.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\CrystalDecisions.CrystalReports.Engine.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\CrystalDecisions.ReportSource.dll
@@ -288,7 +287,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.GenerateResource.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CoreCompileInputs.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe.manifest
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.application
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.Up2Date
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
 D:\Projects\สุราช\GD4-LED-V10\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
@@ -433,3 +431,7 @@ D:\Projects\สุราช\GD4-LED-V10\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.ap
 D:\Projects\สุราช\GD4-LED-V10\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\Projects\สุราช\GD4-LED-V10\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.exe
 D:\Projects\สุราช\GD4-LED-V10\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.pdb
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\LoginWindow.baml
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\LoginWindow.g.cs
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.frmRefill.resources

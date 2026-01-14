@@ -13,14 +13,14 @@
     <framework targetVersion="4.8" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="GD4_LED.exe.manifest" size="48328">
+    <dependentAssembly dependencyType="install" codebase="GD4_LED.exe.manifest" size="57294">
       <assemblyIdentity name="GD4_LED.exe" version="1.0.1.57" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>OchSi+ylANPGi2MLumwyKK/8noRzc4txerbTmU7raVo=</dsig:DigestValue>
+        <dsig:DigestValue>FAlbmSiQhu7jPfjTZg5EjILZ1xqSK93+X0cpU+pWY4k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

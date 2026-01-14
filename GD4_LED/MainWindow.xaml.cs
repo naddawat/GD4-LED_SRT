@@ -38,7 +38,7 @@ namespace GD4_LED
             InitializeComponent();
 
             clsvariable.comname = Environment.MachineName;
-            if (clsvariable.comname == "HP")
+            if (clsvariable.comname == "DEV-MIM")
             {
                 clsvariable.comname = "GD4-LED-1";
             }
@@ -157,7 +157,7 @@ namespace GD4_LED
             txtdevice.Text = _Man.getDeviceDetail(clsvariable.comname);
             txtdatetime.Text = datetimeNow;
 
-            clsvariable.dt_LedConfig = _config.GetLedConfig("HP2");
+            clsvariable.dt_LedConfig = _config.GetLedConfig(clsvariable.comname);
             if (clsvariable.dt_LedConfig.Rows.Count > 0)
             {
                 clsvariable.RGD_dispense = clsvariable.dt_LedConfig.Rows[0]["RGB_dispense"].ToString().Split('|');
@@ -205,6 +205,9 @@ namespace GD4_LED
             {
                 //txtdevice.Text = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
                 clsvariable.shelfzone = clsvariable.dt_Ledinfo.Rows[0]["shelfzone"].ToString();
+
+                frmRefill refill = new frmRefill();
+                refill.ShowDialog();
             }
 
             if (v && local) // method ที่คุณเขียนไว้เช็คการต่อ
