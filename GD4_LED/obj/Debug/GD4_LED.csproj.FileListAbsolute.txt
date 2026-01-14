@@ -213,8 +213,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\CrystalDecisions.ReportAppServer.CommonC
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\stdole.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ShockwaveFlashObjects.dll
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\BouncyCastle.Cryptography.xml
-D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.pdb
-D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\ClsSerialLED.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Google.Protobuf.pdb
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\Google.Protobuf.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\K4os.Compression.LZ4.xml
@@ -255,7 +253,6 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Encodings.Web.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Text.Json.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.Threading.Tasks.Extensions.xml
 D:\GitHub\GD4-LED_SRT\GD4_LED\bin\Debug\System.ValueTuple.xml
-D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\ModernCalendarApp.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePage.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\page\DispensePageHistory.baml

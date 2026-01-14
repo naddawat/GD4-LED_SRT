@@ -404,34 +404,35 @@ namespace GD4_LED.cls
         }
         public DataTable GetRefill()
         {
-            connectst = clsvariable.connectionST;
-            SQL = $@"  SELECT *
-                        FROM (
-                          SELECT
-                            ml.shelfname AS ตำแหน่ง,
-                            ml.orderitemcode AS DrugCode,
-                            ml.orderitemENname AS DrugName,
-                            ms.In_Qty AS Quantity,
-                            ms.LotNo AS Lot,
-                            ms.Exp AS EXP,
-                            ml.max AS Max,
-                            ml.min AS Min,
-                            LEAST(
-                              ROUND((ms.In_Qty * 100.0) / NULLIF(ml.max, 0), 0),
-                              100
-                            ) AS Percent
-                          FROM
-                            ms_stock ms
-                            RIGHT JOIN ms_location ml ON ms.orderitemcode = ml.orderitemcode
-                        ) t
-                        WHERE
-                          t.percent <= 10
-                        ORDER BY
-                          t.percent;
+            connectst_main = GD4_LED.Properties.Settings.Default.connectstring;
+            SQL = $@" SELECT
+                      ml.shelfname AS ตำแหน่ง,
+                      ml.orderitemcode AS DrugCode,
+                      ml.orderitemENname AS DrugName,
+                      ms.In_Qty AS Quantity,
+                      ms.LotNo AS Lot,
+                      ms.Exp AS EXP,
+                      ml.`max` AS MaxQty,
+                      ml.`min` AS MinQty,
+                      -- สถานะใกล้หมดอายุ
+                      CASE
+                        WHEN ms.Exp <= DATE_ADD(CURRENT_DATE, INTERVAL 3 MONTH)
+                          THEN 'วันหมดอายุน้อยกว่า 3 เดือน'
+                        ELSE '-'
+                      END AS ExpStatus
 
-                        ";
+                    FROM ms_stock ms
+                    INNER JOIN ms_location ml
+                      ON ms.orderitemcode = ml.orderitemcode
 
-            return clsFillMyDB.GetDataSet(connectst, SQL);
+                    WHERE ml.shelfzone = '{clsvariable.shelfzone}'
+                      AND (
+                           ms.In_Qty <= ms.`min`
+                           OR ms.Exp <= DATE_ADD(CURRENT_DATE, INTERVAL 3 MONTH)
+                          );
+                    ";
+
+            return clsFillMyDB.GetDataSet(connectst_main, SQL);
         }
         public DataTable GetLedStockByZone(string shelfzone)
         {
