@@ -25,8 +25,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Initial Catalog=meddispense;Persist Security Info=True;User" +
-            " ID=root;Password=root;Charset=utf8mb4;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=192.168.209.2;Initial Catalog=meddispense;Persist Security Info=True;" +
+            "User ID=root;Password=Admin@gd4;Charset=utf8mb4;")]
         public string connectstring {
             get {
                 return ((string)(this["connectstring"]));
@@ -38,8 +38,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Initial Catalog=meddispense;Persist Security Info=True;User" +
-            " ID=root;Password=root; charset=utf8mb4;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1Initial Catalog=led_demo;Persist Security Info=True;User ID=" +
+            "root;Password=Admin@gd4; charset=utf8mb4;")]
         public string connectstringlocal {
             get {
                 return ((string)(this["connectstringlocal"]));
@@ -51,8 +51,8 @@ namespace GD4_LED.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1;Port=3306;Initial Catalog=led_demo;Persist Security Info=Tr" +
-            "ue;User ID=root;Password=Admin@gd4; charset=utf8mb4;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=127.0.0.1Initial Catalog=led_demo;Persist Security Info=True;User ID=" +
+            "root;Password=Admin@gd4; charset=utf8mb4;")]
         public string Setting {
             get {
                 return ((string)(this["Setting"]));
