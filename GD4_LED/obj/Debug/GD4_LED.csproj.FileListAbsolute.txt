@@ -432,3 +432,4 @@ D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\LoginWindow.baml
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\LoginWindow.g.cs
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.CopyComplete
 D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.frmRefill.resources
+D:\GitHub\GD4-LED_SRT\GD4_LED\obj\Debug\GD4_LED.csproj.AssemblyReference.cache
